@@ -42,7 +42,7 @@ function LinkList({ items }) {
 export default function Footer() {
   return (
     <footer className="footer-shell mt-10">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:py-10">
+      <div className="px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
         <div className="mb-6 px-2 py-2 lg:px-0">
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(280px,0.8fr)] lg:items-center">
             <div>

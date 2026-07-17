@@ -243,7 +243,7 @@ export default function ProfilePage() {
       )}
 
       <section className="overflow-hidden rounded-[32px] border border-slate-200 bg-[linear-gradient(135deg,#ffffff_0%,#f8fafc_48%,#eef4ff_100%)] shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
-        <div className="grid gap-8 px-6 py-7 lg:grid-cols-[minmax(0,1.2fr)_340px] lg:px-8">
+        <div className="grid gap-8 px-6 py-7 lg:grid-cols-[minmax(0,1.2fr)_320px] lg:px-8 xl:grid-cols-[minmax(0,1.3fr)_360px]">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[var(--moeys-gold)]">
               Account Center
@@ -297,7 +297,7 @@ export default function ProfilePage() {
         </div>
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[minmax(0,1.15fr)_380px]">
+      <section className="grid gap-6 xl:grid-cols-[minmax(0,1.15fr)_380px] 2xl:grid-cols-[minmax(0,1.2fr)_440px]">
         <div className="space-y-6">
           <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
             <SectionTitle
@@ -305,7 +305,7 @@ export default function ProfilePage() {
               title="Current account information"
               summary="This section gives a quick summary of the information currently attached to your account."
             />
-            <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {profileCards.map((card) => (
                 <InfoCard key={`${card.label}-${card.value}`} icon={card.icon} label={card.label} value={card.value} />
               ))}

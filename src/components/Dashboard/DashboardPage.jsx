@@ -289,19 +289,19 @@ export default function DashboardPage() {
                 <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{stat.label}</p>
                 <p className="mt-2 text-3xl font-bold text-gray-800 dark:text-gray-100">{stat.value}</p>
               </div>
-              <div className={`rounded-2xl p-3 ${stat.tone}`}>
+              <div className={`rounded-2xl p-3 ${stat.tone} flex-shrink-0`}>
                 <stat.icon className="h-6 w-6" />
               </div>
             </div>
             <div className="mt-4 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-              <HiOutlineTrendingUp className="h-4 w-4 text-green-500" />
+              <HiOutlineTrendingUp className="h-4 w-4 text-green-500 flex-shrink-0" />
               <span>{stat.hint}</span>
             </div>
           </article>
         ))}
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[minmax(0,1.1fr)_360px]">
+      <section className="grid gap-6 xl:grid-cols-[minmax(0,1.1fr)_360px] 2xl:grid-cols-[minmax(0,1.2fr)_420px]">
         <div className="institution-card rounded-[28px]">
           <div className="flex items-center justify-between border-b border-gray-100 px-6 py-5 dark:border-slate-800">
             <div>

@@ -230,17 +230,17 @@ export default function Header({ onMenuToggle, isMenuEnabled, onMenuVisibilityTo
 
   return (
     <header className="sticky top-0 z-30 shadow-sm">
-      <div className="header-surface px-3 py-3 sm:px-6">
-        <div className="mx-auto grid max-w-7xl gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+      <div className="header-surface px-4 py-3 sm:px-6 lg:px-8">
+        <div className="flex flex-wrap items-center gap-4 lg:flex-nowrap lg:justify-between">
           <div className="flex min-w-0 items-center gap-3 sm:gap-5">
-            <div className="moeys-seal flex h-14 w-14 items-center justify-center rounded-full sm:h-16 sm:w-16">
-              <span className="text-sm font-extrabold tracking-wide sm:text-base">MOEYS</span>
+            <div className="moeys-seal flex h-12 w-12 items-center justify-center rounded-full sm:h-16 sm:w-16 flex-shrink-0">
+              <span className="text-xs font-extrabold tracking-wide sm:text-base">MOEYS</span>
             </div>
             <div className="min-w-0">
               <p className="text-[10px] font-semibold uppercase tracking-[0.32em] text-slate-500 sm:text-[11px]">
                 Kingdom of Cambodia
               </p>
-              <h1 className="moeys-heading truncate text-xl font-extrabold tracking-wide text-[var(--moeys-navy)] sm:text-3xl">
+              <h1 className="moeys-heading truncate text-lg font-extrabold tracking-wide text-[var(--moeys-navy)] sm:text-2xl lg:text-3xl">
                 High School Administration Portal
               </h1>
               <p className="text-[10px] uppercase tracking-[0.28em] text-[var(--moeys-gold)] sm:text-xs">
@@ -249,7 +249,7 @@ export default function Header({ onMenuToggle, isMenuEnabled, onMenuVisibilityTo
             </div>
           </div>
 
-          <div className="header-status-panel hidden min-w-[280px] rounded-2xl px-4 py-3 lg:block">
+          <div className="header-status-panel hidden min-w-[240px] max-w-xs rounded-2xl px-4 py-3 lg:block flex-shrink-0">
             <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-500">
               Institutional Focus
             </p>
@@ -263,15 +263,15 @@ export default function Header({ onMenuToggle, isMenuEnabled, onMenuVisibilityTo
         </div>
       </div>
 
-      <div className="moeys-banner border-b border-[rgba(255,255,255,0.12)] px-3 py-2 sm:px-6">
-        <div className="mx-auto flex max-w-7xl flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
-          <nav className="hidden flex-wrap items-center gap-1.5 text-xs font-semibold text-blue-50 xl:flex">
+      <div className="moeys-banner border-b border-[rgba(255,255,255,0.12)] px-4 py-2 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+          <nav className="hidden flex-wrap items-center gap-1 xl:flex">
             {visibleNavItems.map((item) => (
               <button
                 key={item.label}
                 type="button"
                 onClick={() => navigate(item.to)}
-                className={`px-3.5 py-2 text-[13px] transition-all duration-200 ${
+                className={`px-3 py-2 text-[13px] transition-all duration-200 rounded ${
                   location.pathname === item.to
                     ? 'bg-white/12 text-white shadow-[inset_0_-1px_0_rgba(255,255,255,0.18)]'
                     : 'text-blue-50/88 hover:bg-white/7 hover:text-white'
@@ -283,11 +283,11 @@ export default function Header({ onMenuToggle, isMenuEnabled, onMenuVisibilityTo
             ))}
           </nav>
 
-          <div className="flex items-center justify-between gap-3 bg-white/[0.04] px-4 py-2 lg:min-w-[370px] lg:justify-end">
+          <div className="flex items-center justify-between gap-3 bg-white/[0.04] px-4 py-2 lg:justify-end lg:min-w-[340px]">
             <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/76">
               National Education Dashboard
             </div>
-            <div className="hidden h-px w-10 bg-white/14 lg:block" />
+            <div className="hidden h-px w-8 bg-white/14 lg:block" />
             <div className="hidden text-[11px] uppercase tracking-[0.18em] text-white/66 md:block">
               {role === ACCOUNT_ROLES.ADMIN ? 'Admin Center' : profileRole}
             </div>
@@ -295,7 +295,7 @@ export default function Header({ onMenuToggle, isMenuEnabled, onMenuVisibilityTo
         </div>
       </div>
 
-      <div className="toolbar-surface px-3 py-3 sm:px-4 lg:px-6">
+      <div className="toolbar-surface px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-3">
           <div className="flex min-w-0 flex-1 items-center gap-2">
             {!isMenuEnabled && (

@@ -22,7 +22,8 @@ export default function Layout({ children }) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-950 flex">
+      {/* Sidebar */}
       {isMenuEnabled && (
         <Sidebar
           isOpen={isSidebarOpen}
@@ -34,23 +35,24 @@ export default function Layout({ children }) {
         />
       )}
 
-      <div className={`${isMenuEnabled ? 'lg:ml-64' : ''} min-h-screen`}>
+      {/* Main content area — offset by sidebar width on desktop */}
+      <div className={`flex flex-col flex-1 min-w-0 ${isMenuEnabled ? 'lg:ml-64' : ''}`}>
         <Header
           onMenuToggle={() => setIsSidebarOpen((prev) => !prev)}
           isMenuEnabled={isMenuEnabled}
           onMenuVisibilityToggle={() => {
             setIsMenuEnabled((prev) => {
               const next = !prev;
-              if (!next) {
-                setIsSidebarOpen(false);
-              }
+              if (!next) setIsSidebarOpen(false);
               return next;
             });
           }}
         />
-        <main className="p-4 sm:p-6">
+
+        <main className="flex-1 w-full p-4 sm:p-6 lg:p-8 2xl:p-10 min-w-0">
           {children || <Outlet />}
         </main>
+
         <Footer />
       </div>
     </div>

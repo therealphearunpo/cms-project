@@ -42,13 +42,13 @@
   }
 
   .sidebar-link {
-    @apply flex items-center gap-3 px-4 py-3 rounded-xl text-blue-100/90
+    @apply flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-blue-100/85
            hover:bg-sidebar-hover hover:text-white transition-all duration-200 
-           text-sm font-medium border border-transparent;
+           text-sm font-medium;
   }
 
   .sidebar-link.active {
-    @apply bg-sidebar-active text-white border-white/10 shadow-sm;
+    @apply bg-sidebar-active text-white shadow-sm;
   }
 
   .attendance-btn {

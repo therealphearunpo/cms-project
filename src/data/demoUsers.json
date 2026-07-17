@@ -1,0 +1,50 @@
+[
+  {
+    "id": "demo-admin",
+    "email": "admin@school.edu",
+    "password": "Admin1234",
+    "name": "Admin Center",
+    "role": "admin",
+    "gender": "female"
+  },
+  {
+    "id": "demo-admin-center-po",
+    "email": "po.phearun.2824@rupp.edu.kh",
+    "password": "Admin1234",
+    "name": "Admin Center",
+    "role": "admin",
+    "gender": "female"
+  },
+  {
+    "id": "demo-admin-center-nim",
+    "email": "nim.cheyseth.2824@rupp.edu.kh",
+    "password": "Admin1234",
+    "name": "Admin Center",
+    "role": "admin",
+    "gender": "female"
+  },
+  {
+    "id": "demo-admin-center-thet",
+    "email": "thet.englang.2824@rupp.edu.kh",
+    "password": "Admin1234",
+    "name": "Admin Center",
+    "role": "admin",
+    "gender": "female"
+  },
+  {
+    "id": "demo-teacher",
+    "email": "teacher@school.edu",
+    "password": "Teacher1234",
+    "name": "Teacher User",
+    "role": "teacher",
+    "gender": "male"
+  },
+  {
+    "id": "demo-student",
+    "email": "student@school.edu",
+    "password": "Student1234",
+    "name": "Student User",
+    "role": "student",
+    "gender": "female"
+  }
+]

@@ -77,7 +77,7 @@ export default function LoginPage() {
         )}
 
         {error && (
-          <div className="mt-4 bg-[#fff1f1] text-[#b42318] p-3 rounded-xl border border-[#f3c6c6] text-sm">
+          <div aria-live="polite" className="mt-4 bg-[#fff1f1] text-[#b42318] p-3 rounded-xl border border-[#f3c6c6] text-sm">
             {error}
           </div>
         )}
@@ -88,6 +88,9 @@ export default function LoginPage() {
             <input
               id="email"
               type="email"
+              autoComplete="username"
+              inputMode="email"
+              spellCheck={false}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-xl border border-[#d8ccaf] bg-white px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#102d5f] focus:ring-2 focus:ring-[#dbe5fb]"
@@ -102,6 +105,7 @@ export default function LoginPage() {
               <input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
+                autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full rounded-xl border border-[#d8ccaf] bg-white px-3 py-2.5 pr-10 text-sm text-slate-800 outline-none transition focus:border-[#102d5f] focus:ring-2 focus:ring-[#dbe5fb]"

@@ -99,6 +99,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-xl border border-[#d8ccaf] bg-white px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#102d5f] focus:ring-2 focus:ring-[#dbe5fb]"
+              enterKeyHint="next"
               placeholder="name@school.edu"
               required
             />

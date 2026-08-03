@@ -3,14 +3,12 @@
 @tailwind utilities;
 
 :root {
-  --moeys-navy: #0f2f63;
-  --moeys-royal: #1e4fa8;
+  --moeys-navy: #102d5f;
+  --moeys-royal: #1c4c91;
   --moeys-gold: #c89b3c;
   --moeys-cream: #f7f3e8;
   --moeys-ink: #10213c;
-  --surface-page:
-    radial-gradient(circle at top left, rgba(200, 155, 60, 0.08), transparent 28%),
-    linear-gradient(180deg, #f8fbff 0%, #eef3fa 100%);
+  --surface-page: #f5f0e8;
 }
 
 @layer base {
@@ -129,14 +127,13 @@ html.dark textarea::placeholder {
 }
 
 .institution-card {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(251, 252, 255, 0.96) 100%);
-  border: 1px solid rgba(15, 47, 99, 0.08);
-  box-shadow: 0 12px 30px rgba(16, 33, 60, 0.08);
+  background: #fffdf9;
+  border: 1px solid rgba(16, 45, 95, 0.1);
+  box-shadow: 0 12px 30px rgba(16, 33, 60, 0.07);
 }
 
 .moeys-banner {
-  background:
-    linear-gradient(90deg, rgba(20, 55, 112, 0.94) 0%, rgba(43, 91, 173, 0.9) 70%, rgba(200, 155, 60, 0.82) 100%);
+  background: #102d5f;
 }
 
 .moeys-heading {
@@ -145,16 +142,15 @@ html.dark textarea::placeholder {
 }
 
 .header-surface {
-  background: rgba(255, 255, 255, 0.96);
-  border-bottom: 1px solid #d7deed;
+  background: #fffdf9;
+  border-bottom: 1px solid #ddd4bf;
   backdrop-filter: blur(12px);
 }
 
 .header-status-panel {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(246, 249, 255, 0.95) 100%);
-  border: 1px solid rgba(15, 47, 99, 0.08);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 12px 24px rgba(16, 33, 60, 0.08);
+  background: #fffdf9;
+  border: 1px solid rgba(16, 45, 95, 0.1);
+  box-shadow: 0 8px 24px rgba(16, 33, 60, 0.06);
 }
 
 .toolbar-surface {
@@ -194,10 +190,8 @@ html.dark textarea::placeholder {
 }
 
 .footer-shell {
-  background:
-    radial-gradient(circle at top right, rgba(200, 155, 60, 0.18), transparent 28%),
-    linear-gradient(180deg, #102d5e 0%, #0b2147 100%);
-  border-top: 1px solid rgba(214, 222, 236, 0.45);
+  background: #102d5f;
+  border-top: 1px solid rgba(214, 222, 236, 0.3);
 }
 
 .footer-panel-title {
@@ -209,8 +203,8 @@ html.dark textarea::placeholder {
 }
 
 .footer-telegram {
-  background: linear-gradient(180deg, #33a8df 0%, #1c81bf 100%);
-  box-shadow: 0 12px 24px rgba(21, 110, 166, 0.3);
+  background: #c89b3c;
+  box-shadow: 0 12px 24px rgba(21, 110, 166, 0.18);
 }
 
 html.dark .header-surface {
@@ -251,13 +245,13 @@ html.dark .profile-trigger:hover {
 }
 
 html.dark .header-status-panel {
-  background: linear-gradient(180deg, rgba(17, 27, 44, 0.92) 0%, rgba(12, 20, 35, 0.96) 100%);
+  background: #0f172a;
   border-color: rgba(120, 145, 190, 0.16);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02), 0 16px 30px rgba(0, 0, 0, 0.24);
 }
 
 html.dark .institution-card {
-  background: linear-gradient(180deg, rgba(15, 23, 38, 0.98) 0%, rgba(17, 27, 44, 0.98) 100%);
+  background: #111827;
   border-color: rgba(120, 145, 190, 0.16);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
 }
@@ -267,8 +261,6 @@ html.dark .moeys-heading {
 }
 
 html.dark .footer-shell {
-  background:
-    radial-gradient(circle at top right, rgba(200, 155, 60, 0.16), transparent 26%),
-    linear-gradient(180deg, #0b1730 0%, #081120 100%);
+  background: #081120;
   border-top-color: rgba(77, 96, 132, 0.5);
 }

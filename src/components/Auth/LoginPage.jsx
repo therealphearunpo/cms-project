@@ -46,28 +46,30 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0b1738] via-[#122655] to-[#1d3b82] px-4 py-8 flex items-center justify-center">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.10),transparent_38%),radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.10),transparent_35%)]" />
-      <div className="relative w-full max-w-md rounded-3xl border border-blue-200/40 bg-white/95 backdrop-blur p-8 shadow-2xl">
+    <div className="min-h-screen bg-[#f5f0e8] px-4 py-8 flex items-center justify-center">
+      <div className="relative w-full max-w-md rounded-[28px] border border-[#dbcda9] bg-[#fffdf9] p-8 shadow-[0_24px_60px_rgba(15,47,99,0.10)]">
         <div className="text-center">
-          <div className="mx-auto w-14 h-14 rounded-full bg-gradient-to-br from-[#1f2f67] to-[#3755b0] text-white flex items-center justify-center font-bold text-sm shadow-lg">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#102d5f] text-white font-bold text-sm shadow-sm">
             HS
           </div>
-          <h1 className="mt-4 text-2xl font-extrabold text-[#1f2f67]">High School Portal</h1>
-          <p className="mt-1 text-sm text-gray-500">School Class Management System</p>
+          <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.3em] text-[var(--moeys-gold)]">
+            Official School Workspace
+          </p>
+          <h1 className="mt-2 text-2xl font-extrabold text-[#102d5f]">High School Portal</h1>
+          <p className="mt-1 text-sm text-slate-500">School Class Management System</p>
         </div>
 
-        <div className="mt-6 rounded-xl bg-[#f3f7ff] border border-blue-100 p-3 text-xs text-blue-800">
+        <div className="mt-6 rounded-2xl border border-[#e5d9b8] bg-[#faf6ee] px-4 py-3 text-xs leading-6 text-slate-700">
           Admin, Teacher, and Student account type is detected automatically from your email.
         </div>
 
         {isDemoMode && (
-          <div className="mt-4 rounded-xl bg-[#f3f7ff] border border-blue-100 p-3 text-xs text-blue-800">
-            <p className="font-semibold">Demo accounts</p>
+          <div className="mt-4 rounded-2xl border border-[#e5d9b8] bg-[#ffffff] px-4 py-3 text-xs text-slate-700">
+            <p className="font-semibold text-slate-800">Demo accounts</p>
             <ul className="mt-2 space-y-2">
               {demoAccounts.map((account) => (
                 <li key={account.email}>
-                  <span className="font-semibold">{account.role}</span>: {account.email} / {account.password}
+                  <span className="font-semibold text-[#102d5f]">{account.role}</span>: {account.email} / {account.password}
                 </li>
               ))}
             </ul>
@@ -75,41 +77,41 @@ export default function LoginPage() {
         )}
 
         {error && (
-          <div className="mt-4 bg-red-100 text-red-700 p-3 rounded-lg border border-red-200 text-sm">
+          <div className="mt-4 bg-[#fff1f1] text-[#b42318] p-3 rounded-xl border border-[#f3c6c6] text-sm">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="mt-5 space-y-4">
           <div>
-            <label htmlFor="email" className="block text-gray-700 mb-2 text-sm font-medium">Email</label>
+            <label htmlFor="email" className="mb-2 block text-sm font-medium text-slate-700">Email</label>
             <input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2.5 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-xl border border-[#d8ccaf] bg-white px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#102d5f] focus:ring-2 focus:ring-[#dbe5fb]"
               placeholder="name@school.edu"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-gray-700 mb-2 text-sm font-medium">Password</label>
+            <label htmlFor="password" className="mb-2 block text-sm font-medium text-slate-700">Password</label>
             <div className="relative">
               <input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2.5 pr-10 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-xl border border-[#d8ccaf] bg-white px-3 py-2.5 pr-10 text-sm text-slate-800 outline-none transition focus:border-[#102d5f] focus:ring-2 focus:ring-[#dbe5fb]"
                 placeholder="Enter password"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700"
+                className="absolute inset-y-0 right-0 flex items-center px-3 text-slate-500 hover:text-slate-700"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <HiEyeOff className="w-5 h-5" /> : <HiEye className="w-5 h-5" />}
@@ -120,13 +122,13 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-[#243671] to-[#2b3f86] text-white py-2.5 rounded-lg hover:opacity-95 disabled:opacity-50 font-semibold"
+            className="w-full rounded-xl bg-[#102d5f] py-2.5 text-sm font-semibold text-white transition hover:bg-[#0d2347] disabled:opacity-50"
           >
             {loading ? 'Loading...' : 'Sign In'}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-xs text-gray-500">
+        <p className="mt-6 text-center text-[11px] uppercase tracking-[0.24em] text-slate-500">
           Public High School System - Cambodia
         </p>
       </div>

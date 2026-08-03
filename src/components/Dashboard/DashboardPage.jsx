@@ -267,7 +267,7 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          <div className="rounded-[24px] border border-[rgba(15,47,99,0.08)] bg-[linear-gradient(135deg,rgba(15,47,99,0.05),rgba(200,155,60,0.08))] px-5 py-5 dark:border-slate-700 dark:bg-[linear-gradient(135deg,rgba(30,64,175,0.14),rgba(200,155,60,0.1))]">
+          <div className="rounded-[24px] border border-[rgba(15,47,99,0.08)] bg-white px-5 py-5 dark:border-slate-700 dark:bg-slate-900">
             <div className="flex items-start gap-3">
               <div className="rounded-2xl bg-[var(--moeys-navy)]/10 p-3 text-[var(--moeys-navy)] dark:bg-white/10 dark:text-white">
                 <HiOutlineSparkles className="h-6 w-6" />

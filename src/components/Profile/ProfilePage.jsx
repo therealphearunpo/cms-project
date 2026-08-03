@@ -242,7 +242,7 @@ export default function ProfilePage() {
         </div>
       )}
 
-      <section className="overflow-hidden rounded-[32px] border border-slate-200 bg-[linear-gradient(135deg,#ffffff_0%,#f8fafc_48%,#eef4ff_100%)] shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
+      <section className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
         <div className="grid gap-8 px-6 py-7 lg:grid-cols-[minmax(0,1.2fr)_320px] lg:px-8 xl:grid-cols-[minmax(0,1.3fr)_360px]">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[var(--moeys-gold)]">
@@ -443,7 +443,7 @@ export default function ProfilePage() {
               summary="Preview your current presentation before committing any changes."
             />
 
-            <div className="mt-5 rounded-[28px] border border-slate-200 bg-[linear-gradient(180deg,#f8fafc_0%,#ffffff_100%)] p-5">
+            <div className="mt-5 rounded-[28px] border border-slate-200 bg-slate-50 p-5">
               <div className="flex items-center gap-4">
                 <Avatar name={valueFor('name', 'User')} src={previewAvatar} size="xl" className="h-20 w-20 ring-4 ring-white shadow-md" />
                 <div>

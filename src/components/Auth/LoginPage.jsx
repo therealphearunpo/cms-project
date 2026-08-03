@@ -59,7 +59,7 @@ export default function LoginPage() {
           <p className="mt-1 text-sm text-slate-500">School Class Management System</p>
         </div>
 
-        <div className="mt-6 rounded-2xl border border-[#e5d9b8] bg-[#faf6ee] px-4 py-3 text-xs leading-6 text-slate-700">
+        <div id="login-help-text" className="mt-6 rounded-2xl border border-[#e5d9b8] bg-[#faf6ee] px-4 py-3 text-xs leading-6 text-slate-700">
           Admin, Teacher, and Student account type is detected automatically from your email.
         </div>
 

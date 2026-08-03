@@ -87,6 +87,7 @@ export default function LoginPage() {
             <label htmlFor="email" className="mb-2 block text-sm font-medium text-slate-700">Email</label>
             <input
               id="email"
+              name="email"
               type="email"
               autoComplete="username"
               inputMode="email"
@@ -104,6 +105,7 @@ export default function LoginPage() {
             <div className="relative">
               <input
                 id="password"
+                name="password"
                 type={showPassword ? 'text' : 'password'}
                 autoComplete="current-password"
                 value={password}
@@ -114,6 +116,7 @@ export default function LoginPage() {
               />
               <button
                 type="button"
+                title={showPassword ? 'Hide password' : 'Show password'}
                 onClick={() => setShowPassword((prev) => !prev)}
                 className="absolute inset-y-0 right-0 flex items-center px-3 text-slate-500 hover:text-slate-700"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}

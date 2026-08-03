@@ -91,6 +91,7 @@ export default function LoginPage() {
               type="email"
               autoComplete="username"
               aria-describedby="login-help-text"
+              aria-invalid={Boolean(error)}
               inputMode="email"
               spellCheck={false}
               value={email}

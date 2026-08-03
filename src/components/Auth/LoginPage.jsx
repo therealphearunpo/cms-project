@@ -113,6 +113,8 @@ export default function LoginPage() {
                 name="password"
                 type={showPassword ? 'text' : 'password'}
                 autoComplete="current-password"
+                autoCapitalize="off"
+                autoCorrect="off"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full rounded-xl border border-[#d8ccaf] bg-white px-3 py-2.5 pr-10 text-sm text-slate-800 outline-none transition focus:border-[#102d5f] focus:ring-2 focus:ring-[#dbe5fb]"

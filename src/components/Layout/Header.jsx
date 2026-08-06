@@ -2,14 +2,17 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   HiOutlineBell,
-  HiOutlineCog,
   HiOutlineLogout,
   HiOutlineMoon,
   HiOutlineSearch,
   HiOutlineSun,
   HiOutlineX,
+  HiOutlineShieldCheck,
+  HiOutlineAcademicCap,
+  HiOutlineUserGroup,
+  HiOutlineSparkles,
 } from 'react-icons/hi';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { ACCOUNT_ROLES, getRoleLabel, normalizeRole } from '../../constants/roles';
 import { useAuth } from '../../context/AuthContext';
@@ -20,31 +23,77 @@ import Avatar from '../common/Avatar';
 
 const LOCAL_STUDENTS_KEY = 'students_local_v2';
 
-const projectNavItems = [
-  { label: 'Dashboard', to: '/dashboard', roles: [ACCOUNT_ROLES.STUDENT, ACCOUNT_ROLES.TEACHER, ACCOUNT_ROLES.ADMIN] },
-  { label: 'Attendance', to: '/attendance', roles: [ACCOUNT_ROLES.TEACHER, ACCOUNT_ROLES.ADMIN] },
-  { label: 'Students', to: '/students', roles: [ACCOUNT_ROLES.ADMIN] },
-  { label: 'User Lookup', to: '/student-lookup', roles: [ACCOUNT_ROLES.ADMIN] },
-  { label: 'Assignments', to: '/assignments', roles: [ACCOUNT_ROLES.STUDENT, ACCOUNT_ROLES.TEACHER] },
-  { label: 'Exam Schedule', to: '/exams', roles: [ACCOUNT_ROLES.STUDENT, ACCOUNT_ROLES.TEACHER, ACCOUNT_ROLES.ADMIN] },
-  { label: 'Reports', to: '/reports', roles: [ACCOUNT_ROLES.ADMIN] },
-];
-
 const pageEntries = [
-  { id: 'dashboard', title: 'Dashboard', subtitle: 'Overview', path: '/dashboard', roles: [ACCOUNT_ROLES.STUDENT, ACCOUNT_ROLES.TEACHER, ACCOUNT_ROLES.ADMIN] },
-  { id: 'attendance', title: 'Attendance', subtitle: 'Daily attendance', path: '/attendance', roles: [ACCOUNT_ROLES.TEACHER, ACCOUNT_ROLES.ADMIN] },
-  { id: 'students', title: 'Students', subtitle: 'Student records', path: '/students', roles: [ACCOUNT_ROLES.ADMIN] },
-  { id: 'student-lookup', title: 'User Lookup', subtitle: 'Find students or staff', path: '/student-lookup', roles: [ACCOUNT_ROLES.ADMIN] },
-  { id: 'assignments', title: 'Assignments', subtitle: 'Homework and tasks', path: '/assignments', roles: [ACCOUNT_ROLES.STUDENT, ACCOUNT_ROLES.TEACHER] },
-  { id: 'exams', title: 'Exam Schedule', subtitle: 'Published exam timetable', path: '/exams', roles: [ACCOUNT_ROLES.STUDENT, ACCOUNT_ROLES.TEACHER, ACCOUNT_ROLES.ADMIN] },
-  { id: 'reports', title: 'Reports', subtitle: 'Analytics and reports', path: '/reports', roles: [ACCOUNT_ROLES.ADMIN] },
-  { id: 'profile', title: 'My Profile', subtitle: 'Account settings', path: '/profile', roles: [ACCOUNT_ROLES.STUDENT, ACCOUNT_ROLES.TEACHER, ACCOUNT_ROLES.ADMIN] },
-];
-
-const quickHighlights = [
-  'Cambodia National Curriculum Workspace',
-  'Administrative Coordination Portal',
-  'Official School Operations Interface',
+  {
+    id: 'dashboard',
+    title: 'Dashboard',
+    subtitle: 'Overview & metrics',
+    path: '/dashboard',
+    roles: [ACCOUNT_ROLES.STUDENT, ACCOUNT_ROLES.TEACHER, ACCOUNT_ROLES.ADMIN],
+  },
+  {
+    id: 'attendance',
+    title: 'Attendance',
+    subtitle: 'Daily attendance tracker',
+    path: '/attendance',
+    roles: [ACCOUNT_ROLES.TEACHER, ACCOUNT_ROLES.ADMIN],
+  },
+  {
+    id: 'students',
+    title: 'Students',
+    subtitle: 'Student roster directory',
+    path: '/students',
+    roles: [ACCOUNT_ROLES.ADMIN],
+  },
+  {
+    id: 'student-lookup',
+    title: 'User Lookup',
+    subtitle: 'Search student & staff accounts',
+    path: '/student-lookup',
+    roles: [ACCOUNT_ROLES.ADMIN],
+  },
+  {
+    id: 'schedule',
+    title: 'Class Schedule',
+    subtitle: 'Weekly timetable',
+    path: '/schedule',
+    roles: [ACCOUNT_ROLES.STUDENT, ACCOUNT_ROLES.TEACHER, ACCOUNT_ROLES.ADMIN],
+  },
+  {
+    id: 'marksheets',
+    title: 'Marksheets',
+    subtitle: 'Grades & academic performance',
+    path: '/marksheets',
+    roles: [ACCOUNT_ROLES.STUDENT, ACCOUNT_ROLES.ADMIN],
+  },
+  {
+    id: 'assignments',
+    title: 'Assignments',
+    subtitle: 'Homework & practical tasks',
+    path: '/assignments',
+    roles: [ACCOUNT_ROLES.STUDENT, ACCOUNT_ROLES.TEACHER],
+  },
+  {
+    id: 'exams',
+    title: 'Exam Schedule',
+    subtitle: 'Published exam timetable',
+    path: '/exams',
+    roles: [ACCOUNT_ROLES.STUDENT, ACCOUNT_ROLES.TEACHER, ACCOUNT_ROLES.ADMIN],
+  },
+  {
+    id: 'reports',
+    title: 'Reports',
+    subtitle: 'School analytics & exports',
+    path: '/reports',
+    roles: [ACCOUNT_ROLES.ADMIN],
+  },
+  {
+    id: 'profile',
+    title: 'My Profile',
+    subtitle: 'Account preferences & details',
+    path: '/profile',
+    roles: [ACCOUNT_ROLES.STUDENT, ACCOUNT_ROLES.TEACHER, ACCOUNT_ROLES.ADMIN],
+  },
 ];
 
 function readLocalStudents() {
@@ -71,23 +120,22 @@ function mergeUniqueStudents(items) {
   return Array.from(map.values());
 }
 
-function formatRole(user) {
-  return getRoleLabel(user?.role || user?.designation || user?.title);
-}
-
 function MenuToggleIcon() {
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5 text-slate-700" aria-hidden="true">
-      <rect x="3" y="6" width="18" height="2.2" rx="1.1" fill="currentColor" />
-      <rect x="3" y="11" width="18" height="2.2" rx="1.1" fill="currentColor" />
-      <rect x="3" y="16" width="18" height="2.2" rx="1.1" fill="currentColor" />
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5 text-slate-600 dark:text-slate-300"
+      aria-hidden="true"
+    >
+      <rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor" />
+      <rect x="3" y="11" width="18" height="2" rx="1" fill="currentColor" />
+      <rect x="3" y="16" width="18" height="2" rx="1" fill="currentColor" />
     </svg>
   );
 }
 
 export default function Header({ onMenuToggle, isMenuEnabled, onMenuVisibilityToggle }) {
   const navigate = useNavigate();
-  const location = useLocation();
   const { user, logout } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const role = normalizeRole(user?.role);
@@ -101,7 +149,6 @@ export default function Header({ onMenuToggle, isMenuEnabled, onMenuVisibilityTo
 
   useEffect(() => {
     if (role !== ACCOUNT_ROLES.ADMIN) return undefined;
-
     let isActive = true;
 
     const loadStudents = async () => {
@@ -149,15 +196,13 @@ export default function Header({ onMenuToggle, isMenuEnabled, onMenuVisibilityTo
       .map((option) => ({
         id: `class-${option.value}`,
         title: `Class ${option.value}`,
-        subtitle: 'Student list',
+        subtitle: 'Student roster list',
         path: '/students',
       }));
 
-    const visiblePages = pageEntries.filter(
-      (entry) => entry.roles.includes(role) && (!entry.adminCenterOnly || user?.isAdminCenterMember)
-    );
+    const visiblePages = pageEntries.filter((entry) => entry.roles.includes(role));
     return [...visiblePages, ...classEntries, ...studentEntries];
-  }, [role, studentRecords, user?.isAdminCenterMember]);
+  }, [role, studentRecords]);
 
   const results = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -217,235 +262,212 @@ export default function Header({ onMenuToggle, isMenuEnabled, onMenuVisibilityTo
   };
 
   const profileName = user?.name || user?.email?.split('@')[0] || 'User';
-  const profileRole = formatRole(user);
-  const visibleNavItems = projectNavItems.filter((item) => item.roles.includes(role));
-  const currentHighlight = quickHighlights[
-    role === ACCOUNT_ROLES.ADMIN ? 1 : role === ACCOUNT_ROLES.TEACHER ? 2 : 0
-  ];
+  const profileRole = getRoleLabel(role);
 
-  const handleLogout = () => {
-    logout();
+  const getRoleBadgeStyle = (r) => {
+    switch (r) {
+      case ACCOUNT_ROLES.ADMIN:
+        return {
+          bg: 'bg-amber-500/10 text-amber-600 border-amber-500/20 dark:bg-amber-400/10 dark:text-amber-400',
+          icon: HiOutlineShieldCheck,
+        };
+      case ACCOUNT_ROLES.TEACHER:
+        return {
+          bg: 'bg-blue-500/10 text-blue-600 border-blue-500/20 dark:bg-blue-400/10 dark:text-blue-400',
+          icon: HiOutlineUserGroup,
+        };
+      default:
+        return {
+          bg: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:bg-emerald-400/10 dark:text-emerald-400',
+          icon: HiOutlineAcademicCap,
+        };
+    }
+  };
+
+  const badgeStyle = getRoleBadgeStyle(role);
+  const BadgeIcon = badgeStyle.icon;
+
+  const handleLogout = async () => {
+    await logout();
     navigate('/login', { replace: true });
   };
 
   return (
-    <header className="sticky top-0 z-30 shadow-sm">
-      <div className="header-surface px-4 py-3 sm:px-6 lg:px-8">
-        <div className="flex flex-wrap items-center gap-4 lg:flex-nowrap lg:justify-between">
-          <div className="flex min-w-0 items-center gap-3 sm:gap-5">
-            <div className="moeys-seal flex h-12 w-12 items-center justify-center rounded-full sm:h-16 sm:w-16 flex-shrink-0">
-              <span className="text-xs font-extrabold tracking-wide sm:text-base">MOEYS</span>
-            </div>
-            <div className="min-w-0">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.32em] text-slate-500 sm:text-[11px]">
-                Kingdom of Cambodia
-              </p>
-              <h1 className="moeys-heading truncate text-lg font-extrabold tracking-wide text-[var(--moeys-navy)] sm:text-2xl lg:text-3xl">
-                High School Administration Portal
+    <header className="sticky top-0 z-30 header-surface h-16 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
+      {/* Left Area: Brand & Navigation */}
+      <div className="flex items-center gap-3 min-w-0">
+        {!isMenuEnabled && (
+          <button
+            type="button"
+            onClick={onMenuVisibilityToggle}
+            className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            aria-label="Turn on menu"
+          >
+            <MenuToggleIcon />
+          </button>
+        )}
+
+        {isMenuEnabled && (
+          <button
+            type="button"
+            onClick={onMenuToggle}
+            className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors lg:hidden"
+            aria-label="Toggle menu"
+          >
+            <MenuToggleIcon />
+          </button>
+        )}
+
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center font-extrabold text-xs tracking-wider shadow-md shadow-blue-600/20 flex-shrink-0">
+            EDU
+          </div>
+          <div className="min-w-0 hidden sm:block">
+            <div className="flex items-center gap-2">
+              <h1 className="text-sm font-extrabold text-slate-900 dark:text-white truncate leading-tight tracking-tight">
+                High School Management Portal
               </h1>
-              <p className="text-[10px] uppercase tracking-[0.28em] text-[var(--moeys-gold)] sm:text-xs">
-                Ministry Style Education Management Portal
-              </p>
             </div>
-          </div>
-
-          <div className="header-status-panel hidden min-w-[240px] max-w-xs rounded-2xl px-4 py-3 lg:block flex-shrink-0">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-500">
-              Institutional Focus
-            </p>
-            <p className="mt-1 text-sm font-semibold text-[var(--moeys-navy)]">
-              {currentHighlight}
-            </p>
-            <p className="mt-1 text-xs text-slate-500">
-              Structured for official administration, student oversight, and school-wide reporting.
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+              Kingdom of Cambodia • Ministry of Education (MOEYS)
             </p>
           </div>
         </div>
       </div>
 
-      <div className="moeys-banner border-b border-[rgba(255,255,255,0.12)] px-4 py-2 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
-          <nav className="hidden flex-wrap items-center gap-1 xl:flex">
-            {visibleNavItems.map((item) => (
-              <button
-                key={item.label}
-                type="button"
-                onClick={() => navigate(item.to)}
-                className={`px-3 py-2 text-[13px] transition-all duration-200 rounded ${
-                  location.pathname === item.to
-                    ? 'bg-white/12 text-white shadow-[inset_0_-1px_0_rgba(255,255,255,0.18)]'
-                    : 'text-blue-50/88 hover:bg-white/7 hover:text-white'
-                }`}
-                aria-current={location.pathname === item.to ? 'page' : undefined}
-              >
-                {item.label}
-              </button>
-            ))}
-          </nav>
-
-          <div className="flex items-center justify-between gap-3 bg-white/[0.04] px-4 py-2 lg:justify-end lg:min-w-[340px]">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/76">
-              National Education Dashboard
-            </div>
-            <div className="hidden h-px w-8 bg-white/14 lg:block" />
-            <div className="hidden text-[11px] uppercase tracking-[0.18em] text-white/66 md:block">
-              {role === ACCOUNT_ROLES.ADMIN ? 'Admin Center' : profileRole}
-            </div>
-          </div>
+      {/* Middle Area: Command Palette Search Bar */}
+      <div ref={searchRef} className="relative flex-1 max-w-md mx-2">
+        <div className="search-shell flex items-center gap-2.5 rounded-xl px-3.5 py-2 text-sm">
+          <HiOutlineSearch className="h-4 w-4 text-slate-400 flex-shrink-0" />
+          <input
+            ref={searchInputRef}
+            type="text"
+            placeholder="Quick search (Press ⌘K to focus)..."
+            className="w-full border-none bg-transparent text-slate-800 dark:text-slate-100 outline-none placeholder:text-slate-400 text-xs sm:text-sm font-medium"
+            value={query}
+            onChange={(event) => {
+              setQuery(event.target.value);
+              setSearchOpen(true);
+              setFocusIndex(-1);
+            }}
+            onFocus={() => setSearchOpen(true)}
+            onKeyDown={onSearchKeyDown}
+          />
+          {query ? (
+            <button
+              type="button"
+              onClick={() => {
+                setQuery('');
+                setFocusIndex(-1);
+              }}
+              className="rounded-full p-1 hover:bg-slate-200 dark:hover:bg-slate-700"
+              aria-label="Clear search"
+            >
+              <HiOutlineX className="h-3.5 w-3.5 text-slate-500" />
+            </button>
+          ) : (
+            <span className="hidden md:inline-flex items-center gap-0.5 text-[10px] font-mono text-slate-400 bg-slate-200/70 dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-300/60 dark:border-slate-700 font-semibold">
+              <HiOutlineSparkles className="w-3 h-3 text-blue-500" /> ⌘K
+            </span>
+          )}
         </div>
+
+        {searchOpen && query.trim() && (
+          <div className="search-dropdown absolute left-0 right-0 z-50 mt-2 overflow-hidden rounded-2xl">
+            {results.length ? (
+              <ul className="max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
+                {results.map((result, index) => (
+                  <li key={result.id}>
+                    <button
+                      type="button"
+                      onClick={() => executeSearchResult(result)}
+                      className={`w-full px-4 py-3 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60 ${
+                        index === focusIndex ? 'bg-blue-50/70 dark:bg-blue-950/40' : ''
+                      }`}
+                    >
+                      <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                        {result.title}
+                      </p>
+                      <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+                        {result.subtitle}
+                      </p>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="px-4 py-4 text-xs text-slate-500 dark:text-slate-400">
+                No results matching &quot;{query}&quot;.
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
-      <div className="toolbar-surface px-4 py-3 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex min-w-0 flex-1 items-center gap-2">
-            {!isMenuEnabled && (
-              <button
-                type="button"
-                onClick={onMenuVisibilityToggle}
-                className="shell-action rounded-xl p-2"
-                aria-label="Turn on menu"
-              >
-                <MenuToggleIcon />
-              </button>
-            )}
-
-            {isMenuEnabled && (
-              <button
-                type="button"
-                onClick={onMenuToggle}
-                className="shell-action rounded-xl p-2 lg:hidden"
-                aria-label="Toggle menu"
-              >
-                <MenuToggleIcon />
-              </button>
-            )}
-
-            <div ref={searchRef} className="relative max-w-xl flex-1">
-              <button
-                type="button"
-                onClick={() => setSearchOpen((prev) => !prev)}
-                className="p-2 transition-colors hover:bg-gray-100 md:hidden"
-                aria-label="Open search"
-              >
-                <HiOutlineSearch className="h-5 w-5 text-gray-500" />
-              </button>
-
-              <div className={`${searchOpen ? 'flex' : 'hidden'} search-shell md:flex items-center gap-2 rounded-xl px-3 py-2`}>
-                <HiOutlineSearch className="h-4 w-4 text-slate-400" />
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  placeholder="Search students, classes, pages..."
-                  className="w-full border-none bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
-                  value={query}
-                  onChange={(event) => {
-                    setQuery(event.target.value);
-                    setSearchOpen(true);
-                    setFocusIndex(-1);
-                  }}
-                  onFocus={() => setSearchOpen(true)}
-                  onKeyDown={onSearchKeyDown}
-                />
-                {query ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setQuery('');
-                      setFocusIndex(-1);
-                    }}
-                    className="rounded-full p-1 hover:bg-gray-200"
-                    aria-label="Clear search"
-                  >
-                    <HiOutlineX className="h-4 w-4 text-gray-500" />
-                  </button>
-                ) : null}
-              </div>
-
-              {searchOpen && query.trim() && (
-                <div className="search-dropdown absolute left-0 right-0 z-40 mt-2 overflow-hidden rounded-2xl">
-                  {results.length ? (
-                    <ul className="max-h-80 overflow-y-auto">
-                      {results.map((result, index) => (
-                        <li key={result.id}>
-                          <button
-                            type="button"
-                            onClick={() => executeSearchResult(result)}
-                            className={`w-full px-3 py-2.5 text-left hover:bg-gray-50 ${
-                              index === focusIndex ? 'bg-primary-50' : ''
-                            }`}
-                          >
-                            <p className="text-sm font-medium text-gray-800">{result.title}</p>
-                            <p className="mt-0.5 text-xs text-gray-500">{result.subtitle}</p>
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <div className="px-3 py-3 text-sm text-gray-500">No result found.</div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-1 sm:gap-2">
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className="shell-action rounded-xl p-2"
-              aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
-              title={isDark ? 'Light Theme' : 'Dark Theme'}
-            >
-              {isDark ? (
-                <HiOutlineSun className="h-5 w-5 text-[var(--moeys-gold)]" />
-              ) : (
-                <HiOutlineMoon className="h-5 w-5 text-gray-500" />
-              )}
-            </button>
-
-            <button
-              type="button"
-              className="shell-action relative rounded-xl p-2"
-              aria-label="Notifications"
-            >
-              <HiOutlineBell className="h-5 w-5 text-gray-500" />
-              <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-primary-500" />
-            </button>
-
-            <button
-              type="button"
-              onClick={() => navigate('/profile')}
-              className="shell-action hidden rounded-xl p-2 sm:block"
-              aria-label="Open settings"
-            >
-              <HiOutlineCog className="h-5 w-5 text-gray-500" />
-            </button>
-
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="rounded-xl p-2 transition-colors hover:bg-red-50"
-              aria-label="Logout"
-              title="Logout"
-            >
-              <HiOutlineLogout className="h-5 w-5 text-red-600" />
-            </button>
-
-            <div className="mx-1 hidden h-8 w-px bg-gray-200 sm:block" />
-
-            <button
-              type="button"
-              onClick={() => navigate('/profile')}
-              className="profile-trigger flex min-w-0 items-center gap-2 rounded-xl border border-transparent px-2 py-1.5 transition-colors sm:gap-3"
-            >
-              <div className="hidden text-right md:block">
-                <p className="max-w-[140px] truncate text-sm font-semibold text-gray-700">{profileName}</p>
-                <p className="max-w-[140px] truncate text-xs text-gray-400">{profileRole}</p>
-              </div>
-              <Avatar name={profileName} size="sm" src={user?.avatar} />
-            </button>
-          </div>
+      {/* Right Area: Status Badge, Theme Toggle, Notifications, Profile & Logout */}
+      <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+        {/* Role Pill Badge */}
+        <div
+          className={`hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-bold ${badgeStyle.bg}`}
+        >
+          <BadgeIcon className="w-3.5 h-3.5" />
+          <span>{profileRole}</span>
         </div>
+
+        {/* Theme Switcher Button */}
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="p-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors"
+          aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
+          title={isDark ? 'Light Theme' : 'Dark Theme'}
+        >
+          {isDark ? (
+            <HiOutlineSun className="h-5 w-5 text-amber-400" />
+          ) : (
+            <HiOutlineMoon className="h-5 w-5 text-slate-600" />
+          )}
+        </button>
+
+        {/* Notifications Button */}
+        <button
+          type="button"
+          className="relative p-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors"
+          aria-label="Notifications"
+        >
+          <HiOutlineBell className="h-5 w-5 text-slate-600 dark:text-slate-400" />
+          <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-blue-500 ring-2 ring-white dark:ring-slate-900" />
+        </button>
+
+        <div className="h-6 w-px bg-slate-200 dark:bg-slate-800 mx-1 hidden sm:block" />
+
+        {/* User Profile Trigger */}
+        <button
+          type="button"
+          onClick={() => navigate('/profile')}
+          className="flex items-center gap-2.5 p-1 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-left"
+        >
+          <Avatar name={profileName} size="sm" src={user?.avatar} />
+          <div className="hidden lg:block">
+            <p className="text-xs font-bold text-slate-900 dark:text-white leading-tight max-w-[120px] truncate">
+              {profileName}
+            </p>
+            <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight max-w-[120px] truncate font-medium">
+              {profileRole}
+            </p>
+          </div>
+        </button>
+
+        {/* Logout Button */}
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
+          aria-label="Logout"
+          title="Logout"
+        >
+          <HiOutlineLogout className="h-5 w-5" />
+        </button>
       </div>
     </header>
   );

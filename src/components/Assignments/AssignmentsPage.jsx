@@ -108,7 +108,8 @@ const normalizeAssignment = (assignment) => {
   const total = Math.max(1, Number(assignment.total) || 1);
   const rawStatus = String(assignment.status || 'active').toLowerCase();
   const status = rawStatus === 'draft' ? 'draft' : 'active';
-  const submissions = status === 'draft' ? 0 : Math.min(total, Math.max(0, Number(assignment.submissions) || 0));
+  const submissions =
+    status === 'draft' ? 0 : Math.min(total, Math.max(0, Number(assignment.submissions) || 0));
 
   return {
     id: assignment.id ?? `local-${Date.now()}`,
@@ -174,12 +175,11 @@ export default function AssignmentsPage() {
     description: '',
   });
 
-  const loadAssignmentsFromLocal = () => readLocalData(LOCAL_ASSIGNMENTS_KEY).map(normalizeAssignment);
+  const loadAssignmentsFromLocal = () =>
+    readLocalData(LOCAL_ASSIGNMENTS_KEY).map(normalizeAssignment);
 
   const getStudentCountForGroup = (classCode) => {
-    const count = students.filter(
-      (student) => student.class === classCode
-    ).length;
+    const count = students.filter((student) => student.class === classCode).length;
     return count || 0;
   };
 
@@ -203,7 +203,9 @@ export default function AssignmentsPage() {
       const localAssignments = loadAssignmentsFromLocal();
       try {
         const response = await assignmentsAPI.getAll();
-        const apiAssignments = (Array.isArray(response?.data) ? response.data : []).map(normalizeAssignment);
+        const apiAssignments = (Array.isArray(response?.data) ? response.data : []).map(
+          normalizeAssignment
+        );
         const merged = mergeUniqueById([...apiAssignments, ...localAssignments]);
         setAssignments(merged);
       } catch {
@@ -220,7 +222,9 @@ export default function AssignmentsPage() {
     if (canManageAssignments) return;
 
     const seenByStudent = readLocalObject(LOCAL_ASSIGNMENT_SEEN_KEY);
-    const seenForCurrent = Array.isArray(seenByStudent[currentStudentKey]) ? seenByStudent[currentStudentKey] : [];
+    const seenForCurrent = Array.isArray(seenByStudent[currentStudentKey])
+      ? seenByStudent[currentStudentKey]
+      : [];
     const announcements = readLocalData(LOCAL_ASSIGNMENT_ANNOUNCEMENTS_KEY);
     const unseen = announcements.filter((item) => !seenForCurrent.includes(String(item.id)));
 
@@ -228,15 +232,18 @@ export default function AssignmentsPage() {
       const latest = unseen[0];
       setNotification({
         type: 'success',
-        message: unseen.length === 1
-          ? `New assignment: ${latest.title}`
-          : `${unseen.length} new assignments have been posted.`,
+        message:
+          unseen.length === 1
+            ? `New assignment: ${latest.title}`
+            : `${unseen.length} new assignments have been posted.`,
       });
       setTimeout(() => setNotification(null), 3500);
 
       const nextSeen = {
         ...seenByStudent,
-        [currentStudentKey]: [...new Set([...seenForCurrent, ...unseen.map((item) => String(item.id))])],
+        [currentStudentKey]: [
+          ...new Set([...seenForCurrent, ...unseen.map((item) => String(item.id))]),
+        ],
       };
       try {
         localStorage.setItem(LOCAL_ASSIGNMENT_SEEN_KEY, JSON.stringify(nextSeen));
@@ -253,14 +260,20 @@ export default function AssignmentsPage() {
       if (event.key === LOCAL_ASSIGNMENT_ANNOUNCEMENTS_KEY) {
         const latestAnnouncements = readLocalData(LOCAL_ASSIGNMENT_ANNOUNCEMENTS_KEY);
         const latestSeen = readLocalObject(LOCAL_ASSIGNMENT_SEEN_KEY);
-        const currentSeen = Array.isArray(latestSeen[currentStudentKey]) ? latestSeen[currentStudentKey] : [];
-        const latestUnseen = latestAnnouncements.filter((item) => !currentSeen.includes(String(item.id)));
+        const currentSeen = Array.isArray(latestSeen[currentStudentKey])
+          ? latestSeen[currentStudentKey]
+          : [];
+        const latestUnseen = latestAnnouncements.filter(
+          (item) => !currentSeen.includes(String(item.id))
+        );
         if (latestUnseen.length > 0) {
           setNotification({ type: 'success', message: `New assignment: ${latestUnseen[0].title}` });
           setTimeout(() => setNotification(null), 3500);
           const updatedSeen = {
             ...latestSeen,
-            [currentStudentKey]: [...new Set([...currentSeen, ...latestUnseen.map((item) => String(item.id))])],
+            [currentStudentKey]: [
+              ...new Set([...currentSeen, ...latestUnseen.map((item) => String(item.id))]),
+            ],
           };
           try {
             localStorage.setItem(LOCAL_ASSIGNMENT_SEEN_KEY, JSON.stringify(updatedSeen));
@@ -278,9 +291,7 @@ export default function AssignmentsPage() {
   const submissionsByAssignment = useMemo(() => {
     const byAssignment = {};
     const studentByEmail = new Map(
-      students
-        .filter((item) => item?.email)
-        .map((item) => [String(item.email).toLowerCase(), item])
+      students.filter((item) => item?.email).map((item) => [String(item.email).toLowerCase(), item])
     );
 
     Object.entries(studentSubmissions).forEach(([submissionKey, value]) => {
@@ -318,7 +329,9 @@ export default function AssignmentsPage() {
 
     const teacherKey = String(user?.email || user?.id || user?.name || 'teacher');
     const seenByTeacher = readLocalObject(LOCAL_ASSIGNMENT_SUBMISSION_SEEN_BY_TEACHER_KEY);
-    const seenForCurrent = Array.isArray(seenByTeacher[teacherKey]) ? seenByTeacher[teacherKey] : [];
+    const seenForCurrent = Array.isArray(seenByTeacher[teacherKey])
+      ? seenByTeacher[teacherKey]
+      : [];
     const allSubmissionIds = Object.values(submissionsByAssignment)
       .flat()
       .map((item) => String(item.id));
@@ -339,7 +352,10 @@ export default function AssignmentsPage() {
         [teacherKey]: [...new Set([...seenForCurrent, ...unseenSubmissionIds])],
       };
       try {
-        localStorage.setItem(LOCAL_ASSIGNMENT_SUBMISSION_SEEN_BY_TEACHER_KEY, JSON.stringify(nextSeen));
+        localStorage.setItem(
+          LOCAL_ASSIGNMENT_SUBMISSION_SEEN_BY_TEACHER_KEY,
+          JSON.stringify(nextSeen)
+        );
       } catch {
         // Ignore storage errors.
       }
@@ -485,7 +501,9 @@ export default function AssignmentsPage() {
     setIsSaving(true);
 
     const isDraft = formData.status === 'draft';
-    const submissions = isDraft ? 0 : Math.min(total, Math.max(0, Number(formData.submissions) || 0));
+    const submissions = isDraft
+      ? 0
+      : Math.min(total, Math.max(0, Number(formData.submissions) || 0));
     const payload = normalizeAssignment({
       id: editingAssignmentId || `local-${Date.now()}`,
       title: formData.title.trim(),
@@ -502,24 +520,42 @@ export default function AssignmentsPage() {
     try {
       if (editingAssignmentId) {
         const response = await assignmentsAPI.update(editingAssignmentId, payload);
-        const updated = normalizeAssignment(response?.data && typeof response.data === 'object' ? response.data : payload);
-        persistAssignments(assignments.map((item) => (String(item.id) === String(editingAssignmentId) ? updated : item)));
+        const updated = normalizeAssignment(
+          response?.data && typeof response.data === 'object' ? response.data : payload
+        );
+        persistAssignments(
+          assignments.map((item) =>
+            String(item.id) === String(editingAssignmentId) ? updated : item
+          )
+        );
         setNotification({ type: 'success', message: 'Assignment updated successfully.' });
       } else {
         const response = await assignmentsAPI.create(payload);
-        const created = normalizeAssignment(response?.data && typeof response.data === 'object' ? response.data : payload);
+        const created = normalizeAssignment(
+          response?.data && typeof response.data === 'object' ? response.data : payload
+        );
         persistAssignments([created, ...assignments]);
         pushAssignmentAnnouncement(created);
         setNotification({ type: 'success', message: 'Assignment created successfully.' });
       }
     } catch {
       if (editingAssignmentId) {
-        persistAssignments(assignments.map((item) => (String(item.id) === String(editingAssignmentId) ? payload : item)));
-        setNotification({ type: 'success', message: 'Assignment updated locally (API unavailable).' });
+        persistAssignments(
+          assignments.map((item) =>
+            String(item.id) === String(editingAssignmentId) ? payload : item
+          )
+        );
+        setNotification({
+          type: 'success',
+          message: 'Assignment updated locally (API unavailable).',
+        });
       } else {
         persistAssignments([payload, ...assignments]);
         pushAssignmentAnnouncement(payload);
-        setNotification({ type: 'success', message: 'Assignment created locally (API unavailable).' });
+        setNotification({
+          type: 'success',
+          message: 'Assignment created locally (API unavailable).',
+        });
       }
     } finally {
       setIsSaving(false);
@@ -561,7 +597,9 @@ export default function AssignmentsPage() {
     }
 
     persistAssignments(
-      assignments.map((item) => (String(item.id) === String(assignment.id) ? normalizeAssignment(published) : item))
+      assignments.map((item) =>
+        String(item.id) === String(assignment.id) ? normalizeAssignment(published) : item
+      )
     );
     pushAssignmentAnnouncement(published);
     setNotification({ type: 'success', message: 'Assignment published. Students can now see it.' });
@@ -712,7 +750,10 @@ export default function AssignmentsPage() {
         throw new Error('Popup blocked');
       }
     } catch {
-      setNotification({ type: 'error', message: 'Could not open this file. Try uploading and submitting again.' });
+      setNotification({
+        type: 'error',
+        message: 'Could not open this file. Try uploading and submitting again.',
+      });
       setTimeout(() => setNotification(null), 3500);
     } finally {
       if (temporaryObjectUrl) {
@@ -731,7 +772,10 @@ export default function AssignmentsPage() {
     const objectUrl = URL.createObjectURL(submitFile);
     const popup = window.open(objectUrl, '_blank', 'noopener,noreferrer');
     if (!popup) {
-      setNotification({ type: 'error', message: 'Popup blocked. Please allow popups for this site.' });
+      setNotification({
+        type: 'error',
+        message: 'Popup blocked. Please allow popups for this site.',
+      });
       setTimeout(() => setNotification(null), 3500);
     }
     setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
@@ -812,11 +856,13 @@ export default function AssignmentsPage() {
               className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
               <option value="all">All Classes</option>
-              {classOptions.filter((option) => option.value).map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.value}
-                </option>
-              ))}
+              {classOptions
+                .filter((option) => option.value)
+                .map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.value}
+                  </option>
+                ))}
             </select>
           </div>
         ) : (
@@ -861,11 +907,14 @@ export default function AssignmentsPage() {
               status === 'completed'
                 ? 'info'
                 : status === 'overdue'
-                ? 'warning'
-                : status === 'active'
-                ? 'success'
-                : 'neutral';
-            const progress = assignment.total > 0 ? Math.min(100, (assignment.submissions / assignment.total) * 100) : 0;
+                  ? 'warning'
+                  : status === 'active'
+                    ? 'success'
+                    : 'neutral';
+            const progress =
+              assignment.total > 0
+                ? Math.min(100, (assignment.submissions / assignment.total) * 100)
+                : 0;
 
             return (
               <div
@@ -881,11 +930,11 @@ export default function AssignmentsPage() {
 
                 <h3 className="font-semibold text-gray-800 mb-1">{assignment.title}</h3>
                 <p className="text-xs text-gray-400 mb-3">{assignment.subject}</p>
-                <p className="text-xs text-gray-500 mb-3">
-                  Class {assignment.classCode}
-                </p>
+                <p className="text-xs text-gray-500 mb-3">Class {assignment.classCode}</p>
                 {assignment.description ? (
-                  <p className="text-xs text-gray-500 mb-3 line-clamp-2">{assignment.description}</p>
+                  <p className="text-xs text-gray-500 mb-3 line-clamp-2">
+                    {assignment.description}
+                  </p>
                 ) : null}
 
                 <div className="mb-3">
@@ -896,15 +945,21 @@ export default function AssignmentsPage() {
                     </span>
                   </div>
                   <div className="w-full bg-gray-100 rounded-full h-1.5">
-                    <div className="bg-primary-500 rounded-full h-1.5 transition-all" style={{ width: `${progress}%` }} />
+                    <div
+                      className="bg-primary-500 rounded-full h-1.5 transition-all"
+                      style={{ width: `${progress}%` }}
+                    />
                   </div>
                 </div>
 
                 <div className="flex items-center justify-between text-xs mb-3">
                   <span className="text-gray-400">
-                    Due: {assignment.dueDate ? format(new Date(assignment.dueDate), 'dd MMM yyyy') : '-'}
+                    Due:{' '}
+                    {assignment.dueDate ? format(new Date(assignment.dueDate), 'dd MMM yyyy') : '-'}
                   </span>
-                  <span className="text-gray-500 font-medium">{assignment.submissions} submitted</span>
+                  <span className="text-gray-500 font-medium">
+                    {assignment.submissions} submitted
+                  </span>
                 </div>
 
                 {canManageAssignments ? (
@@ -1024,151 +1079,179 @@ export default function AssignmentsPage() {
           title={editingAssignmentId ? 'Edit Assignment' : 'Create Assignment'}
         >
           <form onSubmit={handleCreateOrUpdate} className="space-y-4">
-          <div>
-            <label htmlFor="assignment-title" className="block text-sm font-medium text-gray-700 mb-1">
-              Title
-            </label>
-            <input
-              id="assignment-title"
-              type="text"
-              value={formData.title}
-              onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="assignment-subject" className="block text-sm font-medium text-gray-700 mb-1">
-              Subject
-            </label>
-            <select
-              id="assignment-subject"
-              value={formData.subject}
-              onChange={(e) => setFormData((prev) => ({ ...prev, subject: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-            >
-              {subjectOptions
-                .filter((option) => option.value)
-                .map((option) => (
-                  <option key={option.value} value={option.label}>
-                    {option.label}
-                  </option>
-                ))}
-            </select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label htmlFor="assignment-class" className="block text-sm font-medium text-gray-700 mb-1">
-                Class
-              </label>
-              <select
-                id="assignment-class"
-                value={formData.classCode}
-                onChange={(e) => setFormData((prev) => ({ ...prev, classCode: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+              <label
+                htmlFor="assignment-title"
+                className="block text-sm font-medium text-gray-700 mb-1"
               >
-                {classOptions.filter((option) => option.value).map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.value}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label htmlFor="assignment-due-date" className="block text-sm font-medium text-gray-700 mb-1">
-                Due Date
+                Title
               </label>
               <input
-                id="assignment-due-date"
-                type="date"
-                value={formData.dueDate}
-                onChange={(e) => setFormData((prev) => ({ ...prev, dueDate: e.target.value }))}
+                id="assignment-title"
+                type="text"
+                value={formData.title}
+                onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                 required
               />
             </div>
-            <div>
-              <label htmlFor="assignment-total" className="block text-sm font-medium text-gray-700 mb-1">
-                Total Students (Auto)
-              </label>
-              <input
-                id="assignment-total"
-                type="number"
-                value={selectedGroupTotal}
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-700"
-                readOnly
-              />
-            </div>
-          </div>
 
-          {showSubmissionField && (
             <div>
-              <label htmlFor="assignment-submissions" className="block text-sm font-medium text-gray-700 mb-1">
-                Submitted Count
+              <label
+                htmlFor="assignment-subject"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Subject
               </label>
-              <input
-                id="assignment-submissions"
-                type="number"
-                min="0"
-                max={Math.max(0, selectedGroupTotal)}
-                value={formData.submissions}
-                onChange={(e) => setFormData((prev) => ({ ...prev, submissions: e.target.value }))}
+              <select
+                id="assignment-subject"
+                value={formData.subject}
+                onChange={(e) => setFormData((prev) => ({ ...prev, subject: e.target.value }))}
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+              >
+                {subjectOptions
+                  .filter((option) => option.value)
+                  .map((option) => (
+                    <option key={option.value} value={option.label}>
+                      {option.label}
+                    </option>
+                  ))}
+              </select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label
+                  htmlFor="assignment-class"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Class
+                </label>
+                <select
+                  id="assignment-class"
+                  value={formData.classCode}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, classCode: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                >
+                  {classOptions
+                    .filter((option) => option.value)
+                    .map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.value}
+                      </option>
+                    ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label
+                  htmlFor="assignment-due-date"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Due Date
+                </label>
+                <input
+                  id="assignment-due-date"
+                  type="date"
+                  value={formData.dueDate}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, dueDate: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  required
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="assignment-total"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Total Students (Auto)
+                </label>
+                <input
+                  id="assignment-total"
+                  type="number"
+                  value={selectedGroupTotal}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-700"
+                  readOnly
+                />
+              </div>
+            </div>
+
+            {showSubmissionField && (
+              <div>
+                <label
+                  htmlFor="assignment-submissions"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Submitted Count
+                </label>
+                <input
+                  id="assignment-submissions"
+                  type="number"
+                  min="0"
+                  max={Math.max(0, selectedGroupTotal)}
+                  value={formData.submissions}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, submissions: e.target.value }))
+                  }
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+            )}
+
+            <div>
+              <label
+                htmlFor="assignment-description"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Description
+              </label>
+              <textarea
+                id="assignment-description"
+                rows={3}
+                value={formData.description}
+                onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                placeholder="Instructions for students..."
               />
             </div>
-          )}
 
-          <div>
-            <label htmlFor="assignment-description" className="block text-sm font-medium text-gray-700 mb-1">
-              Description
-            </label>
-            <textarea
-              id="assignment-description"
-              rows={3}
-              value={formData.description}
-              onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-              placeholder="Instructions for students..."
-            />
-          </div>
+            <div>
+              <label
+                htmlFor="assignment-status"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Publishing State
+              </label>
+              <select
+                id="assignment-status"
+                value={formData.status}
+                onChange={(e) => setFormData((prev) => ({ ...prev, status: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+              >
+                <option value="active">Published</option>
+                <option value="draft">Draft</option>
+              </select>
+            </div>
 
-          <div>
-            <label htmlFor="assignment-status" className="block text-sm font-medium text-gray-700 mb-1">
-              Publishing State
-            </label>
-            <select
-              id="assignment-status"
-              value={formData.status}
-              onChange={(e) => setFormData((prev) => ({ ...prev, status: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-            >
-              <option value="active">Published</option>
-              <option value="draft">Draft</option>
-            </select>
-          </div>
-
-          <div className="flex justify-end gap-2 pt-1">
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => {
-                setIsModalOpen(false);
-                setEditingAssignmentId(null);
-                resetForm();
-              }}
-              disabled={isSaving}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" loading={isSaving}>
-              {editingAssignmentId ? 'Save Changes' : 'Create'}
-            </Button>
-          </div>
+            <div className="flex justify-end gap-2 pt-1">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setEditingAssignmentId(null);
+                  resetForm();
+                }}
+                disabled={isSaving}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" loading={isSaving}>
+                {editingAssignmentId ? 'Save Changes' : 'Create'}
+              </Button>
+            </div>
           </form>
         </Modal>
       )}
@@ -1184,7 +1267,8 @@ export default function AssignmentsPage() {
         >
           <div className="space-y-3">
             {(() => {
-              const list = submissionsByAssignment[String(selectedTeacherAssignment?.id || '')] || [];
+              const list =
+                submissionsByAssignment[String(selectedTeacherAssignment?.id || '')] || [];
               if (list.length === 0) {
                 return <p className="text-sm text-gray-500">No submissions yet.</p>;
               }
@@ -1205,9 +1289,13 @@ export default function AssignmentsPage() {
                         {list.map((item) => {
                           const stamp = item.submittedAt ? new Date(item.submittedAt) : null;
                           const dateLabel =
-                            stamp && !Number.isNaN(stamp.getTime()) ? format(stamp, 'dd MMM yyyy') : '-';
+                            stamp && !Number.isNaN(stamp.getTime())
+                              ? format(stamp, 'dd MMM yyyy')
+                              : '-';
                           const timeLabel =
-                            stamp && !Number.isNaN(stamp.getTime()) ? format(stamp, 'hh:mm a') : '-';
+                            stamp && !Number.isNaN(stamp.getTime())
+                              ? format(stamp, 'hh:mm a')
+                              : '-';
 
                           return (
                             <tr key={item.id} className="border-t border-gray-100">
@@ -1270,17 +1358,20 @@ export default function AssignmentsPage() {
             </div>
 
             <div>
-              <label htmlFor="assignment-submit-file" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="assignment-submit-file"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Submission File
               </label>
-                <input
-                  id="assignment-submit-file"
-                  type="file"
-                  required
-                  accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.zip,.rar,image/*"
-                  onChange={(e) => handleSubmitFileChange(e.target.files?.[0] || null)}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 file:mr-3 file:px-3 file:py-1.5 file:border-0 file:rounded-md file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
-                />
+              <input
+                id="assignment-submit-file"
+                type="file"
+                required
+                accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.zip,.rar,image/*"
+                onChange={(e) => handleSubmitFileChange(e.target.files?.[0] || null)}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 file:mr-3 file:px-3 file:py-1.5 file:border-0 file:rounded-md file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
+              />
               {submitFile && (
                 <p className="text-xs text-gray-500 mt-1">
                   Selected: {submitFile.name} ({Math.max(1, Math.round(submitFile.size / 1024))} KB)
@@ -1298,7 +1389,10 @@ export default function AssignmentsPage() {
             </div>
 
             <div>
-              <label htmlFor="assignment-submit-note" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="assignment-submit-note"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Note (Optional)
               </label>
               <textarea
@@ -1315,12 +1409,12 @@ export default function AssignmentsPage() {
               <Button
                 type="button"
                 variant="secondary"
-                  onClick={() => {
-                    setIsSubmitModalOpen(false);
-                    setSelectedAssignment(null);
-                    handleSubmitFileChange(null);
-                    setSubmitNote('');
-                  }}
+                onClick={() => {
+                  setIsSubmitModalOpen(false);
+                  setSelectedAssignment(null);
+                  handleSubmitFileChange(null);
+                  setSubmitNote('');
+                }}
                 disabled={isSubmitting}
               >
                 Cancel
@@ -1335,4 +1429,3 @@ export default function AssignmentsPage() {
     </div>
   );
 }
-

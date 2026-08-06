@@ -43,7 +43,7 @@ export default function AttendancePage() {
     getStudentStatus,
   } = useAttendanceContext();
   const isAdminTrackingStudents = isAdmin && attendanceScope === 'students';
-  const recordLabel = isAdminTrackingStudents ? 'Student' : (isAdmin ? 'Teacher' : 'Student');
+  const recordLabel = isAdminTrackingStudents ? 'Student' : isAdmin ? 'Teacher' : 'Student';
 
   const { filteredStudents, groupedStudents } = useFilteredStudents();
   const stats = useAttendanceStats();
@@ -90,7 +90,7 @@ export default function AttendancePage() {
     const safeSubjects = getDepartmentSubjectOptions(safeDepartment);
     const safeSubject = safeSubjects.some((item) => item.value === staff.subject)
       ? staff.subject
-      : (safeSubjects[0]?.value || '');
+      : safeSubjects[0]?.value || '';
     setStaffForm({
       id: staff.id,
       employeeId: staff.employeeId || '',
@@ -121,7 +121,9 @@ export default function AttendancePage() {
     } else {
       nextList.push({
         id: `teacher-${Date.now()}`,
-        employeeId: String(staffForm.employeeId || `T${String(nextList.length + 1).padStart(4, '0')}`),
+        employeeId: String(
+          staffForm.employeeId || `T${String(nextList.length + 1).padStart(4, '0')}`
+        ),
         name,
         class: staffForm.class,
         subject: staffForm.subject,
@@ -167,7 +169,13 @@ export default function AttendancePage() {
       ['Shift', selectedShift || 'All'],
       ['Subject', selectedSubject || 'All'],
       [],
-      [isAdmin ? 'Teacher ID' : 'Roll No', `${recordLabel} Name`, isAdmin ? 'Stream' : 'Class', 'Shift', 'Status'],
+      [
+        isAdmin ? 'Teacher ID' : 'Roll No',
+        `${recordLabel} Name`,
+        isAdmin ? 'Stream' : 'Class',
+        'Shift',
+        'Status',
+      ],
       ...rows,
     ]
       .map((line) => line.map(escapeCell).join(','))
@@ -372,7 +380,9 @@ export default function AttendancePage() {
         >
           <form onSubmit={handleSaveStaff} className="space-y-3">
             <div>
-              <label htmlFor="staff-name" className="block text-xs font-medium text-gray-600 mb-1">Name</label>
+              <label htmlFor="staff-name" className="block text-xs font-medium text-gray-600 mb-1">
+                Name
+              </label>
               <input
                 id="staff-name"
                 type="text"
@@ -383,7 +393,12 @@ export default function AttendancePage() {
               />
             </div>
             <div>
-              <label htmlFor="staff-employee-id" className="block text-xs font-medium text-gray-600 mb-1">Employee ID</label>
+              <label
+                htmlFor="staff-employee-id"
+                className="block text-xs font-medium text-gray-600 mb-1"
+              >
+                Employee ID
+              </label>
               <input
                 id="staff-employee-id"
                 type="text"
@@ -394,7 +409,12 @@ export default function AttendancePage() {
               />
             </div>
             <div>
-              <label htmlFor="staff-department" className="block text-xs font-medium text-gray-600 mb-1">Stream</label>
+              <label
+                htmlFor="staff-department"
+                className="block text-xs font-medium text-gray-600 mb-1"
+              >
+                Stream
+              </label>
               <select
                 id="staff-department"
                 value={staffForm.class}
@@ -406,12 +426,19 @@ export default function AttendancePage() {
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
               >
                 {editableDepartmentOptions.map((item) => (
-                  <option key={item.value} value={item.value}>{item.label}</option>
+                  <option key={item.value} value={item.value}>
+                    {item.label}
+                  </option>
                 ))}
               </select>
             </div>
             <div>
-              <label htmlFor="staff-subject" className="block text-xs font-medium text-gray-600 mb-1">Subject</label>
+              <label
+                htmlFor="staff-subject"
+                className="block text-xs font-medium text-gray-600 mb-1"
+              >
+                Subject
+              </label>
               <select
                 id="staff-subject"
                 value={staffForm.subject}
@@ -419,12 +446,16 @@ export default function AttendancePage() {
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
               >
                 {editableSubjectOptions.map((item) => (
-                  <option key={item.value} value={item.value}>{item.label}</option>
+                  <option key={item.value} value={item.value}>
+                    {item.label}
+                  </option>
                 ))}
               </select>
             </div>
             <div className="flex items-center justify-end gap-2 pt-1">
-              <Button type="button" variant="secondary" onClick={resetStaffForm}>New</Button>
+              <Button type="button" variant="secondary" onClick={resetStaffForm}>
+                New
+              </Button>
               <Button type="submit">{staffForm.id ? 'Update Staff' : 'Add Staff'}</Button>
             </div>
           </form>
@@ -443,7 +474,9 @@ export default function AttendancePage() {
                     className="min-w-0 flex-1 text-left"
                   >
                     <p className="text-sm text-gray-800">{staff.name}</p>
-                    <p className="text-xs text-gray-500">{staff.class} | {staff.subject}</p>
+                    <p className="text-xs text-gray-500">
+                      {staff.class} | {staff.subject}
+                    </p>
                   </button>
                   <Button
                     type="button"

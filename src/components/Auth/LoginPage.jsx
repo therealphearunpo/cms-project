@@ -1,31 +1,25 @@
 import React, { useEffect, useState } from 'react';
 
-import { HiEye, HiEyeOff } from 'react-icons/hi';
+import {
+  HiEye,
+  HiEyeOff,
+  HiOutlineLockClosed,
+  HiOutlineMail,
+  HiOutlineAcademicCap,
+} from 'react-icons/hi';
 import { useNavigate } from 'react-router-dom';
 
-import { isFrontendOnly } from '../../config/appMode';
 import { getRoleHomePath } from '../../constants/roles';
 import { useAuth } from '../../context/AuthContext';
-import demoUsers from '../../data/demoUsers.json';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState('');
   const { login, loading, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
-  const isDemoMode = isFrontendOnly();
-  const hiddenDemoEmails = new Set([
-    'po.phearun.2824@rupp.edu.kh',
-    'nim.cheyseth.2824@rupp.edu.kh',
-    'thet.englang.2824@rupp.edu.kh',
-  ]);
-  const demoAccounts = isDemoMode
-    ? demoUsers
-        .filter((item) => !hiddenDemoEmails.has(item.email))
-        .map((item) => ({ email: item.email, password: item.password, role: item.role }))
-    : [];
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -36,7 +30,7 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    
+
     const result = await login(email, password);
     if (result.success) {
       navigate(getRoleHomePath(result.role));
@@ -46,108 +40,120 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f5f0e8] px-4 py-8 flex items-center justify-center">
-      <div className="relative w-full max-w-md rounded-[28px] border border-[#dbcda9] bg-[#fffdf9] p-8 shadow-[0_24px_60px_rgba(15,47,99,0.10)]">
-        <div className="text-center">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#102d5f] text-white font-bold text-sm shadow-sm">
-            HS
-          </div>
-          <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.3em] text-[var(--moeys-gold)]">
-            Official School Workspace
-          </p>
-          <h1 className="mt-2 text-2xl font-extrabold text-[#102d5f]">High School Portal</h1>
-          <p className="mt-1 text-sm text-slate-500">School Class Management System</p>
+    <div className="min-h-screen bg-slate-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600 shadow-lg shadow-blue-500/30 mb-4 border border-blue-400/30">
+          <HiOutlineAcademicCap className="w-8 h-8 text-white" />
         </div>
+        <h1 className="text-2xl font-bold text-slate-100 tracking-tight">High School Portal</h1>
+        <p className="mt-1.5 text-sm text-slate-400">Class & Academic Management System</p>
+      </div>
 
-        <div id="login-help-text" className="mt-6 rounded-2xl border border-[#e5d9b8] bg-[#faf6ee] px-4 py-3 text-xs leading-6 text-slate-700">
-          Admin, Teacher, and Student account type is detected automatically from your email.
-        </div>
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
+        <div className="bg-slate-800/90 backdrop-blur-xl border border-slate-700/60 py-8 px-6 shadow-2xl rounded-2xl sm:px-10">
+          {error && (
+            <div className="mb-5 bg-red-500/10 border border-red-500/30 text-red-300 px-4 py-3 rounded-xl text-xs flex items-start gap-2">
+              <span className="font-semibold text-red-400">Error:</span>
+              <span>{error}</span>
+            </div>
+          )}
 
-        {isDemoMode && (
-          <div className="mt-4 rounded-2xl border border-[#e5d9b8] bg-[#ffffff] px-4 py-3 text-xs text-slate-700">
-            <p className="font-semibold text-slate-800">Demo accounts</p>
-            <ul className="mt-2 space-y-2">
-              {demoAccounts.map((account) => (
-                <li key={account.email}>
-                  <span className="font-semibold text-[#102d5f]">{account.role}</span>: {account.email} / {account.password}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5"
+              >
+                Email Address
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <HiOutlineMail className="w-5 h-5" />
+                </div>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-900/80 border border-slate-700 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm transition"
+                  placeholder="name@school.edu"
+                  required
+                />
+              </div>
+            </div>
 
-        {error && (
-          <div aria-live="polite" className="mt-4 bg-[#fff1f1] text-[#b42318] p-3 rounded-xl border border-[#f3c6c6] text-sm">
-            {error}
-          </div>
-        )}
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5"
+              >
+                Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <HiOutlineLockClosed className="w-5 h-5" />
+                </div>
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-10 pr-10 py-2.5 bg-slate-900/80 border border-slate-700 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm transition"
+                  placeholder="••••••••"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-200 transition"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <HiEyeOff className="w-5 h-5" /> : <HiEye className="w-5 h-5" />}
+                </button>
+              </div>
+            </div>
 
-        <form onSubmit={handleSubmit} className="mt-5 space-y-4">
-          <div>
-            <label htmlFor="email" className="mb-2 block text-sm font-medium text-slate-700">Email</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="username"
-              aria-describedby="login-help-text"
-              aria-invalid={Boolean(error)}
-              autoCapitalize="off"
-              autoCorrect="off"
-              inputMode="email"
-              spellCheck={false}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-xl border border-[#d8ccaf] bg-white px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#102d5f] focus:ring-2 focus:ring-[#dbe5fb]"
-              enterKeyHint="next"
-              placeholder="name@school.edu"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="password" className="mb-2 block text-sm font-medium text-slate-700">Password</label>
-            <div className="relative">
-              <input
-                id="password"
-                name="password"
-                type={showPassword ? 'text' : 'password'}
-                autoComplete="current-password"
-                autoCapitalize="off"
-                autoCorrect="off"
-                aria-invalid={Boolean(error)}
-                spellCheck={false}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-xl border border-[#d8ccaf] bg-white px-3 py-2.5 pr-10 text-sm text-slate-800 outline-none transition focus:border-[#102d5f] focus:ring-2 focus:ring-[#dbe5fb]"
-                enterKeyHint="done"
-                placeholder="Enter password"
-                required
-              />
+            <div className="flex items-center justify-between text-xs">
+              <label className="flex items-center text-slate-400 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="w-4 h-4 rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-blue-500 focus:ring-offset-slate-800"
+                />
+                <span className="ml-2">Remember me</span>
+              </label>
               <button
                 type="button"
-                title={showPassword ? 'Hide password' : 'Show password'}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-                onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute inset-y-0 right-0 flex items-center px-3 text-slate-500 hover:text-slate-700"
+                className="text-blue-400 hover:text-blue-300 font-medium transition"
+                onClick={() => {}}
               >
-                {showPassword ? <HiEyeOff className="w-5 h-5" /> : <HiEye className="w-5 h-5" />}
+                Forgot password?
               </button>
             </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 px-4 rounded-xl shadow-lg shadow-blue-600/25 active:scale-[0.99] disabled:opacity-50 transition-all text-sm flex items-center justify-center gap-2"
+            >
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>Signing in...</span>
+                </>
+              ) : (
+                <span>Sign In</span>
+              )}
+            </button>
+          </form>
+
+          <div className="mt-6 pt-5 border-t border-slate-700/60 text-center">
+            <p className="text-xs text-slate-400">
+              Ministry of Education, Youth and Sport • Cambodia
+            </p>
           </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-xl bg-[#102d5f] py-2.5 text-sm font-semibold text-white transition hover:bg-[#0d2347] disabled:opacity-50"
-          >
-            {loading ? 'Loading...' : 'Sign In'}
-          </button>
-        </form>
-
-        <p className="mt-6 text-center text-[11px] uppercase tracking-[0.24em] text-slate-500">
-          Public High School System - Cambodia
-        </p>
+        </div>
       </div>
     </div>
   );

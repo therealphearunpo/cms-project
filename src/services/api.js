@@ -2,15 +2,15 @@ import axios from 'axios';
 
 function getDefaultApiBaseUrl() {
   if (typeof window === 'undefined') {
-    return 'http://localhost:3001/api';
+    return 'http://localhost:3001';
   }
 
   const { hostname } = window.location;
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
-    return 'http://localhost:3001/api';
+    return 'http://localhost:3001';
   }
 
-  return `${window.location.origin}/api`;
+  return `${window.location.origin}`;
 }
 
 const API_BASE_URL = (process.env.REACT_APP_API_URL || getDefaultApiBaseUrl()).replace(/\/+$/, '');
@@ -21,8 +21,7 @@ function buildTelegramReportCandidates() {
   const candidates = [];
   const seen = new Set();
   const canUseProxy =
-    typeof window !== 'undefined' &&
-    API_BASE_URL.startsWith(window.location.origin);
+    typeof window !== 'undefined' && API_BASE_URL.startsWith(window.location.origin);
 
   const push = (url) => {
     if (!url) return;
@@ -149,13 +148,12 @@ export const assignmentsAPI = {
   create: (data) => api.post('/assignments', data),
   update: (id, data) => api.put(`/assignments/${id}`, data),
   delete: (id) => api.delete(`/assignments/${id}`),
-  submit: (id, data) => api.post(
-    `/assignments/${id}/submit`,
-    data,
-    data instanceof FormData
-      ? { headers: { 'Content-Type': 'multipart/form-data' } }
-      : undefined
-  ),
+  submit: (id, data) =>
+    api.post(
+      `/assignments/${id}/submit`,
+      data,
+      data instanceof FormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : undefined
+    ),
   grade: (id, data) => api.post(`/assignments/${id}/grade`, data),
 };
 
@@ -203,7 +201,8 @@ export const reportsAPI = {
   getAttendanceReport: (params) => api.get('/reports/attendance', { params }),
   getPerformanceReport: (params) => api.get('/reports/performance', { params }),
   getDemographics: (params) => api.get('/reports/demographics', { params }),
-  exportReport: (type, params) => api.get(`/reports/export/${type}`, { params, responseType: 'blob' }),
+  exportReport: (type, params) =>
+    api.get(`/reports/export/${type}`, { params, responseType: 'blob' }),
 };
 
 export default api;

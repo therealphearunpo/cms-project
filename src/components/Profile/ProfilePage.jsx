@@ -9,7 +9,12 @@ import {
   HiOutlineUser,
 } from 'react-icons/hi';
 
-import { ACCOUNT_ROLES, ROLE_CAPABILITIES, ROLE_LABELS, normalizeRole } from '../../constants/roles';
+import {
+  ACCOUNT_ROLES,
+  ROLE_CAPABILITIES,
+  ROLE_LABELS,
+  normalizeRole,
+} from '../../constants/roles';
 import { useAuth } from '../../context/AuthContext';
 import { generateAvatarByGender, normalizeGender } from '../../utils/avatar';
 import Avatar from '../common/Avatar';
@@ -137,7 +142,11 @@ export default function ProfilePage() {
     ...(isStudent
       ? [
           { icon: HiOutlineAcademicCap, label: 'Class', value: classLabel || 'Not assigned' },
-          { icon: HiOutlineCalendar, label: 'Date of Birth', value: textValue('dateOfBirth') || 'Not added yet' },
+          {
+            icon: HiOutlineCalendar,
+            label: 'Date of Birth',
+            value: textValue('dateOfBirth') || 'Not added yet',
+          },
         ]
       : []),
   ];
@@ -190,7 +199,10 @@ export default function ProfilePage() {
       );
       onChange('avatar', nextAvatar);
       setAvatarEditor(null);
-      setMessage({ type: 'success', text: 'Profile picture updated. Click Save Profile to keep it.' });
+      setMessage({
+        type: 'success',
+        text: 'Profile picture updated. Click Save Profile to keep it.',
+      });
     } catch (error) {
       setMessage({ type: 'error', text: error?.message || 'Could not apply image changes.' });
     } finally {
@@ -252,20 +264,31 @@ export default function ProfilePage() {
               Profile and account settings
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">
-              Keep your information accurate, maintain a professional profile photo, and review the permissions attached to your school account.
+              Keep your information accurate, maintain a professional profile photo, and review the
+              permissions attached to your school account.
             </p>
 
             <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
               <div className="rounded-2xl border border-slate-200 bg-white/80 px-4 py-4 shadow-sm">
-                <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-400">Account Role</p>
-                <p className="mt-2 text-base font-semibold text-slate-900">{ROLE_LABELS[currentRole]}</p>
+                <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-400">
+                  Account Role
+                </p>
+                <p className="mt-2 text-base font-semibold text-slate-900">
+                  {ROLE_LABELS[currentRole]}
+                </p>
               </div>
               <div className="rounded-2xl border border-slate-200 bg-white/80 px-4 py-4 shadow-sm">
-                <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-400">Email</p>
-                <p className="mt-2 truncate text-base font-semibold text-slate-900">{textValue('email')}</p>
+                <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-400">
+                  Email
+                </p>
+                <p className="mt-2 truncate text-base font-semibold text-slate-900">
+                  {textValue('email')}
+                </p>
               </div>
               <div className="rounded-2xl border border-slate-200 bg-white/80 px-4 py-4 shadow-sm">
-                <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-400">Profile Status</p>
+                <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-400">
+                  Profile Status
+                </p>
                 <p className="mt-2 text-base font-semibold text-emerald-700">Active</p>
               </div>
             </div>
@@ -273,8 +296,15 @@ export default function ProfilePage() {
 
           <div className="rounded-[28px] border border-slate-200 bg-white/90 p-6 shadow-lg">
             <div className="flex flex-col items-center text-center">
-              <Avatar name={valueFor('name', 'User')} src={previewAvatar} size="xl" className="h-24 w-24 ring-4 ring-slate-100" />
-              <h2 className="mt-4 text-xl font-semibold text-slate-900">{valueFor('name', 'User')}</h2>
+              <Avatar
+                name={valueFor('name', 'User')}
+                src={previewAvatar}
+                size="xl"
+                className="h-24 w-24 ring-4 ring-slate-100"
+              />
+              <h2 className="mt-4 text-xl font-semibold text-slate-900">
+                {valueFor('name', 'User')}
+              </h2>
               <p className="mt-1 text-sm text-slate-500">{textValue('email', 'No email')}</p>
               <span className="mt-3 inline-flex items-center rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
                 {ROLE_LABELS[currentRole]} Account
@@ -283,13 +313,21 @@ export default function ProfilePage() {
 
             <div className="mt-6 space-y-3">
               <div className="rounded-2xl bg-slate-50 px-4 py-3">
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-400">Phone</p>
-                <p className="mt-1 text-sm font-semibold text-slate-800">{textValue('phone') || 'Not added yet'}</p>
+                <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-400">
+                  Phone
+                </p>
+                <p className="mt-1 text-sm font-semibold text-slate-800">
+                  {textValue('phone') || 'Not added yet'}
+                </p>
               </div>
               {isStudent && (
                 <div className="rounded-2xl bg-slate-50 px-4 py-3">
-                  <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-400">Class</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-800">{classLabel || 'Not assigned'}</p>
+                  <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-400">
+                    Class
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-slate-800">
+                    {classLabel || 'Not assigned'}
+                  </p>
                 </div>
               )}
             </div>
@@ -307,7 +345,12 @@ export default function ProfilePage() {
             />
             <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {profileCards.map((card) => (
-                <InfoCard key={`${card.label}-${card.value}`} icon={card.icon} label={card.label} value={card.value} />
+                <InfoCard
+                  key={`${card.label}-${card.value}`}
+                  icon={card.icon}
+                  label={card.label}
+                  value={card.value}
+                />
               ))}
             </div>
           </div>
@@ -366,8 +409,12 @@ export default function ProfilePage() {
                     className={`${inputClassName} cursor-not-allowed bg-slate-50 text-slate-500`}
                   >
                     <option value={ACCOUNT_ROLES.ADMIN}>{ROLE_LABELS[ACCOUNT_ROLES.ADMIN]}</option>
-                    <option value={ACCOUNT_ROLES.STUDENT}>{ROLE_LABELS[ACCOUNT_ROLES.STUDENT]}</option>
-                    <option value={ACCOUNT_ROLES.TEACHER}>{ROLE_LABELS[ACCOUNT_ROLES.TEACHER]}</option>
+                    <option value={ACCOUNT_ROLES.STUDENT}>
+                      {ROLE_LABELS[ACCOUNT_ROLES.STUDENT]}
+                    </option>
+                    <option value={ACCOUNT_ROLES.TEACHER}>
+                      {ROLE_LABELS[ACCOUNT_ROLES.TEACHER]}
+                    </option>
                   </select>
                 </Field>
               </div>
@@ -422,7 +469,8 @@ export default function ProfilePage() {
                   />
                 </Field>
                 <p className="mt-2 text-xs leading-5 text-slate-500">
-                  Accepted: image files up to 6000KB. You will be able to reposition and zoom the image before saving.
+                  Accepted: image files up to 6000KB. You will be able to reposition and zoom the
+                  image before saving.
                 </p>
               </div>
 
@@ -445,9 +493,16 @@ export default function ProfilePage() {
 
             <div className="mt-5 rounded-[28px] border border-slate-200 bg-slate-50 p-5">
               <div className="flex items-center gap-4">
-                <Avatar name={valueFor('name', 'User')} src={previewAvatar} size="xl" className="h-20 w-20 ring-4 ring-white shadow-md" />
+                <Avatar
+                  name={valueFor('name', 'User')}
+                  src={previewAvatar}
+                  size="xl"
+                  className="h-20 w-20 ring-4 ring-white shadow-md"
+                />
                 <div>
-                  <h3 className="text-lg font-semibold text-slate-900">{valueFor('name', 'User')}</h3>
+                  <h3 className="text-lg font-semibold text-slate-900">
+                    {valueFor('name', 'User')}
+                  </h3>
                   <p className="mt-1 text-sm text-slate-500">{textValue('email') || 'No email'}</p>
                   <p className="mt-2 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--moeys-gold)]">
                     {ROLE_LABELS[currentRole]}
@@ -457,18 +512,29 @@ export default function ProfilePage() {
 
               <div className="mt-5 space-y-3">
                 <div className="rounded-2xl bg-white px-4 py-3 shadow-sm">
-                  <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-400">Phone</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-800">{textValue('phone') || 'Not added yet'}</p>
+                  <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-400">
+                    Phone
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-slate-800">
+                    {textValue('phone') || 'Not added yet'}
+                  </p>
                 </div>
                 <div className="rounded-2xl bg-white px-4 py-3 shadow-sm">
-                  <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-400">Gender</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-800">{gender === 'female' ? 'Female' : 'Male'}</p>
+                  <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-400">
+                    Gender
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-slate-800">
+                    {gender === 'female' ? 'Female' : 'Male'}
+                  </p>
                 </div>
                 {isStudent && (
                   <div className="rounded-2xl bg-white px-4 py-3 shadow-sm">
-                    <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-400">Academic Details</p>
+                    <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-400">
+                      Academic Details
+                    </p>
                     <p className="mt-1 text-sm font-semibold text-slate-800">
-                      {classLabel || 'No class'}{textValue('dateOfBirth') ? ` | ${textValue('dateOfBirth')}` : ''}
+                      {classLabel || 'No class'}
+                      {textValue('dateOfBirth') ? ` | ${textValue('dateOfBirth')}` : ''}
                     </p>
                   </div>
                 )}
@@ -507,7 +573,8 @@ export default function ProfilePage() {
         {avatarEditor && (
           <div className="space-y-5">
             <p className="text-sm text-slate-600">
-              Move and zoom the image until it fits the framing you want, then apply it to your profile preview.
+              Move and zoom the image until it fits the framing you want, then apply it to your
+              profile preview.
             </p>
 
             <div className="flex justify-center">
@@ -533,7 +600,9 @@ export default function ProfilePage() {
                   max="3"
                   step="0.01"
                   value={avatarEditor.scale}
-                  onChange={(e) => setAvatarEditor((prev) => ({ ...prev, scale: Number(e.target.value) }))}
+                  onChange={(e) =>
+                    setAvatarEditor((prev) => ({ ...prev, scale: Number(e.target.value) }))
+                  }
                   className="w-full"
                 />
               </Field>
@@ -546,7 +615,9 @@ export default function ProfilePage() {
                   max="180"
                   step="1"
                   value={avatarEditor.offsetX}
-                  onChange={(e) => setAvatarEditor((prev) => ({ ...prev, offsetX: Number(e.target.value) }))}
+                  onChange={(e) =>
+                    setAvatarEditor((prev) => ({ ...prev, offsetX: Number(e.target.value) }))
+                  }
                   className="w-full"
                 />
               </Field>
@@ -559,14 +630,21 @@ export default function ProfilePage() {
                   max="180"
                   step="1"
                   value={avatarEditor.offsetY}
-                  onChange={(e) => setAvatarEditor((prev) => ({ ...prev, offsetY: Number(e.target.value) }))}
+                  onChange={(e) =>
+                    setAvatarEditor((prev) => ({ ...prev, offsetY: Number(e.target.value) }))
+                  }
                   className="w-full"
                 />
               </Field>
             </div>
 
             <div className="flex justify-end gap-2">
-              <Button type="button" variant="secondary" onClick={() => setAvatarEditor(null)} disabled={isApplyingAvatar}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setAvatarEditor(null)}
+                disabled={isApplyingAvatar}
+              >
                 Cancel
               </Button>
               <Button type="button" onClick={handleApplyAvatar} loading={isApplyingAvatar}>

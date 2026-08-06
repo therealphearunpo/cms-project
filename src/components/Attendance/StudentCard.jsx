@@ -44,27 +44,21 @@ const StudentCard = memo(function StudentCard({ student }) {
       <div className="flex items-center justify-center gap-3">
         <button
           onClick={() => handleMark('present')}
-          className={`attendance-btn ${
-            status === 'present' ? 'present' : 'inactive'
-          }`}
+          className={`attendance-btn ${status === 'present' ? 'present' : 'inactive'}`}
           title="Present"
         >
           P
         </button>
         <button
           onClick={() => handleMark('absent')}
-          className={`attendance-btn ${
-            status === 'absent' ? 'absent' : 'inactive'
-          }`}
+          className={`attendance-btn ${status === 'absent' ? 'absent' : 'inactive'}`}
           title="Absent"
         >
           A
         </button>
         <button
           onClick={() => handleMark('late')}
-          className={`attendance-btn ${
-            status === 'late' ? 'late' : 'inactive'
-          }`}
+          className={`attendance-btn ${status === 'late' ? 'late' : 'inactive'}`}
           title="Late"
         >
           L

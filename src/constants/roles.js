@@ -31,11 +31,7 @@ export const ROLE_CAPABILITIES = {
   ],
 };
 
-const SCHOOL_TEAMS = [
-  'Technical Team (Admin Center)',
-  'School Manager',
-  'Teacher',
-];
+const SCHOOL_TEAMS = ['Technical Team (Admin Center)', 'School Manager', 'Teacher'];
 
 const roleAliases = {
   admin: ACCOUNT_ROLES.ADMIN,
@@ -45,7 +41,9 @@ const roleAliases = {
 };
 
 export function normalizeRole(role) {
-  const key = String(role || '').trim().toLowerCase();
+  const key = String(role || '')
+    .trim()
+    .toLowerCase();
   // Fail closed to least-privileged role when role is missing/invalid.
   return roleAliases[key] || ACCOUNT_ROLES.STUDENT;
 }

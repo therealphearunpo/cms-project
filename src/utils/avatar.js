@@ -1,5 +1,7 @@
 export function normalizeGender(value, fallback = 'male') {
-  const key = String(value || '').trim().toLowerCase();
+  const key = String(value || '')
+    .trim()
+    .toLowerCase();
   if (key === 'female') return 'female';
   if (key === 'male') return 'male';
   return fallback;

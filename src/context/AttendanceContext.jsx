@@ -3,7 +3,7 @@ import React, { createContext, useContext, useReducer, useCallback, useEffect } 
 import { format } from 'date-fns';
 
 import { useAuth } from './AuthContext';
-import { isFrontendOnly } from '../config/appMode';
+import { isFrontendOnly } from '../config/appMode.js';
 import { ACCOUNT_ROLES, normalizeRole } from '../constants/roles';
 import { attendanceAPI } from '../services/api';
 
@@ -50,14 +50,14 @@ function attendanceReducer(state, action) {
       const dateKey = format(state.currentDate, 'yyyy-MM-dd');
       const dateRecords = state.records[dateKey] || {};
       const currentStatus = dateRecords[action.payload.studentId];
-      
+
       return {
         ...state,
         records: {
           ...state.records,
           [dateKey]: {
             ...dateRecords,
-            [action.payload.studentId]: 
+            [action.payload.studentId]:
               currentStatus === action.payload.status ? null : action.payload.status,
           },
         },
@@ -66,7 +66,7 @@ function attendanceReducer(state, action) {
     case 'MARK_ALL_PRESENT': {
       const dateKey = format(state.currentDate, 'yyyy-MM-dd');
       const dateRecords = { ...(state.records[dateKey] || {}) };
-      action.payload.studentIds.forEach(id => {
+      action.payload.studentIds.forEach((id) => {
         dateRecords[id] = 'present';
       });
       return {
@@ -116,7 +116,8 @@ function buildAttendanceExcelBlob({
     late: 'L',
     unmarked: 'U',
   };
-  const toShortStatus = (status) => statusShortMap[String(status || 'unmarked').toLowerCase()] || 'U';
+  const toShortStatus = (status) =>
+    statusShortMap[String(status || 'unmarked').toLowerCase()] || 'U';
 
   const escapeHtml = (value) =>
     String(value ?? '')
@@ -190,11 +191,7 @@ function isNetworkFailure(error) {
 export function AttendanceProvider({ children }) {
   const { user } = useAuth();
   const role = normalizeRole(user?.role);
-  const [state, dispatch] = useReducer(
-    attendanceReducer,
-    initialState,
-    initializeAttendanceState
-  );
+  const [state, dispatch] = useReducer(attendanceReducer, initialState, initializeAttendanceState);
 
   useEffect(() => {
     try {
@@ -220,9 +217,12 @@ export function AttendanceProvider({ children }) {
     dispatch({ type: 'SET_FILTER', field, payload: value });
   }, []);
 
-  const recordType = role === ACCOUNT_ROLES.ADMIN
-    ? (state.attendanceScope === 'students' ? 'student' : 'teacher')
-    : getRecordTypeFromRole(role);
+  const recordType =
+    role === ACCOUNT_ROLES.ADMIN
+      ? state.attendanceScope === 'students'
+        ? 'student'
+        : 'teacher'
+      : getRecordTypeFromRole(role);
 
   const setViewMode = useCallback((mode) => {
     dispatch({ type: 'SET_VIEW_MODE', payload: mode });
@@ -242,143 +242,158 @@ export function AttendanceProvider({ children }) {
         shiftName: state.selectedShift || undefined,
         subjectKey: state.selectedSubject || undefined,
       });
-      const records = response?.data?.records && typeof response.data.records === 'object'
-        ? response.data.records
-        : {};
+      const records =
+        response?.data?.records && typeof response.data.records === 'object'
+          ? response.data.records
+          : {};
       dispatch({ type: 'SET_DAY_RECORDS', payload: records });
     } catch (_error) {
       // Keep current in-memory marks if API read fails.
     }
-  }, [recordType, state.currentDate, state.selectedClass, state.selectedShift, state.selectedSubject]);
-
-  useEffect(() => {
-    loadDayRecords();
-  }, [loadDayRecords]);
-
-  const submitAttendance = useCallback(async (studentIds = [], students = []) => {
-    dispatch({ type: 'SET_SUBMITTING', payload: true });
-    try {
-      const dateKey = format(state.currentDate, 'yyyy-MM-dd');
-      const dateRecords = state.records[dateKey] || {};
-      const scopedIds = studentIds.length > 0
-        ? studentIds
-        : Object.keys(dateRecords);
-      const markedCount = scopedIds.filter((id) => dateRecords[id]).length;
-      const scopedStudents = students.filter((student) => scopedIds.includes(student.id));
-
-      if (markedCount === 0) {
-        throw new Error('Please mark at least one student before submitting.');
-      }
-
-      if (isFrontendOnly()) {
-        dispatch({
-          type: 'SET_NOTIFICATION',
-          payload: {
-            type: 'success',
-            message: `Attendance saved locally (${markedCount} marked).`,
-          },
-        });
-        return;
-      }
-
-      const payload = scopedIds
-        .map((id) => ({
-          targetId: String(id),
-          status: dateRecords[id],
-        }))
-        .filter((item) => item.status);
-
-      let savedToServer = true;
-      try {
-        await attendanceAPI.bulkMark({
-          date: dateKey,
-          recordType,
-          className: state.selectedClass || null,
-          shiftName: state.selectedShift || null,
-          subjectKey: state.selectedSubject || null,
-          records: payload,
-        });
-      } catch (apiError) {
-        if (isNetworkFailure(apiError)) {
-          savedToServer = false;
-        } else {
-          throw apiError;
-        }
-      }
-
-      let excelSent = false;
-      let telegramFailureMessage = '';
-      if (savedToServer && scopedStudents.length > 0) {
-        const excelBlob = buildAttendanceExcelBlob({
-          currentDate: state.currentDate,
-          selectedClass: state.selectedClass,
-          selectedSubject: state.selectedSubject,
-          selectedShift: state.selectedShift,
-          students: scopedStudents,
-          dateRecords,
-        });
-        const now = new Date();
-        const classToken = toShortToken(state.selectedClass || 'all', 6);
-        const subjectToken = toShortToken(state.selectedSubject || 'all', 5);
-        const shiftMap = {
-          morning: 'm',
-          afternoon: 'a',
-        };
-        const shiftToken = shiftMap[toShortToken(state.selectedShift || 'all', 9)] || toShortToken(state.selectedShift || 'all', 1);
-        const timeToken = format(now, 'HHmm');
-        const dateToken = format(state.currentDate, 'yyMMdd');
-        const baseName = `${classToken}-${subjectToken}-${shiftToken}-${timeToken}-${dateToken}`;
-        const caption = `Attendance report ${format(state.currentDate, 'yyyy-MM-dd')} | Class: ${state.selectedClass || 'All'} | Shift: ${state.selectedShift || 'All'} | Subject: ${state.selectedSubject || 'All'}`;
-
-        const excelFormData = new FormData();
-        excelFormData.append('file', excelBlob, `${baseName}.xls`);
-        excelFormData.append('caption', caption);
-        try {
-          await attendanceAPI.sendTelegramReport(excelFormData);
-          excelSent = true;
-        } catch (sendError) {
-          excelSent = false;
-          telegramFailureMessage =
-            sendError?.response?.data?.message ||
-            sendError?.message ||
-            'Telegram send failed';
-        }
-      }
-
-      const successMessage = !savedToServer
-        ? `Attendance saved locally (${markedCount} marked). Backend is unreachable, so sync is pending.`
-        : (
-          excelSent
-            ? `Attendance submitted successfully! (${markedCount} marked). Excel sent to Admin Center Telegram.`
-            : `Attendance submitted successfully! (${markedCount} marked). Telegram send failed: ${telegramFailureMessage}.`
-        );
-
-      dispatch({ type: 'SET_NOTIFICATION', payload: {
-        type: 'success',
-        message: successMessage,
-      }});
-    } catch (error) {
-      dispatch({ type: 'SET_NOTIFICATION', payload: { 
-        type: 'error', 
-        message: error.message || 'Failed to submit attendance',
-      }});
-    } finally {
-      dispatch({ type: 'SET_SUBMITTING', payload: false });
-      setTimeout(() => dispatch({ type: 'CLEAR_NOTIFICATION' }), 3000);
-    }
   }, [
     recordType,
     state.currentDate,
-    state.records,
     state.selectedClass,
     state.selectedShift,
     state.selectedSubject,
   ]);
 
-  const getStudentStatus = useCallback((studentId) => {
-    const dateKey = format(state.currentDate, 'yyyy-MM-dd');
-    return state.records[dateKey]?.[studentId] || null;
-  }, [state.records, state.currentDate]);
+  useEffect(() => {
+    loadDayRecords();
+  }, [loadDayRecords]);
+
+  const submitAttendance = useCallback(
+    async (studentIds = [], students = []) => {
+      dispatch({ type: 'SET_SUBMITTING', payload: true });
+      try {
+        const dateKey = format(state.currentDate, 'yyyy-MM-dd');
+        const dateRecords = state.records[dateKey] || {};
+        const scopedIds = studentIds.length > 0 ? studentIds : Object.keys(dateRecords);
+        const markedCount = scopedIds.filter((id) => dateRecords[id]).length;
+        const scopedStudents = students.filter((student) => scopedIds.includes(student.id));
+
+        if (markedCount === 0) {
+          throw new Error('Please mark at least one student before submitting.');
+        }
+
+        if (isFrontendOnly()) {
+          dispatch({
+            type: 'SET_NOTIFICATION',
+            payload: {
+              type: 'success',
+              message: `Attendance saved locally (${markedCount} marked).`,
+            },
+          });
+          return;
+        }
+
+        const payload = scopedIds
+          .map((id) => ({
+            targetId: String(id),
+            status: dateRecords[id],
+          }))
+          .filter((item) => item.status);
+
+        let savedToServer = true;
+        try {
+          await attendanceAPI.bulkMark({
+            date: dateKey,
+            recordType,
+            className: state.selectedClass || null,
+            shiftName: state.selectedShift || null,
+            subjectKey: state.selectedSubject || null,
+            records: payload,
+          });
+        } catch (apiError) {
+          if (isNetworkFailure(apiError)) {
+            savedToServer = false;
+          } else {
+            throw apiError;
+          }
+        }
+
+        let excelSent = false;
+        let telegramFailureMessage = '';
+        if (savedToServer && scopedStudents.length > 0) {
+          const excelBlob = buildAttendanceExcelBlob({
+            currentDate: state.currentDate,
+            selectedClass: state.selectedClass,
+            selectedSubject: state.selectedSubject,
+            selectedShift: state.selectedShift,
+            students: scopedStudents,
+            dateRecords,
+          });
+          const now = new Date();
+          const classToken = toShortToken(state.selectedClass || 'all', 6);
+          const subjectToken = toShortToken(state.selectedSubject || 'all', 5);
+          const shiftMap = {
+            morning: 'm',
+            afternoon: 'a',
+          };
+          const shiftToken =
+            shiftMap[toShortToken(state.selectedShift || 'all', 9)] ||
+            toShortToken(state.selectedShift || 'all', 1);
+          const timeToken = format(now, 'HHmm');
+          const dateToken = format(state.currentDate, 'yyMMdd');
+          const baseName = `${classToken}-${subjectToken}-${shiftToken}-${timeToken}-${dateToken}`;
+          const caption = `Attendance report ${format(state.currentDate, 'yyyy-MM-dd')} | Class: ${state.selectedClass || 'All'} | Shift: ${state.selectedShift || 'All'} | Subject: ${state.selectedSubject || 'All'}`;
+
+          const excelFormData = new FormData();
+          excelFormData.append('file', excelBlob, `${baseName}.xls`);
+          excelFormData.append('caption', caption);
+          try {
+            await attendanceAPI.sendTelegramReport(excelFormData);
+            excelSent = true;
+          } catch (sendError) {
+            excelSent = false;
+            telegramFailureMessage =
+              sendError?.response?.data?.message || sendError?.message || 'Telegram send failed';
+          }
+        }
+
+        const successMessage = !savedToServer
+          ? `Attendance saved locally (${markedCount} marked). Backend is unreachable, so sync is pending.`
+          : excelSent
+            ? `Attendance submitted successfully! (${markedCount} marked). Excel sent to Admin Center Telegram.`
+            : `Attendance submitted successfully! (${markedCount} marked). Telegram send failed: ${telegramFailureMessage}.`;
+
+        dispatch({
+          type: 'SET_NOTIFICATION',
+          payload: {
+            type: 'success',
+            message: successMessage,
+          },
+        });
+      } catch (error) {
+        dispatch({
+          type: 'SET_NOTIFICATION',
+          payload: {
+            type: 'error',
+            message: error.message || 'Failed to submit attendance',
+          },
+        });
+      } finally {
+        dispatch({ type: 'SET_SUBMITTING', payload: false });
+        setTimeout(() => dispatch({ type: 'CLEAR_NOTIFICATION' }), 3000);
+      }
+    },
+    [
+      recordType,
+      state.currentDate,
+      state.records,
+      state.selectedClass,
+      state.selectedShift,
+      state.selectedSubject,
+    ]
+  );
+
+  const getStudentStatus = useCallback(
+    (studentId) => {
+      const dateKey = format(state.currentDate, 'yyyy-MM-dd');
+      return state.records[dateKey]?.[studentId] || null;
+    },
+    [state.records, state.currentDate]
+  );
 
   const value = {
     ...state,
@@ -391,11 +406,7 @@ export function AttendanceProvider({ children }) {
     getStudentStatus,
   };
 
-  return (
-    <AttendanceContext.Provider value={value}>
-      {children}
-    </AttendanceContext.Provider>
-  );
+  return <AttendanceContext.Provider value={value}>{children}</AttendanceContext.Provider>;
 }
 
 export function useAttendanceContext() {

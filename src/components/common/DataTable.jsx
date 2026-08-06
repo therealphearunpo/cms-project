@@ -81,8 +81,10 @@ export default function DataTable({
     });
   }, [filteredData, sortConfig]);
 
-  const { currentItems, currentPage, totalPages, nextPage, prevPage, paginate } =
-    usePagination(sortedData, itemsPerPage);
+  const { currentItems, currentPage, totalPages, nextPage, prevPage, paginate } = usePagination(
+    sortedData,
+    itemsPerPage
+  );
   const pageItems = useMemo(
     () => buildPageItems(currentPage, totalPages),
     [currentPage, totalPages]
@@ -179,10 +181,7 @@ export default function DataTable({
           <tbody className="divide-y divide-gray-100">
             {currentItems.length === 0 ? (
               <tr>
-                <td
-                  colSpan={columns.length}
-                  className="px-4 py-8 text-center text-gray-500"
-                >
+                <td colSpan={columns.length} className="px-4 py-8 text-center text-gray-500">
                   No data available
                 </td>
               </tr>
@@ -198,7 +197,9 @@ export default function DataTable({
                 >
                   {columns.map((column) => (
                     <td key={column.accessor} className="px-4 py-3 text-sm text-gray-700">
-                      {column.render ? column.render(row[column.accessor], row) : row[column.accessor]}
+                      {column.render
+                        ? column.render(row[column.accessor], row)
+                        : row[column.accessor]}
                     </td>
                   ))}
                 </tr>
@@ -245,9 +246,10 @@ export default function DataTable({
                     onClick={() => paginate(item)}
                     className={`
                       h-8 min-w-[2rem] rounded-lg px-2 text-sm font-medium transition-colors
-                      ${currentPage === item
-                        ? 'bg-primary-600 text-white'
-                        : 'hover:bg-gray-100 text-gray-600'
+                      ${
+                        currentPage === item
+                          ? 'bg-primary-600 text-white'
+                          : 'hover:bg-gray-100 text-gray-600'
                       }
                     `}
                     aria-current={currentPage === item ? 'page' : undefined}

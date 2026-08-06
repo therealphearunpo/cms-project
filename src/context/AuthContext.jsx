@@ -1,6 +1,6 @@
-import React, { createContext, useCallback, useContext, useReducer } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useReducer } from 'react';
 
-import { isFrontendOnly } from '../config/appMode';
+import { isFrontendOnly } from '../config/appMode.js';
 import { ACCOUNT_ROLES, getRoleLabel, normalizeRole } from '../constants/roles';
 import demoUsers from '../data/demoUsers.json';
 import { authAPI } from '../services/api';
@@ -53,7 +53,9 @@ function authReducer(state, action) {
 
 function normalizeUser(user) {
   if (!user) return null;
-  const normalizedEmail = String(user.email || '').trim().toLowerCase();
+  const normalizedEmail = String(user.email || '')
+    .trim()
+    .toLowerCase();
   const isAdminCenterMember = ADMIN_CENTER_EMAILS.includes(normalizedEmail);
   const normalizedRole = isAdminCenterMember ? ACCOUNT_ROLES.ADMIN : normalizeRole(user.role);
   const normalizedGender = normalizeGender(user.gender, 'male');
@@ -88,11 +90,15 @@ function readLocalStudents() {
 function getDemoUser(email, password) {
   if (!email || !password) return null;
   const normalizedEmail = String(email).trim().toLowerCase();
-  const normalizedPassword = String(password);
+  const rawPassword = String(password);
+  const trimmedPassword = rawPassword.trim();
   return demoUsers.find(
     (item) =>
-      String(item.email || '').trim().toLowerCase() === normalizedEmail &&
-      String(item.password || '') === normalizedPassword
+      String(item.email || '')
+        .trim()
+        .toLowerCase() === normalizedEmail &&
+      (String(item.password || '') === rawPassword ||
+        String(item.password || '').trim() === trimmedPassword)
   );
 }
 
@@ -105,9 +111,7 @@ function getLocalStudentUser(email, password) {
 
   for (let index = 0; index < students.length; index += 1) {
     const student = normalizeStudentAccount(students[index], index + 1);
-    const studentEmail = String(
-      student.email || makeStudentEmail(student.name, student.class)
-    )
+    const studentEmail = String(student.email || makeStudentEmail(student.name, student.class))
       .trim()
       .toLowerCase();
     const expectedPassword = buildStudentPassword(student);
@@ -163,9 +167,15 @@ function mergeStoredProfile(user) {
 
   const storedId = String(storedUser.id || '').trim();
   const nextId = String(user.id || '').trim();
-  const storedEmail = String(storedUser.email || '').trim().toLowerCase();
-  const nextEmail = String(user.email || '').trim().toLowerCase();
-  const isSameUser = (storedId && nextId && storedId === nextId) || (storedEmail && nextEmail && storedEmail === nextEmail);
+  const storedEmail = String(storedUser.email || '')
+    .trim()
+    .toLowerCase();
+  const nextEmail = String(user.email || '')
+    .trim()
+    .toLowerCase();
+  const isSameUser =
+    (storedId && nextId && storedId === nextId) ||
+    (storedEmail && nextEmail && storedEmail === nextEmail);
 
   if (!isSameUser) return user;
 
@@ -188,8 +198,10 @@ export function AuthProvider({ children }) {
       }
 
       const normalizedEmail = String(email).trim().toLowerCase();
+      const rawPassword = String(password);
+
       if (isDemoMode()) {
-        const localUser = resolveLocalUser(normalizedEmail, password);
+        const localUser = resolveLocalUser(normalizedEmail, rawPassword);
         if (!localUser) {
           throw new Error('Invalid email or password.');
         }
@@ -203,26 +215,46 @@ export function AuthProvider({ children }) {
         return { success: true, role: user.role };
       }
 
-      const response = await authAPI.login({ email: normalizedEmail, password });
-      const token = response?.data?.token;
-      const user = normalizeUser(mergeStoredProfile(response?.data?.user));
+      try {
+        const response = await authAPI.login({ email: normalizedEmail, password: rawPassword });
+        const token = response?.data?.token;
+        const user = normalizeUser(mergeStoredProfile(response?.data?.user));
 
-      if (!token || !user) {
-        throw new Error('Login response is missing required user data');
+        if (!token || !user) {
+          throw new Error('Login response is missing required user data');
+        }
+
+        localStorage.setItem('auth_token', token);
+        localStorage.setItem('auth_user', JSON.stringify(user));
+        dispatch({ type: 'LOGIN_SUCCESS', payload: user });
+        return { success: true, role: user.role };
+      } catch (apiError) {
+        const isNetworkErr =
+          !apiError?.response &&
+          (apiError?.message === 'Network Error' || apiError?.code === 'ERR_NETWORK');
+
+        if (isNetworkErr) {
+          const localUser = resolveLocalUser(normalizedEmail, rawPassword);
+          if (localUser) {
+            const token = createDemoToken(normalizedEmail);
+            const user = normalizeUser(mergeStoredProfile(localUser));
+
+            localStorage.setItem('auth_token', token);
+            localStorage.setItem('auth_user', JSON.stringify(user));
+            dispatch({ type: 'LOGIN_SUCCESS', payload: user });
+            return { success: true, role: user.role };
+          }
+        }
+        throw apiError;
       }
-
-      localStorage.setItem('auth_token', token);
-      localStorage.setItem('auth_user', JSON.stringify(user));
-      dispatch({ type: 'LOGIN_SUCCESS', payload: user });
-      return { success: true, role: user.role };
     } catch (error) {
       clearStoredAuth();
       const isNetworkError =
-        !error?.response &&
-        (error?.message === 'Network Error' || error?.code === 'ERR_NETWORK');
-      const message = isNetworkError && !isDemoMode()
-        ? 'Unable to reach the authentication server. Please check your network connection, backend availability, and API URL.'
-        : error?.response?.data?.message || error?.message || 'Login failed';
+        !error?.response && (error?.message === 'Network Error' || error?.code === 'ERR_NETWORK');
+      const message =
+        isNetworkError && !isDemoMode()
+          ? 'Unable to reach the authentication server. Please check your network connection, backend availability, and API URL.'
+          : error?.response?.data?.message || error?.message || 'Login failed';
       dispatch({ type: 'LOGIN_FAILURE', payload: message });
       return { success: false, error: message };
     }
@@ -246,6 +278,7 @@ export function AuthProvider({ children }) {
     try {
       const token = localStorage.getItem('auth_token');
       if (!token) {
+        dispatch({ type: 'SET_LOADING', payload: false });
         return;
       }
 
@@ -253,22 +286,32 @@ export function AuthProvider({ children }) {
         const storedUser = readStoredUser();
         if (storedUser) {
           dispatch({ type: 'LOGIN_SUCCESS', payload: normalizeUser(storedUser) });
-          return;
+        } else {
+          clearStoredAuth();
+          dispatch({ type: 'LOGOUT' });
         }
-        clearStoredAuth();
-        dispatch({ type: 'LOGOUT' });
         return;
       }
 
-      const response = await authAPI.me();
-      const user = normalizeUser(mergeStoredProfile(response?.data?.user));
+      try {
+        const response = await authAPI.me();
+        const user = normalizeUser(mergeStoredProfile(response?.data?.user));
 
-      if (!user) {
-        throw new Error('Authenticated user payload is missing');
+        if (!user) {
+          throw new Error('Authenticated user payload is missing');
+        }
+
+        localStorage.setItem('auth_user', JSON.stringify(user));
+        dispatch({ type: 'LOGIN_SUCCESS', payload: user });
+      } catch (apiError) {
+        const storedUser = readStoredUser();
+        if (storedUser) {
+          dispatch({ type: 'LOGIN_SUCCESS', payload: normalizeUser(storedUser) });
+        } else {
+          clearStoredAuth();
+          dispatch({ type: 'LOGOUT' });
+        }
       }
-
-      localStorage.setItem('auth_user', JSON.stringify(user));
-      dispatch({ type: 'LOGIN_SUCCESS', payload: user });
     } catch (_error) {
       clearStoredAuth();
       dispatch({ type: 'LOGOUT' });
@@ -277,38 +320,49 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  const updateProfile = useCallback(async (updates) => {
-    if (!state.user) {
-      return { success: false, error: 'No authenticated user found.' };
-    }
+  const updateProfile = useCallback(
+    async (updates) => {
+      if (!state.user) {
+        return { success: false, error: 'No authenticated user found.' };
+      }
 
-    const currentRole = normalizeRole(state.user.role);
-    const nextUser = {
-      ...state.user,
-      ...updates,
-      role: currentRole,
-      roleLabel: getRoleLabel(currentRole),
-      isAdminCenterMember: currentRole === ACCOUNT_ROLES.ADMIN,
-    };
-
-    nextUser.gender = normalizeGender(nextUser.gender, normalizeGender(state.user.gender, 'male'));
-    if (!nextUser.avatar) {
-      const avatarSeed = nextUser.email || nextUser.name || 'user';
-      nextUser.avatar = generateAvatarByGender(avatarSeed, nextUser.gender);
-    }
-
-    dispatch({ type: 'UPDATE_PROFILE', payload: nextUser });
-    try {
-      localStorage.setItem('auth_user', JSON.stringify(nextUser));
-      return { success: true, user: nextUser };
-    } catch (_error) {
-      return {
-        success: true,
-        user: nextUser,
-        warning: 'Profile updated for this session. Storage is full, so it may not persist after refresh.',
+      const currentRole = normalizeRole(state.user.role);
+      const nextUser = {
+        ...state.user,
+        ...updates,
+        role: currentRole,
+        roleLabel: getRoleLabel(currentRole),
+        isAdminCenterMember: currentRole === ACCOUNT_ROLES.ADMIN,
       };
-    }
-  }, [state.user]);
+
+      nextUser.gender = normalizeGender(
+        nextUser.gender,
+        normalizeGender(state.user.gender, 'male')
+      );
+      if (!nextUser.avatar) {
+        const avatarSeed = nextUser.email || nextUser.name || 'user';
+        nextUser.avatar = generateAvatarByGender(avatarSeed, nextUser.gender);
+      }
+
+      dispatch({ type: 'UPDATE_PROFILE', payload: nextUser });
+      try {
+        localStorage.setItem('auth_user', JSON.stringify(nextUser));
+        return { success: true, user: nextUser };
+      } catch (_error) {
+        return {
+          success: true,
+          user: nextUser,
+          warning:
+            'Profile updated for this session. Storage is full, so it may not persist after refresh.',
+        };
+      }
+    },
+    [state.user]
+  );
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   return (
     <AuthContext.Provider value={{ ...state, login, logout, checkAuth, updateProfile }}>

@@ -1,14 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@500;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --moeys-navy: #102d5f;
-  --moeys-royal: #1c4c91;
-  --moeys-gold: #c89b3c;
-  --moeys-cream: #f7f3e8;
-  --moeys-ink: #10213c;
-  --surface-page: #f5f0e8;
+  --brand-primary: #2e3a59; /* deep slate */
+  --brand-secondary: #f4a261; /* warm amber */
+  --brand-accent: #e76f51; /* burnt orange */
+  --bg-light: #f8fafc;
+  --bg-dark: #080c14;
 }
 
 @layer base {
@@ -19,34 +19,50 @@
   }
 
   body {
-    font-family: 'Noto Sans Khmer', 'Battambang', 'Segoe UI', Tahoma, sans-serif;
+    font-family: 'Outfit', 'Inter', 'Noto Sans Khmer', 'Battambang', 'Segoe UI', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background: var(--surface-page);
-    color: var(--moeys-ink);
+    background-color: var(--bg-light);
+    color: var(--brand-primary);
   }
 
   html.dark body {
-    background-color: #0f172a;
-    color: #e2e8f0;
+    background-color: var(--bg-dark);
+    color: #f8fafc;
   }
+}
+
+/* Custom Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.6);
 }
 
 @layer components {
   .filter-select {
-    @apply min-w-[170px] rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-gray-700 shadow-sm
-           transition-colors duration-200 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/30
-           dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-primary-500;
+    @apply min-w-[170px] rounded-xl border border-slate-200/90 bg-white px-4 py-2.5 text-sm text-slate-700 shadow-sm
+           transition-colors duration-200 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20
+           dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-500;
   }
 
   .sidebar-link {
-    @apply flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-blue-100/85
-           hover:bg-sidebar-hover hover:text-white transition-all duration-200 
+    @apply relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400
+           hover:bg-slate-800/80 hover:text-slate-100 transition-all duration-200 
            text-sm font-medium;
   }
 
   .sidebar-link.active {
-    @apply bg-sidebar-active text-white shadow-sm;
+    @apply bg-blue-600/15 text-blue-400 font-semibold shadow-sm border-l-4 border-blue-500 rounded-l-none pl-3;
   }
 
   .attendance-btn {
@@ -55,212 +71,177 @@
   }
 
   .attendance-btn.present {
-    @apply bg-attendance-present text-white border-attendance-present;
+    @apply bg-emerald-500 text-white border-emerald-500 shadow-sm shadow-emerald-500/20;
   }
 
   .attendance-btn.absent {
-    @apply bg-attendance-absent text-white border-attendance-absent;
+    @apply bg-rose-500 text-white border-rose-500 shadow-sm shadow-rose-500/20;
   }
 
   .attendance-btn.late {
-    @apply bg-attendance-late text-white border-attendance-late;
+    @apply bg-amber-500 text-white border-amber-500 shadow-sm shadow-amber-500/20;
   }
 
   .attendance-btn.inactive {
-    @apply bg-white text-gray-400 border-gray-200 hover:border-gray-400;
+    @apply bg-white text-slate-400 border-slate-200 hover:border-slate-400 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-500;
   }
 }
 
-html.dark .bg-gray-50 {
-  background-color: #0f172a !important;
+.institution-card {
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow:
+    0 4px 20px -2px rgba(15, 23, 42, 0.04),
+    0 1px 2px 0 rgba(15, 23, 42, 0.02);
+  transition:
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.25s ease;
+}
+
+.institution-card:hover {
+  border-color: rgba(59, 130, 246, 0.35);
+  box-shadow:
+    0 12px 30px -4px rgba(15, 23, 42, 0.08),
+    0 4px 6px -2px rgba(15, 23, 42, 0.04);
+}
+
+.header-surface {
+  background: rgba(255, 255, 255, 0.88);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.search-shell {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.search-shell:focus-within {
+  background: #ffffff;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.search-dropdown {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.2);
+}
+
+.footer-shell {
+  background: #0b1120;
+  border-top: 1px solid #1e293b;
+}
+
+.footer-panel-title {
+  color: #60a5fa;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.footer-telegram {
+  background: linear-gradient(135deg, #0088cc 0%, #006699 100%);
+  box-shadow: 0 10px 20px rgba(0, 136, 204, 0.3);
+}
+
+/* Micro Animations & Glow Elements */
+@keyframes pulse-slow {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s infinite ease-in-out;
+}
+
+/* Dark Mode Extensions */
+html.dark .bg-gray-50,
+html.dark .bg-slate-50 {
+  background-color: #080c14 !important;
 }
 
 html.dark .bg-white {
-  background-color: #111827 !important;
+  background-color: #0f172a !important;
 }
 
-html.dark .bg-gray-100 {
-  background-color: #1f2937 !important;
+html.dark .bg-gray-100,
+html.dark .bg-slate-100 {
+  background-color: #1e293b !important;
 }
 
 html.dark .border-gray-100,
-html.dark .border-gray-200 {
-  border-color: #374151 !important;
+html.dark .border-gray-200,
+html.dark .border-slate-200 {
+  border-color: #1e293b !important;
 }
 
-html.dark .text-gray-800 {
-  color: #e5e7eb !important;
+html.dark .text-gray-800,
+html.dark .text-slate-800 {
+  color: #f8fafc !important;
 }
 
-html.dark .text-gray-700 {
-  color: #d1d5db !important;
+html.dark .text-gray-700,
+html.dark .text-slate-700 {
+  color: #e2e8f0 !important;
 }
 
-html.dark .text-gray-600 {
+html.dark .text-gray-600,
+html.dark .text-slate-600 {
   color: #cbd5e1 !important;
 }
 
 html.dark .text-gray-500,
-html.dark .text-gray-400 {
+html.dark .text-slate-500 {
   color: #94a3b8 !important;
-}
-
-html.dark .hover\:bg-gray-50:hover {
-  background-color: #1f2937 !important;
-}
-
-html.dark .hover\:bg-gray-100:hover {
-  background-color: #334155 !important;
 }
 
 html.dark input,
 html.dark select,
 html.dark textarea {
-  background-color: #0b1220;
-  color: #e5e7eb;
-  border-color: #334155;
-}
-
-html.dark input::placeholder,
-html.dark textarea::placeholder {
-  color: #94a3b8;
-}
-
-.institution-card {
-  background: #fffdf9;
-  border: 1px solid rgba(16, 45, 95, 0.1);
-  box-shadow: 0 12px 30px rgba(16, 33, 60, 0.07);
-}
-
-.moeys-banner {
-  background: #102d5f;
-}
-
-.moeys-heading {
-  font-family: 'Noto Sans Khmer', 'Battambang', 'Segoe UI', sans-serif;
-  letter-spacing: 0.01em;
-}
-
-.header-surface {
-  background: #fffdf9;
-  border-bottom: 1px solid #ddd4bf;
-  backdrop-filter: blur(12px);
-}
-
-.header-status-panel {
-  background: #fffdf9;
-  border: 1px solid rgba(16, 45, 95, 0.1);
-  box-shadow: 0 8px 24px rgba(16, 33, 60, 0.06);
-}
-
-.toolbar-surface {
-  background: rgba(255, 255, 255, 0.95);
-  border-bottom: 1px solid #dde5f1;
-}
-
-.moeys-seal {
-  background: #ffffff;
-  color: var(--moeys-navy);
-  border: 2px solid var(--moeys-gold);
-  box-shadow: 0 6px 14px rgba(15, 47, 99, 0.08);
-}
-
-.shell-action {
-  transition: background-color 0.2s ease, border-color 0.2s ease;
-}
-
-.shell-action:hover {
-  background: #f4f6fb;
-}
-
-.search-shell {
-  background: #f7f9fc;
-  border: 1px solid #dbe2ee;
-}
-
-.search-dropdown {
-  background: #ffffff;
-  border: 1px solid #d9e3f3;
-  box-shadow: 0 18px 40px rgba(16, 33, 60, 0.12);
-}
-
-.profile-trigger:hover {
-  border-color: #e0e7f2;
-  background: #fbfcfe;
-}
-
-.footer-shell {
-  background: #102d5f;
-  border-top: 1px solid rgba(214, 222, 236, 0.3);
-}
-
-.footer-panel-title {
-  color: var(--moeys-gold);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-}
-
-.footer-telegram {
-  background: #c89b3c;
-  box-shadow: 0 12px 24px rgba(21, 110, 166, 0.18);
+  background-color: #0f172a;
+  color: #f8fafc;
+  border-color: #1e293b;
 }
 
 html.dark .header-surface {
-  background: rgba(10, 18, 32, 0.92);
-  border-bottom-color: #24324a;
-}
-
-html.dark .toolbar-surface {
-  background: rgba(12, 20, 35, 0.94);
-  border-bottom-color: #24324a;
-}
-
-html.dark .moeys-seal {
-  background: #14213a;
-  color: #f8fbff;
-  border-color: var(--moeys-gold);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.28);
-}
-
-html.dark .shell-action:hover {
-  background: #172235;
+  background: rgba(15, 23, 42, 0.88);
+  border-bottom-color: #1e293b;
 }
 
 html.dark .search-shell {
-  background: #111b2d;
-  border-color: #2a3953;
+  background: #1e293b;
+  border-color: #334155;
+}
+
+html.dark .search-shell:focus-within {
+  background: #0f172a;
+  border-color: #3b82f6;
 }
 
 html.dark .search-dropdown {
-  background: #0f1726;
-  border-color: #2a3953;
-  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.42);
-}
-
-html.dark .profile-trigger:hover {
-  border-color: #2f405f;
-  background: #141f32;
-}
-
-html.dark .header-status-panel {
   background: #0f172a;
-  border-color: rgba(120, 145, 190, 0.16);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02), 0 16px 30px rgba(0, 0, 0, 0.24);
+  border-color: #1e293b;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
 }
 
 html.dark .institution-card {
-  background: #111827;
-  border-color: rgba(120, 145, 190, 0.16);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+  background: #0f172a;
+  border-color: #1e293b;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.4);
 }
 
-html.dark .moeys-heading {
-  color: #edf4ff !important;
-}
-
-html.dark .footer-shell {
-  background: #081120;
-  border-top-color: rgba(77, 96, 132, 0.5);
+html.dark .institution-card:hover {
+  border-color: rgba(59, 130, 246, 0.4);
 }

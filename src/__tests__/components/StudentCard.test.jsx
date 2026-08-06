@@ -16,9 +16,7 @@ const mockStudent = {
 const renderWithContext = (component) => {
   return render(
     <AuthProvider>
-      <AttendanceProvider>
-        {component}
-      </AttendanceProvider>
+      <AttendanceProvider>{component}</AttendanceProvider>
     </AuthProvider>
   );
 };
@@ -48,10 +46,10 @@ describe('StudentCard', () => {
   it('toggles attendance status on repeated clicks', () => {
     renderWithContext(<StudentCard student={mockStudent} />);
     const presentButton = screen.getByTitle('Present');
-    
+
     fireEvent.click(presentButton);
     expect(presentButton).toHaveClass('present');
-    
+
     fireEvent.click(presentButton);
     expect(presentButton).toHaveClass('inactive');
   });

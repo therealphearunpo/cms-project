@@ -1,21 +1,9 @@
 export function isFrontendOnly() {
-  const demoFlag = String(process.env.REACT_APP_DEMO ?? '').trim().toLowerCase();
-  if (demoFlag === 'true') {
-    return true;
+  const envVal = process.env.REACT_APP_DEMO;
+  if (envVal !== undefined && envVal !== null && String(envVal).trim() !== '') {
+    return String(envVal).toLowerCase() === 'true';
   }
-
-  if (demoFlag === 'false') {
-    return false;
-  }
-
-  if (typeof window !== 'undefined') {
-    const { hostname } = window.location;
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      return false;
-    }
-  }
-
-  return !String(process.env.REACT_APP_API_URL ?? '').trim();
+  return true;
 }
 
 export const isDemoMode = isFrontendOnly;

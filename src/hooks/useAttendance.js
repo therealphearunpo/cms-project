@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { format } from 'date-fns';
 
-import { isFrontendOnly } from '../config/appMode';
+import { isFrontendOnly } from '../config/appMode.js';
 import { ACCOUNT_ROLES, normalizeRole } from '../constants/roles';
 import { useAttendanceContext } from '../context/AttendanceContext';
 import { useAuth } from '../context/AuthContext';
@@ -134,10 +134,10 @@ export function useFilteredStudents() {
     let scopedStudents = useTeacherDataset ? [...teachers] : [...students];
 
     if (selectedClass) {
-      scopedStudents = scopedStudents.filter(s => s.class === selectedClass);
+      scopedStudents = scopedStudents.filter((s) => s.class === selectedClass);
     }
     if (!useTeacherDataset && selectedShift) {
-      scopedStudents = scopedStudents.filter(s => s.shift === selectedShift);
+      scopedStudents = scopedStudents.filter((s) => s.shift === selectedShift);
     }
     if (useTeacherDataset && selectedSubject) {
       scopedStudents = scopedStudents.filter((teacher) => teacher.subject === selectedSubject);
@@ -148,8 +148,8 @@ export function useFilteredStudents() {
 
   const groupedStudents = useMemo(() => {
     const groups = {};
-    
-    filteredStudents.forEach(student => {
+
+    filteredStudents.forEach((student) => {
       const firstLetter = student.name.charAt(0).toUpperCase();
       if (!groups[firstLetter]) {
         groups[firstLetter] = [];
@@ -161,10 +161,8 @@ export function useFilteredStudents() {
     const sortedGroups = {};
     Object.keys(groups)
       .sort()
-      .forEach(key => {
-        sortedGroups[key] = groups[key].sort((a, b) => 
-          a.name.localeCompare(b.name)
-        );
+      .forEach((key) => {
+        sortedGroups[key] = groups[key].sort((a, b) => a.name.localeCompare(b.name));
       });
 
     return sortedGroups;
@@ -180,13 +178,13 @@ export function useAttendanceStats() {
   return useMemo(() => {
     const dateKey = format(currentDate, 'yyyy-MM-dd');
     const dayRecords = records[dateKey] || {};
-    
+
     let present = 0;
     let absent = 0;
     let late = 0;
     let unmarked = 0;
 
-    filteredStudents.forEach(student => {
+    filteredStudents.forEach((student) => {
       const status = dayRecords[student.id];
       if (status === 'present') present++;
       else if (status === 'absent') absent++;

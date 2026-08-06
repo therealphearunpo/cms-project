@@ -38,7 +38,7 @@ export default function MarksheetsPage() {
     return students.filter((student) => {
       return lockedClass
         ? student.class === lockedClass
-        : (selectedClass === 'ALL' || student.class === selectedClass);
+        : selectedClass === 'ALL' || student.class === selectedClass;
     });
   }, [isStudent, selectedClass, studentClassCode, students]);
 
@@ -50,9 +50,7 @@ export default function MarksheetsPage() {
       const total = hasScores
         ? SUBJECTS.reduce((sum, subject) => sum + clampScore(scores[subject]), 0)
         : null;
-      const avg = hasScores
-        ? Number((total / SUBJECTS.length).toFixed(1))
-        : null;
+      const avg = hasScores ? Number((total / SUBJECTS.length).toFixed(1)) : null;
       const grade = hasScores ? getGradeFromAverage(avg) : '';
 
       const normalizedScores = SUBJECTS.reduce((acc, subject) => {
@@ -77,10 +75,10 @@ export default function MarksheetsPage() {
     const ranked = [...baseRows]
       .filter((row) => row.hasScores)
       .sort((a, b) => {
-      if (b.avg !== a.avg) return b.avg - a.avg;
-      if (b.total !== a.total) return b.total - a.total;
-      return String(a.name).localeCompare(String(b.name));
-    });
+        if (b.avg !== a.avg) return b.avg - a.avg;
+        if (b.total !== a.total) return b.total - a.total;
+        return String(a.name).localeCompare(String(b.name));
+      });
 
     const rankByStudentId = {};
     let prevKey = null;
@@ -183,7 +181,9 @@ export default function MarksheetsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Marksheets</h1>
-          <p className="text-sm text-gray-500 mt-1">Only real saved marks are shown. Students without marks stay blank until entered.</p>
+          <p className="text-sm text-gray-500 mt-1">
+            Only real saved marks are shown. Students without marks stay blank until entered.
+          </p>
         </div>
       </div>
 

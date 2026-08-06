@@ -17,9 +17,7 @@ export default function Avatar({ src, name, size = 'md', className = '' }) {
     .toUpperCase()
     .slice(0, 2);
 
-  const colorIndex = name
-    ? name.charCodeAt(0) % 6
-    : 0;
+  const colorIndex = name ? name.charCodeAt(0) % 6 : 0;
 
   const bgColors = [
     'bg-blue-500',
@@ -31,9 +29,7 @@ export default function Avatar({ src, name, size = 'md', className = '' }) {
   ];
 
   return (
-    <div
-      className={`${sizeMap[size]} rounded-full overflow-hidden flex-shrink-0 ${className}`}
-    >
+    <div className={`${sizeMap[size]} rounded-full overflow-hidden flex-shrink-0 ${className}`}>
       {src && !imgError ? (
         <img
           src={src}

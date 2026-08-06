@@ -17,12 +17,27 @@ const LEGACY_STREAM_MAP = {
 };
 
 export const DEPARTMENT_SUBJECTS = {
-  Science: ['Mathematics', 'Physics', 'Chemistry', 'Biology', 'Earth & Environmental Science', 'Digital Literacy / ICT'],
-  Social: ['History', 'Geography', 'Social Studies', 'Civics and Morality', 'Khmer Language & Literature', 'English', 'French', 'Life Skills and Career Orientation', 'Physical Education & Sports'],
+  Science: [
+    'Mathematics',
+    'Physics',
+    'Chemistry',
+    'Biology',
+    'Earth & Environmental Science',
+    'Digital Literacy / ICT',
+  ],
+  Social: [
+    'History',
+    'Geography',
+    'Social Studies',
+    'Civics and Morality',
+    'Khmer Language & Literature',
+    'English',
+    'French',
+    'Life Skills and Career Orientation',
+    'Physical Education & Sports',
+  ],
 };
-const fallbackSubjects = subjectOptions
-  .filter((item) => item.value)
-  .map((item) => item.label);
+const fallbackSubjects = subjectOptions.filter((item) => item.value).map((item) => item.label);
 
 const avatarFor = (seed, gender) => generateAvatarByGender(`teacher-${seed}`, gender);
 export const teachersData = [];
@@ -51,8 +66,13 @@ export function normalizeTeacherItem(item, index = 0) {
   const requestedSubject = item?.subject || item?.subjectName;
   const subject = subjectPool.includes(requestedSubject) ? requestedSubject : subjectPool[0];
   const baseId = item?.id || `teacher-${toSlug(name) || index + 1}`;
-  const employeeId = String(item?.employeeId || item?.employeeCode || `T${String(index + 1).padStart(4, '0')}`);
-  const gender = normalizeGender(item?.gender || item?.profileGender, index % 2 === 0 ? 'male' : 'female');
+  const employeeId = String(
+    item?.employeeId || item?.employeeCode || `T${String(index + 1).padStart(4, '0')}`
+  );
+  const gender = normalizeGender(
+    item?.gender || item?.profileGender,
+    index % 2 === 0 ? 'male' : 'female'
+  );
   return {
     id: baseId,
     employeeId,
@@ -76,9 +96,10 @@ export function loadTeachers() {
     if (!Array.isArray(parsed) || parsed.length === 0) return [];
     const looksLikeLegacyDemoOnly =
       parsed.length > 0 &&
-      parsed.every((item, index) =>
-        String(item?.id || '') === `teacher-${index + 1}` &&
-        String(item?.employeeId || '') === `T${String(index + 1).padStart(4, '0')}`
+      parsed.every(
+        (item, index) =>
+          String(item?.id || '') === `teacher-${index + 1}` &&
+          String(item?.employeeId || '') === `T${String(index + 1).padStart(4, '0')}`
       );
     if (looksLikeLegacyDemoOnly) return [];
     return parsed.map((item, index) => normalizeTeacherItem(item, index));
@@ -88,8 +109,9 @@ export function loadTeachers() {
 }
 
 export function saveTeachers(items) {
-  const normalized = (Array.isArray(items) ? items : [])
-    .map((item, index) => normalizeTeacherItem(item, index));
+  const normalized = (Array.isArray(items) ? items : []).map((item, index) =>
+    normalizeTeacherItem(item, index)
+  );
   localStorage.setItem(LOCAL_TEACHERS_KEY, JSON.stringify(normalized));
   return normalized;
 }

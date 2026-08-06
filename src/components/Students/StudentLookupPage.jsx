@@ -40,8 +40,12 @@ function readLocalStudents() {
 }
 
 function compareClassCodes(left, right) {
-  const leftValue = String(left || '').trim().toUpperCase();
-  const rightValue = String(right || '').trim().toUpperCase();
+  const leftValue = String(left || '')
+    .trim()
+    .toUpperCase();
+  const rightValue = String(right || '')
+    .trim()
+    .toUpperCase();
   const leftMatch = leftValue.match(/^(\d+)([A-Z]*)$/);
   const rightMatch = rightValue.match(/^(\d+)([A-Z]*)$/);
 
@@ -66,7 +70,9 @@ function formatProfileValue(value, fallback = 'Not available') {
 }
 
 function formatGenderLabel(value) {
-  const normalized = String(value || '').trim().toLowerCase();
+  const normalized = String(value || '')
+    .trim()
+    .toLowerCase();
   if (!normalized) return 'Not recorded';
   return normalized.charAt(0).toUpperCase() + normalized.slice(1);
 }
@@ -80,8 +86,13 @@ function getStudentAccountStatus(student) {
 
 function normalizeTeacherAccount(teacher, index = 1) {
   const fullName = String(teacher?.fullName || teacher?.full_name || '').trim();
-  const gender = normalizeGender(teacher?.profileGender || teacher?.gender, index % 2 === 0 ? 'female' : 'male');
-  const email = String(teacher?.email || '').trim().toLowerCase();
+  const gender = normalizeGender(
+    teacher?.profileGender || teacher?.gender,
+    index % 2 === 0 ? 'female' : 'male'
+  );
+  const email = String(teacher?.email || '')
+    .trim()
+    .toLowerCase();
   const stream = normalizeTeacherStream(teacher?.stream || teacher?.department || teacher?.class);
   const subjectName = String(teacher?.subjectName || teacher?.subject_name || '').trim();
 
@@ -92,7 +103,8 @@ function normalizeTeacherAccount(teacher, index = 1) {
     fullName: fullName || `Teacher ${index}`,
     email,
     gender,
-    avatar: teacher?.avatar || generateAvatarByGender(email || fullName || `teacher-${index}`, gender),
+    avatar:
+      teacher?.avatar || generateAvatarByGender(email || fullName || `teacher-${index}`, gender),
     employeeCode: String(teacher?.employeeCode || teacher?.employee_code || '').trim(),
     stream,
     subjectName,
@@ -125,10 +137,12 @@ function downloadFile(filename, content, mimeType) {
 
 function exportRowsAsCsv(filename, headers, rows) {
   const escapeCsv = (value) => `"${String(value ?? '').replace(/"/g, '""')}"`;
-  const csv = [headers, ...rows]
-    .map((row) => row.map(escapeCsv).join(','))
-    .join('\n');
-  downloadFile(filename, new Blob([csv], { type: 'text/csv;charset=utf-8;' }), 'text/csv;charset=utf-8;');
+  const csv = [headers, ...rows].map((row) => row.map(escapeCsv).join(',')).join('\n');
+  downloadFile(
+    filename,
+    new Blob([csv], { type: 'text/csv;charset=utf-8;' }),
+    'text/csv;charset=utf-8;'
+  );
 }
 
 function SectionTitle({ eyebrow, title, summary }) {
@@ -154,20 +168,30 @@ function DirectoryCard({ item, activeType, onSelect }) {
         <Avatar src={item.avatar} name={item.name} size="lg" />
         <div className="min-w-0">
           <p className="truncate text-base font-semibold text-slate-900">{item.name}</p>
-          <p className="mt-1 truncate text-sm text-slate-500">{item.email || 'No email available'}</p>
+          <p className="mt-1 truncate text-sm text-slate-500">
+            {item.email || 'No email available'}
+          </p>
         </div>
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-2">
         {activeType === DIRECTORY_TYPES.STUDENT ? (
           <>
-            <div className="rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-600">Class: {item.class || '-'}</div>
-            <div className="rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-600">Address: {item.currentAddress || '-'}</div>
+            <div className="rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-600">
+              Class: {item.class || '-'}
+            </div>
+            <div className="rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-600">
+              Address: {item.currentAddress || '-'}
+            </div>
           </>
         ) : (
           <>
-            <div className="rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-600">Stream: {item.stream || '-'}</div>
-            <div className="rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-600">Subject: {item.subjectName || '-'}</div>
+            <div className="rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-600">
+              Stream: {item.stream || '-'}
+            </div>
+            <div className="rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-600">
+              Subject: {item.subjectName || '-'}
+            </div>
           </>
         )}
       </div>
@@ -210,8 +234,7 @@ export default function StudentLookupPage() {
       ]);
 
       const hasStudentApi =
-        studentsResult.status === 'fulfilled' &&
-        Array.isArray(studentsResult.value?.data);
+        studentsResult.status === 'fulfilled' && Array.isArray(studentsResult.value?.data);
 
       if (hasStudentApi) {
         const normalizedApiStudents = studentsResult.value.data.map((student, index) =>
@@ -222,10 +245,7 @@ export default function StudentLookupPage() {
         setStudents(localStudents);
       }
 
-      if (
-        teachersResult.status === 'fulfilled' &&
-        Array.isArray(teachersResult.value?.data)
-      ) {
+      if (teachersResult.status === 'fulfilled' && Array.isArray(teachersResult.value?.data)) {
         const normalizedTeachers = teachersResult.value.data.map((teacher, index) =>
           normalizeTeacherAccount(teacher, index + 1)
         );
@@ -243,8 +263,8 @@ export default function StudentLookupPage() {
   const classOptions = useMemo(() => getStudentClasses(students), [students]);
   const streamOptions = useMemo(
     () =>
-      Array.from(new Set(teachers.map((teacher) => teacher.stream).filter(Boolean))).sort((left, right) =>
-        left.localeCompare(right)
+      Array.from(new Set(teachers.map((teacher) => teacher.stream).filter(Boolean))).sort(
+        (left, right) => left.localeCompare(right)
       ),
     [teachers]
   );
@@ -256,10 +276,32 @@ export default function StudentLookupPage() {
     const emailTerm = emailQuery.trim().toLowerCase();
 
     return activeRecords.filter((item) => {
-      if (nameTerm && !String(item.name || '').toLowerCase().includes(nameTerm)) return false;
-      if (emailTerm && !String(item.email || '').toLowerCase().includes(emailTerm)) return false;
-      if (activeType === DIRECTORY_TYPES.STUDENT && classFilter !== 'ALL' && String(item.class) !== classFilter) return false;
-      if (activeType === DIRECTORY_TYPES.STAFF && streamFilter !== 'ALL' && String(item.stream) !== streamFilter) return false;
+      if (
+        nameTerm &&
+        !String(item.name || '')
+          .toLowerCase()
+          .includes(nameTerm)
+      )
+        return false;
+      if (
+        emailTerm &&
+        !String(item.email || '')
+          .toLowerCase()
+          .includes(emailTerm)
+      )
+        return false;
+      if (
+        activeType === DIRECTORY_TYPES.STUDENT &&
+        classFilter !== 'ALL' &&
+        String(item.class) !== classFilter
+      )
+        return false;
+      if (
+        activeType === DIRECTORY_TYPES.STAFF &&
+        streamFilter !== 'ALL' &&
+        String(item.stream) !== streamFilter
+      )
+        return false;
       return true;
     });
   }, [activeRecords, activeType, classFilter, emailQuery, nameQuery, streamFilter]);
@@ -279,9 +321,10 @@ export default function StudentLookupPage() {
     const loadSelectedStudentDetails = async () => {
       try {
         const response = await studentsAPI.getById(effectiveSelectedId);
-        const detail = response?.data && typeof response.data === 'object'
-          ? normalizeStudentAccount(response.data, Number(effectiveSelectedId) || 1)
-          : null;
+        const detail =
+          response?.data && typeof response.data === 'object'
+            ? normalizeStudentAccount(response.data, Number(effectiveSelectedId) || 1)
+            : null;
 
         if (!cancelled) {
           setSelectedStudentDetails(detail);
@@ -301,7 +344,8 @@ export default function StudentLookupPage() {
   }, [activeType, effectiveSelectedId]);
 
   const selectedRecord = useMemo(() => {
-    const baseRecord = filteredRecords.find((item) => String(item.id) === String(effectiveSelectedId)) || null;
+    const baseRecord =
+      filteredRecords.find((item) => String(item.id) === String(effectiveSelectedId)) || null;
     if (
       activeType === DIRECTORY_TYPES.STUDENT &&
       selectedStudentDetails &&
@@ -339,7 +383,17 @@ export default function StudentLookupPage() {
       ]);
       exportRowsAsCsv(
         'students-directory.csv',
-        ['Name', 'Student ID', 'Class', 'Shift', 'Date of Birth', 'Account Status', 'Login Password', 'Email', 'Current Address'],
+        [
+          'Name',
+          'Student ID',
+          'Class',
+          'Shift',
+          'Date of Birth',
+          'Account Status',
+          'Login Password',
+          'Email',
+          'Current Address',
+        ],
         rows
       );
       return;
@@ -372,7 +426,8 @@ export default function StudentLookupPage() {
               User Lookup
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">
-              Search the school directory, review professional profile details, and switch between student and teacher records from one clean lookup workspace.
+              Search the school directory, review professional profile details, and switch between
+              student and teacher records from one clean lookup workspace.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
@@ -406,15 +461,21 @@ export default function StudentLookupPage() {
           <div className="rounded-[28px] border border-slate-200 bg-white/90 p-6 shadow-lg">
             <div className="grid grid-cols-1 gap-3">
               <div className="rounded-2xl bg-slate-50 px-4 py-4">
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-400">Student Records</p>
+                <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-400">
+                  Student Records
+                </p>
                 <p className="mt-2 text-2xl font-bold text-slate-900">{directoryStats.students}</p>
               </div>
               <div className="rounded-2xl bg-slate-50 px-4 py-4">
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-400">Staff Records</p>
+                <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-400">
+                  Staff Records
+                </p>
                 <p className="mt-2 text-2xl font-bold text-slate-900">{directoryStats.teachers}</p>
               </div>
               <div className="rounded-2xl bg-slate-50 px-4 py-4">
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-400">Visible Results</p>
+                <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-400">
+                  Visible Results
+                </p>
                 <p className="mt-2 text-2xl font-bold text-primary-700">{directoryStats.visible}</p>
               </div>
             </div>
@@ -431,7 +492,10 @@ export default function StudentLookupPage() {
 
         <div className="mt-6 grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_260px_260px_auto] xl:items-end">
           <div>
-            <label htmlFor="lookup-name" className="mb-1.5 block text-sm font-medium text-slate-700">
+            <label
+              htmlFor="lookup-name"
+              className="mb-1.5 block text-sm font-medium text-slate-700"
+            >
               Name
             </label>
             <div className="relative">
@@ -441,14 +505,21 @@ export default function StudentLookupPage() {
                 type="text"
                 value={nameQuery}
                 onChange={(e) => setNameQuery(e.target.value)}
-                placeholder={activeType === DIRECTORY_TYPES.STUDENT ? 'Search student name' : 'Search teacher name'}
+                placeholder={
+                  activeType === DIRECTORY_TYPES.STUDENT
+                    ? 'Search student name'
+                    : 'Search teacher name'
+                }
                 className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-3 text-sm outline-none transition focus:border-primary-400 focus:ring-2 focus:ring-primary-100"
               />
             </div>
           </div>
 
           <div>
-            <label htmlFor="lookup-email" className="mb-1.5 block text-sm font-medium text-slate-700">
+            <label
+              htmlFor="lookup-email"
+              className="mb-1.5 block text-sm font-medium text-slate-700"
+            >
               Email
             </label>
             <input
@@ -463,7 +534,10 @@ export default function StudentLookupPage() {
 
           {activeType === DIRECTORY_TYPES.STUDENT ? (
             <div>
-              <label htmlFor="lookup-class" className="mb-1.5 block text-sm font-medium text-slate-700">
+              <label
+                htmlFor="lookup-class"
+                className="mb-1.5 block text-sm font-medium text-slate-700"
+              >
                 Class
               </label>
               <select
@@ -482,7 +556,10 @@ export default function StudentLookupPage() {
             </div>
           ) : (
             <div>
-              <label htmlFor="lookup-stream" className="mb-1.5 block text-sm font-medium text-slate-700">
+              <label
+                htmlFor="lookup-stream"
+                className="mb-1.5 block text-sm font-medium text-slate-700"
+              >
                 Stream
               </label>
               <select
@@ -534,7 +611,12 @@ export default function StudentLookupPage() {
           </div>
 
           <div className="flex justify-end">
-            <Button type="button" variant="secondary" icon={HiOutlineDownload} onClick={exportCurrentDirectory}>
+            <Button
+              type="button"
+              variant="secondary"
+              icon={HiOutlineDownload}
+              onClick={exportCurrentDirectory}
+            >
               Export
             </Button>
           </div>
@@ -557,28 +639,49 @@ export default function StudentLookupPage() {
             <div className="mt-5">
               {!filteredRecords.length ? (
                 <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">
-                  No matching {activeType === DIRECTORY_TYPES.STUDENT ? 'student' : 'staff'} record found.
+                  No matching {activeType === DIRECTORY_TYPES.STUDENT ? 'student' : 'staff'} record
+                  found.
                 </div>
               ) : viewMode === VIEW_MODES.LIST ? (
                 <div className="overflow-x-auto rounded-[24px] border border-slate-200">
                   <table className="w-full min-w-[760px]">
                     <thead>
                       <tr className="border-b border-slate-200 bg-slate-50">
-                        <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Name</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                          Name
+                        </th>
                         {activeType === DIRECTORY_TYPES.STUDENT ? (
                           <>
-                            <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Student ID</th>
-                            <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Class</th>
-                            <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Account</th>
-                            <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Address</th>
-                            <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Email</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                              Student ID
+                            </th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                              Class
+                            </th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                              Account
+                            </th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                              Address
+                            </th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                              Email
+                            </th>
                           </>
                         ) : (
                           <>
-                            <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Employee Code</th>
-                            <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Stream</th>
-                            <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Subject</th>
-                            <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Email</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                              Employee Code
+                            </th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                              Stream
+                            </th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                              Subject
+                            </th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                              Email
+                            </th>
                           </>
                         )}
                       </tr>
@@ -589,14 +692,18 @@ export default function StudentLookupPage() {
                           key={`${activeType}-${item.id}`}
                           onClick={() => setSelectedId(item.id)}
                           className={`cursor-pointer transition hover:bg-slate-50 ${
-                            String(effectiveSelectedId) === String(item.id) ? 'bg-primary-50/70' : 'bg-white'
+                            String(effectiveSelectedId) === String(item.id)
+                              ? 'bg-primary-50/70'
+                              : 'bg-white'
                           }`}
                         >
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-3">
                               <Avatar src={item.avatar} name={item.name} size="sm" />
                               <div className="min-w-0">
-                                <p className="truncate text-sm font-semibold text-slate-900">{item.name}</p>
+                                <p className="truncate text-sm font-semibold text-slate-900">
+                                  {item.name}
+                                </p>
                                 <p className="mt-0.5 text-xs text-slate-500">
                                   {activeType === DIRECTORY_TYPES.STUDENT ? 'Student' : 'Teacher'}
                                 </p>
@@ -605,18 +712,36 @@ export default function StudentLookupPage() {
                           </td>
                           {activeType === DIRECTORY_TYPES.STUDENT ? (
                             <>
-                              <td className="px-4 py-3 text-sm text-slate-600">{item.studentId || '-'}</td>
-                              <td className="px-4 py-3 text-sm text-slate-600">{item.class || '-'}</td>
-                              <td className="px-4 py-3 text-sm font-medium text-slate-700">{getStudentAccountStatus(item)}</td>
-                              <td className="px-4 py-3 text-sm text-slate-600">{item.currentAddress || '-'}</td>
-                              <td className="px-4 py-3 text-sm text-primary-700">{item.email || '-'}</td>
+                              <td className="px-4 py-3 text-sm text-slate-600">
+                                {item.studentId || '-'}
+                              </td>
+                              <td className="px-4 py-3 text-sm text-slate-600">
+                                {item.class || '-'}
+                              </td>
+                              <td className="px-4 py-3 text-sm font-medium text-slate-700">
+                                {getStudentAccountStatus(item)}
+                              </td>
+                              <td className="px-4 py-3 text-sm text-slate-600">
+                                {item.currentAddress || '-'}
+                              </td>
+                              <td className="px-4 py-3 text-sm text-primary-700">
+                                {item.email || '-'}
+                              </td>
                             </>
                           ) : (
                             <>
-                              <td className="px-4 py-3 text-sm text-slate-600">{item.employeeCode || '-'}</td>
-                              <td className="px-4 py-3 text-sm text-slate-600">{item.stream || '-'}</td>
-                              <td className="px-4 py-3 text-sm text-slate-600">{item.subjectName || '-'}</td>
-                              <td className="px-4 py-3 text-sm text-primary-700">{item.email || '-'}</td>
+                              <td className="px-4 py-3 text-sm text-slate-600">
+                                {item.employeeCode || '-'}
+                              </td>
+                              <td className="px-4 py-3 text-sm text-slate-600">
+                                {item.stream || '-'}
+                              </td>
+                              <td className="px-4 py-3 text-sm text-slate-600">
+                                {item.subjectName || '-'}
+                              </td>
+                              <td className="px-4 py-3 text-sm text-primary-700">
+                                {item.email || '-'}
+                              </td>
                             </>
                           )}
                         </tr>
@@ -642,7 +767,11 @@ export default function StudentLookupPage() {
           <div className="self-start rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm xl:sticky xl:top-6">
             <SectionTitle
               eyebrow="Profile View"
-              title={activeType === DIRECTORY_TYPES.STUDENT ? 'Selected student profile' : 'Selected staff profile'}
+              title={
+                activeType === DIRECTORY_TYPES.STUDENT
+                  ? 'Selected student profile'
+                  : 'Selected staff profile'
+              }
               summary="Review the current directory details and use the built-in actions for quick follow-up."
             />
 
@@ -652,12 +781,21 @@ export default function StudentLookupPage() {
                   <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
                     <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
                       <div className="flex items-center gap-4">
-                        <Avatar src={selectedRecord.avatar} name={selectedRecord.name} size="xl" className="h-20 w-20 ring-4 ring-white shadow-md" />
+                        <Avatar
+                          src={selectedRecord.avatar}
+                          name={selectedRecord.name}
+                          size="xl"
+                          className="h-20 w-20 ring-4 ring-white shadow-md"
+                        />
                         <div className="min-w-0">
                           <div className="flex flex-wrap items-center gap-2">
-                            <h3 className="truncate text-xl font-semibold text-slate-900">{selectedRecord.name}</h3>
+                            <h3 className="truncate text-xl font-semibold text-slate-900">
+                              {selectedRecord.name}
+                            </h3>
                             <span className="inline-flex rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-                              {activeType === DIRECTORY_TYPES.STUDENT ? 'Student Profile' : 'Teacher Profile'}
+                              {activeType === DIRECTORY_TYPES.STUDENT
+                                ? 'Student Profile'
+                                : 'Teacher Profile'}
                             </span>
                           </div>
                           <p className="mt-1 truncate text-sm text-slate-500">
@@ -681,7 +819,9 @@ export default function StudentLookupPage() {
                       <div className="grid grid-cols-2 gap-3 lg:min-w-[220px]">
                         <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
                           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
-                            {activeType === DIRECTORY_TYPES.STUDENT ? 'Student ID' : 'Employee Code'}
+                            {activeType === DIRECTORY_TYPES.STUDENT
+                              ? 'Student ID'
+                              : 'Employee Code'}
                           </p>
                           <p className="mt-2 text-sm font-semibold text-slate-900">
                             {activeType === DIRECTORY_TYPES.STUDENT
@@ -696,7 +836,9 @@ export default function StudentLookupPage() {
                           <p className="mt-2 text-sm font-semibold text-slate-900">
                             {activeType === DIRECTORY_TYPES.STUDENT
                               ? getStudentAccountStatus(selectedRecord)
-                              : (selectedRecord.isActive ? 'Active' : 'Inactive')}
+                              : selectedRecord.isActive
+                                ? 'Active'
+                                : 'Inactive'}
                           </p>
                         </div>
                       </div>
@@ -706,23 +848,65 @@ export default function StudentLookupPage() {
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     {activeType === DIRECTORY_TYPES.STUDENT ? (
                       <>
-                        <InfoCard label="Class" value={formatProfileValue(selectedRecord.class, 'Unassigned')} />
-                        <InfoCard label="Shift" value={formatProfileValue(selectedRecord.shift, 'Not assigned')} />
-                        <InfoCard label="Date of Birth" value={formatProfileValue(formatDobLabel(selectedRecord.dateOfBirth), 'Not recorded')} />
-                        <InfoCard label="Login Password" value={formatProfileValue(buildStudentPassword(selectedRecord), 'Needs date of birth')} />
-                        <InfoCard label="Login Email" value={formatProfileValue(selectedRecord.email)} />
-                        <InfoCard label="Current Address" value={formatProfileValue(selectedRecord.currentAddress, 'Not recorded')} />
-                        <InfoCard label="Account Status" value={getStudentAccountStatus(selectedRecord)} />
+                        <InfoCard
+                          label="Class"
+                          value={formatProfileValue(selectedRecord.class, 'Unassigned')}
+                        />
+                        <InfoCard
+                          label="Shift"
+                          value={formatProfileValue(selectedRecord.shift, 'Not assigned')}
+                        />
+                        <InfoCard
+                          label="Date of Birth"
+                          value={formatProfileValue(
+                            formatDobLabel(selectedRecord.dateOfBirth),
+                            'Not recorded'
+                          )}
+                        />
+                        <InfoCard
+                          label="Login Password"
+                          value={formatProfileValue(
+                            buildStudentPassword(selectedRecord),
+                            'Needs date of birth'
+                          )}
+                        />
+                        <InfoCard
+                          label="Login Email"
+                          value={formatProfileValue(selectedRecord.email)}
+                        />
+                        <InfoCard
+                          label="Current Address"
+                          value={formatProfileValue(selectedRecord.currentAddress, 'Not recorded')}
+                        />
+                        <InfoCard
+                          label="Account Status"
+                          value={getStudentAccountStatus(selectedRecord)}
+                        />
                         <InfoCard label="Gender" value={formatGenderLabel(selectedRecord.gender)} />
                       </>
                     ) : (
                       <>
-                        <InfoCard label="Employee Code" value={formatProfileValue(selectedRecord.employeeCode)} />
-                        <InfoCard label="Stream" value={formatProfileValue(selectedRecord.stream)} />
-                        <InfoCard label="Subject" value={formatProfileValue(selectedRecord.subjectName)} />
-                        <InfoCard label="Phone" value={formatProfileValue(selectedRecord.phone, 'Not added')} />
+                        <InfoCard
+                          label="Employee Code"
+                          value={formatProfileValue(selectedRecord.employeeCode)}
+                        />
+                        <InfoCard
+                          label="Stream"
+                          value={formatProfileValue(selectedRecord.stream)}
+                        />
+                        <InfoCard
+                          label="Subject"
+                          value={formatProfileValue(selectedRecord.subjectName)}
+                        />
+                        <InfoCard
+                          label="Phone"
+                          value={formatProfileValue(selectedRecord.phone, 'Not added')}
+                        />
                         <InfoCard label="Email" value={formatProfileValue(selectedRecord.email)} />
-                        <InfoCard label="Status" value={selectedRecord.isActive ? 'Active' : 'Inactive'} />
+                        <InfoCard
+                          label="Status"
+                          value={selectedRecord.isActive ? 'Active' : 'Inactive'}
+                        />
                       </>
                     )}
                   </div>
@@ -753,7 +937,8 @@ export default function StudentLookupPage() {
                 </div>
               ) : (
                 <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">
-                  Select a {activeType === DIRECTORY_TYPES.STUDENT ? 'student' : 'staff member'} from the results to view the profile details.
+                  Select a {activeType === DIRECTORY_TYPES.STUDENT ? 'student' : 'staff member'}{' '}
+                  from the results to view the profile details.
                 </div>
               )}
             </div>
@@ -772,23 +957,43 @@ export default function StudentLookupPage() {
           <table className="w-full min-w-[760px]">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50">
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Name</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                  Name
+                </th>
                 {activeType === DIRECTORY_TYPES.STUDENT ? (
                   <>
-                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Student ID</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Class</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Account</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Address</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Login Password</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                      Student ID
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                      Class
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                      Account
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                      Address
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                      Login Password
+                    </th>
                   </>
                 ) : (
                   <>
-                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Employee Code</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Stream</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Subject</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                      Employee Code
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                      Stream
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                      Subject
+                    </th>
                   </>
                 )}
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Email</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                  Email
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -799,9 +1004,15 @@ export default function StudentLookupPage() {
                     <>
                       <td className="px-4 py-3 text-sm text-slate-600">{item.studentId || '-'}</td>
                       <td className="px-4 py-3 text-sm text-slate-600">{item.class}</td>
-                      <td className="px-4 py-3 text-sm font-medium text-slate-700">{getStudentAccountStatus(item)}</td>
-                      <td className="px-4 py-3 text-sm text-slate-600">{item.currentAddress || '-'}</td>
-                      <td className="px-4 py-3 text-sm text-slate-600">{buildStudentPassword(item)}</td>
+                      <td className="px-4 py-3 text-sm font-medium text-slate-700">
+                        {getStudentAccountStatus(item)}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-slate-600">
+                        {item.currentAddress || '-'}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-slate-600">
+                        {buildStudentPassword(item)}
+                      </td>
                     </>
                   ) : (
                     <>
@@ -819,7 +1030,8 @@ export default function StudentLookupPage() {
 
         {filteredRecords.length > 150 ? (
           <p className="mt-3 text-xs text-slate-500">
-            Showing the first 150 records in summary view. Use export for the full filtered directory.
+            Showing the first 150 records in summary view. Use export for the full filtered
+            directory.
           </p>
         ) : null}
       </section>

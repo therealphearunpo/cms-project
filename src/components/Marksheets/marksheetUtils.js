@@ -38,13 +38,12 @@ export function uniqueStudents(students) {
 
   return (Array.isArray(students) ? students : []).filter((student) => {
     const normalized = normalizeStudent(student);
-    const key = normalized.id != null
-      ? `id:${String(normalized.id)}`
-      : [
-        normalized.name,
-        normalized.class,
-        normalized.rollNo,
-      ].map((value) => String(value ?? '').trim()).join('|');
+    const key =
+      normalized.id != null
+        ? `id:${String(normalized.id)}`
+        : [normalized.name, normalized.class, normalized.rollNo]
+            .map((value) => String(value ?? '').trim())
+            .join('|');
 
     if (seen.has(key)) return false;
     seen.add(key);
@@ -74,7 +73,12 @@ export function normalizeScoreMap(payload) {
   if (typeof payload === 'object') {
     return Object.entries(payload).reduce((acc, [studentId, value]) => {
       acc[String(studentId)] = SUBJECTS.reduce((scores, subject) => {
-        if (value && typeof value === 'object' && value.scores && typeof value.scores === 'object') {
+        if (
+          value &&
+          typeof value === 'object' &&
+          value.scores &&
+          typeof value.scores === 'object'
+        ) {
           scores[subject] = clampScore(value.scores[subject]);
         } else {
           scores[subject] = clampScore(value?.[subject]);

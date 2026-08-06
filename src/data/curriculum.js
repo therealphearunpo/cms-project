@@ -5,9 +5,7 @@ export const TRACK_OPTIONS = [
   { value: 'social', label: 'Social Science Stream (MoEYS)' },
 ];
 
-export const SHIFT_OPTIONS = [
-  { value: 'Both', label: 'Both Shifts (07:00 - 17:00)' },
-];
+export const SHIFT_OPTIONS = [{ value: 'Both', label: 'Both Shifts (07:00 - 17:00)' }];
 
 export const PERIOD_DURATION_OPTIONS = [
   { value: '50', label: '50 Minutes (MoEYS Standard)' },
@@ -214,6 +212,4 @@ export function generatePratTimetable(track = 'science') {
   };
 }
 
-export const scheduleClassOptions = [
-  ...classOptions.filter((item) => item.value),
-];
+export const scheduleClassOptions = [...classOptions.filter((item) => item.value)];

@@ -39,8 +39,12 @@ export default function FilterBar() {
   } = useAttendanceContext();
   const { filteredStudents } = useFilteredStudents();
   const isAdminTrackingStudents = isAdmin && attendanceScope === 'students';
-  const trackingLabel = isAdminTrackingStudents ? 'Student' : (isAdmin ? 'Teacher' : 'Student');
-  const classFilterOptions = isAdminTrackingStudents ? classOptions : (isAdmin ? teacherDepartmentOptions : classOptions);
+  const trackingLabel = isAdminTrackingStudents ? 'Student' : isAdmin ? 'Teacher' : 'Student';
+  const classFilterOptions = isAdminTrackingStudents
+    ? classOptions
+    : isAdmin
+      ? teacherDepartmentOptions
+      : classOptions;
   const subjectFilterOptions = useMemo(() => {
     if (!isAdminTrackingStudents && !isAdmin) return subjectOptions;
     if (isAdminTrackingStudents) return subjectOptions;
@@ -67,9 +71,7 @@ export default function FilterBar() {
       {/* Top row: Title + Date + View toggle */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex flex-col gap-3">
-          <h1 className="text-2xl font-bold text-gray-800">
-            {trackingLabel} Attendance Tracking
-          </h1>
+          <h1 className="text-2xl font-bold text-gray-800">{trackingLabel} Attendance Tracking</h1>
           {isAdmin && (
             <div className="inline-flex w-fit rounded-lg border border-gray-200 bg-white p-1">
               <button
@@ -81,7 +83,9 @@ export default function FilterBar() {
                   setFilter('selectedShift', '');
                 }}
                 className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                  attendanceScope === 'staff' ? 'bg-primary-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+                  attendanceScope === 'staff'
+                    ? 'bg-primary-600 text-white'
+                    : 'text-gray-600 hover:bg-gray-100'
                 }`}
               >
                 Staff
@@ -94,7 +98,9 @@ export default function FilterBar() {
                   setFilter('selectedSubject', '');
                 }}
                 className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                  attendanceScope === 'students' ? 'bg-primary-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+                  attendanceScope === 'students'
+                    ? 'bg-primary-600 text-white'
+                    : 'text-gray-600 hover:bg-gray-100'
                 }`}
               >
                 Students
@@ -173,9 +179,20 @@ export default function FilterBar() {
           variant="primary"
           size="lg"
           loading={isSubmitting}
-          onClick={() => submitAttendance(filteredStudents.map((s) => s.id), filteredStudents)}
+          onClick={() =>
+            submitAttendance(
+              filteredStudents.map((s) => s.id),
+              filteredStudents
+            )
+          }
         >
-          {isSubmitting ? 'Submitting...' : (isAdminTrackingStudents ? 'Track Student Attendance' : (isAdmin ? 'Track Teacher Attendance by Stream' : 'Take Attendance'))}
+          {isSubmitting
+            ? 'Submitting...'
+            : isAdminTrackingStudents
+              ? 'Track Student Attendance'
+              : isAdmin
+                ? 'Track Teacher Attendance by Stream'
+                : 'Take Attendance'}
         </Button>
       </div>
     </div>

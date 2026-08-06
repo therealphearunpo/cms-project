@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import { HiOutlinePencil, HiOutlinePlus, HiOutlineTrash } from 'react-icons/hi';
 
-import { isFrontendOnly } from '../../config/appMode';
+import { isFrontendOnly } from '../../config/appMode.js';
 import {
   classOptions,
   DEFAULT_CLASS_CODE,
@@ -48,7 +48,9 @@ function saveLocalStudents(students) {
 function normalizeStudentRecord(student, fallbackId = null) {
   const id = student?.id ?? fallbackId ?? `local-${Date.now()}`;
   const name = String(student?.name ?? student?.full_name ?? '').trim();
-  const classCode = String(student?.class ?? student?.class_name ?? '').trim().toUpperCase();
+  const classCode = String(student?.class ?? student?.class_name ?? '')
+    .trim()
+    .toUpperCase();
   const gender = normalizeGender(student?.gender, 'male');
   const email = String(student?.email || '').trim();
   const studentId = String(student?.studentId ?? student?.student_code ?? '').trim();
@@ -210,7 +212,9 @@ export default function StudentsPage() {
       header: 'Source',
       accessor: 'isLocalOnly',
       sortable: true,
-      render: (value) => <Badge variant={value ? 'warning' : 'success'}>{value ? 'Local only' : 'Backend'}</Badge>,
+      render: (value) => (
+        <Badge variant={value ? 'warning' : 'success'}>{value ? 'Local only' : 'Backend'}</Badge>
+      ),
     },
     {
       header: 'Actions',
@@ -319,10 +323,17 @@ export default function StudentsPage() {
 
       if (editingStudent?.isLocalOnly) {
         removeStudent(editingStudent.id);
-        upsertStudent(response?.data && typeof response.data === 'object' ? response.data : buildLocalStudent());
-        setNotification({ type: 'success', message: 'Legacy student record synced to the backend successfully.' });
+        upsertStudent(
+          response?.data && typeof response.data === 'object' ? response.data : buildLocalStudent()
+        );
+        setNotification({
+          type: 'success',
+          message: 'Legacy student record synced to the backend successfully.',
+        });
       } else {
-        upsertStudent(response?.data && typeof response.data === 'object' ? response.data : buildLocalStudent());
+        upsertStudent(
+          response?.data && typeof response.data === 'object' ? response.data : buildLocalStudent()
+        );
         setNotification({
           type: 'success',
           message: editingStudent ? 'Student updated successfully.' : 'Student added successfully.',
@@ -493,7 +504,10 @@ export default function StudentsPage() {
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
-              <label htmlFor="student-class" className="mb-1 block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="student-class"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
                 Class
               </label>
               <select
@@ -502,16 +516,21 @@ export default function StudentsPage() {
                 onChange={(e) => setFormData((prev) => ({ ...prev, class: e.target.value }))}
                 className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
-                {classOptions.filter((opt) => opt.value).map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.value}
-                  </option>
-                ))}
+                {classOptions
+                  .filter((opt) => opt.value)
+                  .map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.value}
+                    </option>
+                  ))}
               </select>
             </div>
 
             <div>
-              <label htmlFor="student-gender" className="mb-1 block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="student-gender"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
                 Gender
               </label>
               <select
@@ -527,7 +546,10 @@ export default function StudentsPage() {
           </div>
 
           <div>
-            <label htmlFor="student-date-of-birth" className="mb-1 block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="student-date-of-birth"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
               Date of Birth
             </label>
             <input
@@ -561,10 +583,18 @@ export default function StudentsPage() {
       >
         <div className="space-y-4">
           <p className="text-sm text-gray-600">
-            Remove <span className="font-semibold text-gray-800">{deletingStudent?.name || 'this student'}</span> from the student list?
+            Remove{' '}
+            <span className="font-semibold text-gray-800">
+              {deletingStudent?.name || 'this student'}
+            </span>{' '}
+            from the student list?
           </p>
           <div className="flex justify-end gap-2">
-            <Button variant="secondary" onClick={() => setDeletingStudent(null)} disabled={isDeleting}>
+            <Button
+              variant="secondary"
+              onClick={() => setDeletingStudent(null)}
+              disabled={isDeleting}
+            >
               Cancel
             </Button>
             <Button variant="danger" loading={isDeleting} onClick={handleDeleteStudent}>

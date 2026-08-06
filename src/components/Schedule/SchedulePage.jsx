@@ -39,7 +39,9 @@ export default function SchedulePage() {
   const isStudent = role === ACCOUNT_ROLES.STUDENT;
   const studentClassCode = String(user?.class || '').trim();
 
-  const [selectedClass, setSelectedClass] = useState(() => studentClassCode || scheduleClassOptions[0]?.value || '7A');
+  const [selectedClass, setSelectedClass] = useState(
+    () => studentClassCode || scheduleClassOptions[0]?.value || '7A'
+  );
   const [track, setTrack] = useState('science');
   const [isEditingCurriculum, setIsEditingCurriculum] = useState(false);
   const [curriculumDraft, setCurriculumDraft] = useState(null);
@@ -91,7 +93,8 @@ export default function SchedulePage() {
   );
 
   const savedRowsOverride = Array.isArray(savedTableMap[tableKey]) ? savedTableMap[tableKey] : null;
-  const renderedRows = isEditingTable && tableDraftRows ? tableDraftRows : (savedRowsOverride || scheduleData.rows);
+  const renderedRows =
+    isEditingTable && tableDraftRows ? tableDraftRows : savedRowsOverride || scheduleData.rows;
   const editableSubjects = useMemo(() => {
     const set = new Set();
     scheduleData.rows.forEach((row) => {
@@ -103,7 +106,8 @@ export default function SchedulePage() {
   }, [scheduleData.rows, scheduleData.dayKeys]);
 
   const startEditCurriculum = () => {
-    const baseCurriculum = curriculumOverride || getCurriculumByClass(selectedClass, effectiveTrack);
+    const baseCurriculum =
+      curriculumOverride || getCurriculumByClass(selectedClass, effectiveTrack);
     setCurriculumDraft({
       notes: baseCurriculum.notes || '',
       subjects: (baseCurriculum.subjects || []).map((subject, idx) => ({
@@ -132,7 +136,10 @@ export default function SchedulePage() {
     const payload = {
       grade,
       track: trackEnabled ? (effectiveTrack === 'social' ? 'Social Science' : 'Science') : null,
-      totalPeriodsRange: [cleanedSubjects.reduce((sum, item) => sum + item.periods, 0), cleanedSubjects.reduce((sum, item) => sum + item.periods, 0)],
+      totalPeriodsRange: [
+        cleanedSubjects.reduce((sum, item) => sum + item.periods, 0),
+        cleanedSubjects.reduce((sum, item) => sum + item.periods, 0),
+      ],
       subjects: cleanedSubjects,
       notes: curriculumDraft.notes.trim() || 'Teacher customized curriculum.',
     };
@@ -180,7 +187,8 @@ export default function SchedulePage() {
       <div>
         <h1 className="text-2xl font-bold text-gray-800">Class Schedule</h1>
         <p className="text-sm text-gray-500 mt-1">
-          Cambodian public school model: Monday-Saturday fixed period timetable aligned with the official curriculum.
+          Cambodian public school model: Monday-Saturday fixed period timetable aligned with the
+          official curriculum.
         </p>
       </div>
 
@@ -203,8 +211,8 @@ export default function SchedulePage() {
 
       {!trackEnabled && (
         <div className="bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 text-sm text-blue-700">
-          Grade {grade} uses the national general foundation curriculum.
-          Track options are enabled from Grade 11 onward.
+          Grade {grade} uses the national general foundation curriculum. Track options are enabled
+          from Grade 11 onward.
         </div>
       )}
 
@@ -226,7 +234,8 @@ export default function SchedulePage() {
       <div className="bg-white rounded-xl shadow-card p-4">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
           <h2 className="text-sm font-semibold text-gray-800">
-            Curriculum Basis - Grade {grade}{scheduleData.track ? ` (${scheduleData.track} Track)` : ''}
+            Curriculum Basis - Grade {grade}
+            {scheduleData.track ? ` (${scheduleData.track} Track)` : ''}
           </h2>
           {isAdmin && (
             <div className="flex items-center gap-2">
@@ -331,10 +340,7 @@ export default function SchedulePage() {
               onClick={() =>
                 setCurriculumDraft((prev) => ({
                   ...prev,
-                  subjects: [
-                    ...prev.subjects,
-                    { id: `${Date.now()}`, subject: '', periods: '1' },
-                  ],
+                  subjects: [...prev.subjects, { id: `${Date.now()}`, subject: '', periods: '1' }],
                 }))
               }
               className="px-3 py-1.5 text-xs font-medium rounded-lg bg-purple-100 text-purple-700 hover:bg-purple-200"
@@ -437,9 +443,9 @@ export default function SchedulePage() {
                         </select>
                       ) : (
                         <span
-                          className={`inline-block px-3 py-1.5 rounded-lg text-xs font-medium border ${
-                            subjectClassName(row[day])
-                          }`}
+                          className={`inline-block px-3 py-1.5 rounded-lg text-xs font-medium border ${subjectClassName(
+                            row[day]
+                          )}`}
                         >
                           {row[day]}
                         </span>

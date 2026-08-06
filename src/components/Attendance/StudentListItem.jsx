@@ -27,25 +27,19 @@ const StudentListItem = memo(function StudentListItem({ student }) {
       <div className="flex items-center gap-2">
         <button
           onClick={() => markAttendance(student.id, 'present')}
-          className={`attendance-btn ${
-            status === 'present' ? 'present' : 'inactive'
-          }`}
+          className={`attendance-btn ${status === 'present' ? 'present' : 'inactive'}`}
         >
           P
         </button>
         <button
           onClick={() => markAttendance(student.id, 'absent')}
-          className={`attendance-btn ${
-            status === 'absent' ? 'absent' : 'inactive'
-          }`}
+          className={`attendance-btn ${status === 'absent' ? 'absent' : 'inactive'}`}
         >
           A
         </button>
         <button
           onClick={() => markAttendance(student.id, 'late')}
-          className={`attendance-btn ${
-            status === 'late' ? 'late' : 'inactive'
-          }`}
+          className={`attendance-btn ${status === 'late' ? 'late' : 'inactive'}`}
         >
           L
         </button>

@@ -91,11 +91,7 @@ function round(num) {
 
 function createCsv(rows) {
   return rows
-    .map((row) =>
-      row
-        .map((value) => `"${String(value ?? '').replace(/"/g, '""')}"`)
-        .join(',')
-    )
+    .map((row) => row.map((value) => `"${String(value ?? '').replace(/"/g, '""')}"`).join(','))
     .join('\n');
 }
 
@@ -104,7 +100,8 @@ function getReportMeta(reportType) {
     return {
       eyebrow: 'Academic Performance Analytics',
       title: 'Subject submission performance overview',
-      description: 'Compare submission strength across subjects and identify variation in performance indicators.',
+      description:
+        'Compare submission strength across subjects and identify variation in performance indicators.',
       icon: HiOutlinePresentationChartLine,
     };
   }
@@ -121,7 +118,8 @@ function getReportMeta(reportType) {
   return {
     eyebrow: 'Attendance Analytics Center',
     title: 'Attendance trend and monitoring overview',
-    description: 'Track attendance movement over time and review present, absent, and late percentages.',
+    description:
+      'Track attendance movement over time and review present, absent, and late percentages.',
     icon: HiOutlineClipboardCheck,
   };
 }
@@ -130,7 +128,9 @@ export default function ReportsPage() {
   const [reportType, setReportType] = useState('attendance');
   const [period, setPeriod] = useState('monthly');
   const [selectedClass, setSelectedClass] = useState('all');
-  const [recentReports, setRecentReports] = useState(() => safeReadJson(REPORT_HISTORY_KEY, []).slice(0, 8));
+  const [recentReports, setRecentReports] = useState(() =>
+    safeReadJson(REPORT_HISTORY_KEY, []).slice(0, 8)
+  );
   const [students, setStudents] = useState(() => getMergedStudents());
   const [assignments, setAssignments] = useState(() => safeReadJson(LOCAL_ASSIGNMENTS_KEY, []));
   const attendanceRecords = useMemo(() => safeReadJson(ATTENDANCE_STORAGE_KEY, {}), []);
@@ -177,7 +177,8 @@ export default function ReportsPage() {
           setAssignments([
             ...apiAssignments,
             ...localAssignments.filter(
-              (localItem) => !apiAssignments.some((apiItem) => String(apiItem.id) === String(localItem.id))
+              (localItem) =>
+                !apiAssignments.some((apiItem) => String(apiItem.id) === String(localItem.id))
             ),
           ]);
         }
@@ -202,7 +203,9 @@ export default function ReportsPage() {
 
   const attendanceTrend = useMemo(() => {
     const studentKeys = new Set(
-      filteredStudents.map((student) => String(student.id || student.studentId || student.email || student.name))
+      filteredStudents.map((student) =>
+        String(student.id || student.studentId || student.email || student.name)
+      )
     );
     const buckets = {};
 
@@ -243,7 +246,9 @@ export default function ReportsPage() {
         };
       });
 
-    return sorted.length > 0 ? sorted : [{ period: 'No Data', present: 0, absent: 0, late: 0, marked: 0 }];
+    return sorted.length > 0
+      ? sorted
+      : [{ period: 'No Data', present: 0, absent: 0, late: 0, marked: 0 }];
   }, [attendanceRecords, filteredStudents, period]);
 
   const performanceData = useMemo(() => {
@@ -253,7 +258,9 @@ export default function ReportsPage() {
 
     const subjectMap = {};
     scoped.forEach((assignment) => {
-      const subject = validSubjects.has(assignment.subject) ? assignment.subject : assignment.subject || 'Unknown';
+      const subject = validSubjects.has(assignment.subject)
+        ? assignment.subject
+        : assignment.subject || 'Unknown';
       const total = Math.max(1, Number(assignment.total) || 1);
       const rate = Math.min(100, Math.max(0, (Number(assignment.submissions) / total) * 100));
 
@@ -359,7 +366,13 @@ export default function ReportsPage() {
         ['Period', period],
         [],
         ['Bucket', 'Present %', 'Absent %', 'Late %', 'Marked Records'],
-        ...attendanceTrend.map((row) => [row.period, row.present, row.absent, row.late, row.marked]),
+        ...attendanceTrend.map((row) => [
+          row.period,
+          row.present,
+          row.absent,
+          row.late,
+          row.marked,
+        ]),
       ];
       filename = `attendance-report-${stamp}.csv`;
     } else if (reportType === 'performance') {
@@ -409,7 +422,10 @@ export default function ReportsPage() {
   };
 
   const classesWithAll = useMemo(
-    () => [{ value: 'all', label: 'All Classes' }, ...classOptions.filter((option) => option.value)],
+    () => [
+      { value: 'all', label: 'All Classes' },
+      ...classOptions.filter((option) => option.value),
+    ],
     []
   );
 
@@ -435,9 +451,12 @@ export default function ReportsPage() {
                 <ReportIcon className="h-6 w-6" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">Export-ready analytics</p>
+                <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">
+                  Export-ready analytics
+                </p>
                 <p className="mt-2 text-sm leading-6 text-gray-600 dark:text-gray-300">
-                  The reporting center stays tied to current class scope, stored attendance, and assignment activity.
+                  The reporting center stays tied to current class scope, stored attendance, and
+                  assignment activity.
                 </p>
               </div>
             </div>
@@ -451,7 +470,9 @@ export default function ReportsPage() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{stat.label}</p>
-                <p className="mt-2 text-3xl font-bold text-gray-800 dark:text-gray-100">{stat.value}</p>
+                <p className="mt-2 text-3xl font-bold text-gray-800 dark:text-gray-100">
+                  {stat.value}
+                </p>
               </div>
               <div className={`rounded-2xl p-3 ${stat.tone}`}>
                 <stat.icon className="h-6 w-6" />
@@ -591,14 +612,20 @@ export default function ReportsPage() {
             <div className="mt-5 space-y-4">
               <div className="rounded-2xl bg-gray-50 px-4 py-4 dark:bg-slate-950/50">
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-sm text-gray-600 dark:text-gray-300">Students in Scope</span>
-                  <span className="text-lg font-bold text-gray-800 dark:text-gray-100">{summaryStats.students}</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-300">
+                    Students in Scope
+                  </span>
+                  <span className="text-lg font-bold text-gray-800 dark:text-gray-100">
+                    {summaryStats.students}
+                  </span>
                 </div>
               </div>
               <div className="rounded-2xl bg-gray-50 px-4 py-4 dark:bg-slate-950/50">
                 <div className="flex items-center justify-between gap-3">
                   <span className="text-sm text-gray-600 dark:text-gray-300">Average Present</span>
-                  <span className="text-lg font-bold text-green-600">{summaryStats.avgPresent}%</span>
+                  <span className="text-lg font-bold text-green-600">
+                    {summaryStats.avgPresent}%
+                  </span>
                 </div>
               </div>
               <div className="rounded-2xl bg-gray-50 px-4 py-4 dark:bg-slate-950/50">
@@ -609,14 +636,22 @@ export default function ReportsPage() {
               </div>
               <div className="rounded-2xl bg-gray-50 px-4 py-4 dark:bg-slate-950/50">
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-sm text-gray-600 dark:text-gray-300">Performance Average</span>
-                  <span className="text-lg font-bold text-blue-600">{summaryStats.avgPerformance}%</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-300">
+                    Performance Average
+                  </span>
+                  <span className="text-lg font-bold text-blue-600">
+                    {summaryStats.avgPerformance}%
+                  </span>
                 </div>
               </div>
               <div className="rounded-2xl bg-gray-50 px-4 py-4 dark:bg-slate-950/50">
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-sm text-gray-600 dark:text-gray-300">Subjects Reported</span>
-                  <span className="text-lg font-bold text-gray-800 dark:text-gray-100">{summaryStats.subjects}</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-300">
+                    Subjects Reported
+                  </span>
+                  <span className="text-lg font-bold text-gray-800 dark:text-gray-100">
+                    {summaryStats.subjects}
+                  </span>
                 </div>
               </div>
             </div>
@@ -636,7 +671,10 @@ export default function ReportsPage() {
                 </div>
               ) : (
                 recentReports.map((item) => (
-                  <div key={item.id} className="rounded-2xl bg-gray-50 px-4 py-4 dark:bg-slate-950/50">
+                  <div
+                    key={item.id}
+                    className="rounded-2xl bg-gray-50 px-4 py-4 dark:bg-slate-950/50"
+                  >
                     <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">
                       {item.type.charAt(0).toUpperCase() + item.type.slice(1)} | {item.classLabel}
                     </p>

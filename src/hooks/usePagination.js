@@ -13,8 +13,8 @@ export function usePagination(items, itemsPerPage = 10) {
   }, [effectivePage, items, itemsPerPage]);
 
   const paginate = (pageNumber) => setCurrentPage(Math.min(Math.max(pageNumber, 1), totalPages));
-  const nextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
-  const prevPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
+  const nextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
 
   return {
     currentPage: effectivePage,

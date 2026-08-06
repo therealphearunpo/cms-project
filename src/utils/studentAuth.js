@@ -21,9 +21,7 @@ export const makeStudentEmail = (name, classCode) => {
 };
 
 export const normalizeDateOfBirth = (value, _seedValue = 1) => {
-  const raw = value instanceof Date
-    ? value.toISOString().slice(0, 10)
-    : String(value || '').trim();
+  const raw = value instanceof Date ? value.toISOString().slice(0, 10) : String(value || '').trim();
   const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
   if (!match) return '';
 
@@ -35,7 +33,10 @@ export const normalizeDateOfBirth = (value, _seedValue = 1) => {
 };
 
 export const getLastName = (name) => {
-  const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+  const parts = String(name || '')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
   if (!parts.length) return 'student';
   return parts[parts.length - 1].toLowerCase();
 };
@@ -73,9 +74,13 @@ export const normalizeStudentIds = (items) => {
 export const normalizeStudentAccount = (student, seedValue = 1) => {
   const dateOfBirth = normalizeDateOfBirth(student?.dateOfBirth ?? student?.dob, seedValue);
   const gender = normalizeGender(student?.gender, seedValue % 2 === 0 ? 'male' : 'female');
-  const classCode = String(student?.class ?? student?.class_name ?? '').trim().toUpperCase();
+  const classCode = String(student?.class ?? student?.class_name ?? '')
+    .trim()
+    .toUpperCase();
   const studentId = String(student?.studentId ?? student?.student_code ?? '').trim();
-  const email = String(student?.email || '').trim() || makeStudentEmail(student?.name || student?.full_name, classCode);
+  const email =
+    String(student?.email || '').trim() ||
+    makeStudentEmail(student?.name || student?.full_name, classCode);
   const avatarSeed = email || student?.name || studentId || `student-${seedValue}`;
   const hasAccount = Boolean(student?.hasAccount ?? (student?.userId && email && dateOfBirth));
   return {

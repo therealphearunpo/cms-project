@@ -42,22 +42,27 @@ export default function createMarksheetColumns({ canEditMarks, subjects, openEdi
       render: (value) => {
         if (!value) return <span className="text-xs text-gray-400">Not entered</span>;
         const variant =
-          value === 'A' ? 'success' : value === 'B' ? 'primary' : value === 'C' ? 'warning' : 'danger';
+          value === 'A'
+            ? 'success'
+            : value === 'B'
+              ? 'primary'
+              : value === 'C'
+                ? 'warning'
+                : 'danger';
         return <Badge variant={variant}>{value}</Badge>;
       },
     },
     {
       header: 'Action',
       accessor: 'action',
-      render: (_value, row) => (
+      render: (_value, row) =>
         canEditMarks ? (
           <Button size="sm" variant="secondary" onClick={() => openEditModal(row)}>
             Edit
           </Button>
         ) : (
           <span className="text-xs text-gray-400">View only</span>
-        )
-      ),
+        ),
     },
   ];
 }

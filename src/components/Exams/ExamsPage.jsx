@@ -170,7 +170,9 @@ export default function ExamsPage() {
       accessor: 'status',
       render: (value) => (
         <Badge variant={examStatusColors[value]}>
-          {String(value || '').charAt(0).toUpperCase() + String(value || '').slice(1)}
+          {String(value || '')
+            .charAt(0)
+            .toUpperCase() + String(value || '').slice(1)}
         </Badge>
       ),
     },
@@ -204,25 +206,51 @@ export default function ExamsPage() {
     },
   ];
 
-  const visibleExams = isStudent && studentClassCode
-    ? exams.filter((exam) => String(exam?.class || '').trim() === studentClassCode)
-    : exams;
-  const visibleAnnouncements = isStudent && studentClassCode
-    ? announcements.filter((item) => item.classCode === 'ALL' || item.classCode === studentClassCode)
-    : announcements;
+  const visibleExams =
+    isStudent && studentClassCode
+      ? exams.filter((exam) => String(exam?.class || '').trim() === studentClassCode)
+      : exams;
+  const visibleAnnouncements =
+    isStudent && studentClassCode
+      ? announcements.filter(
+          (item) => item.classCode === 'ALL' || item.classCode === studentClassCode
+        )
+      : announcements;
 
   const stats = [
-    { label: 'Total Exams', value: visibleExams.length, icon: HiOutlineClipboardList, color: 'bg-blue-500' },
-    { label: 'Upcoming', value: visibleExams.filter((e) => e.status === 'scheduled').length, icon: HiOutlineCalendar, color: 'bg-yellow-500' },
-    { label: 'Ongoing', value: visibleExams.filter((e) => e.status === 'ongoing').length, icon: HiOutlineClipboardList, color: 'bg-green-500' },
-    { label: 'Completed', value: visibleExams.filter((e) => e.status === 'completed').length, icon: HiOutlineUsers, color: 'bg-purple-500' },
+    {
+      label: 'Total Exams',
+      value: visibleExams.length,
+      icon: HiOutlineClipboardList,
+      color: 'bg-blue-500',
+    },
+    {
+      label: 'Upcoming',
+      value: visibleExams.filter((e) => e.status === 'scheduled').length,
+      icon: HiOutlineCalendar,
+      color: 'bg-yellow-500',
+    },
+    {
+      label: 'Ongoing',
+      value: visibleExams.filter((e) => e.status === 'ongoing').length,
+      icon: HiOutlineClipboardList,
+      color: 'bg-green-500',
+    },
+    {
+      label: 'Completed',
+      value: visibleExams.filter((e) => e.status === 'completed').length,
+      icon: HiOutlineUsers,
+      color: 'bg-purple-500',
+    },
   ];
 
   const handleCreateAnnouncement = (payload) => {
     const normalized = normalizeAnnouncement(payload);
     const next = editingAnnouncement
       ? writeAnnouncements(
-          announcements.map((item) => (String(item.id) === String(editingAnnouncement.id) ? normalized : item))
+          announcements.map((item) =>
+            String(item.id) === String(editingAnnouncement.id) ? normalized : item
+          )
         )
       : writeAnnouncements([normalized, ...announcements]);
     setAnnouncements(next);
@@ -306,11 +334,15 @@ export default function ExamsPage() {
                   <div>
                     <p className="text-sm font-semibold text-gray-800">{item.title}</p>
                     <p className="text-xs text-gray-500 mt-0.5">
-                      Class: {item.classCode === 'ALL' ? 'All Classes' : item.classCode} | Date: {item.examDate || '-'} | Time: {item.examTime || '-'} | Posted by {item.postedBy}
+                      Class: {item.classCode === 'ALL' ? 'All Classes' : item.classCode} | Date:{' '}
+                      {item.examDate || '-'} | Time: {item.examTime || '-'} | Posted by{' '}
+                      {item.postedBy}
                     </p>
                   </div>
                   <div className="flex items-start gap-2">
-                    <p className="text-[11px] text-gray-400">{new Date(item.postedAt).toLocaleString()}</p>
+                    <p className="text-[11px] text-gray-400">
+                      {new Date(item.postedAt).toLocaleString()}
+                    </p>
                     {isAdmin && (
                       <div className="flex items-center gap-1">
                         <button
@@ -417,11 +449,7 @@ export default function ExamsPage() {
         />
       </Modal>
 
-      <Modal
-        isOpen={selectedExam}
-        onClose={() => setSelectedExam(null)}
-        title={selectedExam?.name}
-      >
+      <Modal isOpen={selectedExam} onClose={() => setSelectedExam(null)} title={selectedExam?.name}>
         {selectedExam && <ExamDetails exam={selectedExam} isAdmin={isAdmin} />}
       </Modal>
     </div>
@@ -538,7 +566,9 @@ function CreateExamForm({ onSuccess }) {
             min="15"
             step="15"
             value={formData.duration}
-            onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value, 10) || 0 })}
+            onChange={(e) =>
+              setFormData({ ...formData, duration: parseInt(e.target.value, 10) || 0 })
+            }
             className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
         </div>
@@ -546,7 +576,10 @@ function CreateExamForm({ onSuccess }) {
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label htmlFor="exam-total-marks" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="exam-total-marks"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Total Marks
           </label>
           <input
@@ -555,13 +588,18 @@ function CreateExamForm({ onSuccess }) {
             required
             min="1"
             value={formData.totalMarks}
-            onChange={(e) => setFormData({ ...formData, totalMarks: parseInt(e.target.value, 10) || 0 })}
+            onChange={(e) =>
+              setFormData({ ...formData, totalMarks: parseInt(e.target.value, 10) || 0 })
+            }
             className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
         </div>
 
         <div>
-          <label htmlFor="exam-passing-marks" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="exam-passing-marks"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Passing Marks
           </label>
           <input
@@ -570,7 +608,9 @@ function CreateExamForm({ onSuccess }) {
             required
             min="1"
             value={formData.passingMarks}
-            onChange={(e) => setFormData({ ...formData, passingMarks: parseInt(e.target.value, 10) || 0 })}
+            onChange={(e) =>
+              setFormData({ ...formData, passingMarks: parseInt(e.target.value, 10) || 0 })
+            }
             className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
         </div>
@@ -654,7 +694,10 @@ function ExamAnnouncementForm({ onSubmit, postedBy, initialData }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       <div>
-        <label htmlFor="announcement-title" className="block text-sm font-medium text-gray-700 mb-1">
+        <label
+          htmlFor="announcement-title"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
           Announcement Title
         </label>
         <input
@@ -669,7 +712,10 @@ function ExamAnnouncementForm({ onSubmit, postedBy, initialData }) {
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label htmlFor="announcement-date" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="announcement-date"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Exam Date
           </label>
           <input
@@ -681,7 +727,10 @@ function ExamAnnouncementForm({ onSubmit, postedBy, initialData }) {
           />
         </div>
         <div>
-          <label htmlFor="announcement-time" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="announcement-time"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Exam Time
           </label>
           <input
@@ -695,7 +744,10 @@ function ExamAnnouncementForm({ onSubmit, postedBy, initialData }) {
       </div>
 
       <div>
-        <label htmlFor="announcement-class" className="block text-sm font-medium text-gray-700 mb-1">
+        <label
+          htmlFor="announcement-class"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
           Target Class
         </label>
         <select
@@ -705,16 +757,21 @@ function ExamAnnouncementForm({ onSubmit, postedBy, initialData }) {
           className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
         >
           <option value="ALL">All Classes</option>
-          {classOptions.filter((opt) => opt.value).map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.value}
-            </option>
-          ))}
+          {classOptions
+            .filter((opt) => opt.value)
+            .map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.value}
+              </option>
+            ))}
         </select>
       </div>
 
       <div>
-        <label htmlFor="announcement-message" className="block text-sm font-medium text-gray-700 mb-1">
+        <label
+          htmlFor="announcement-message"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
           Message
         </label>
         <textarea
@@ -745,11 +802,13 @@ function ExamAnnouncementForm({ onSubmit, postedBy, initialData }) {
               <button
                 type="button"
                 className="text-red-600 hover:underline"
-                onClick={() => setExistingAttachment({
-                  attachmentName: '',
-                  attachmentType: '',
-                  attachmentDataUrl: '',
-                })}
+                onClick={() =>
+                  setExistingAttachment({
+                    attachmentName: '',
+                    attachmentType: '',
+                    attachmentDataUrl: '',
+                  })
+                }
               >
                 Remove attachment
               </button>
@@ -781,7 +840,9 @@ function ExamDetails({ exam, isAdmin }) {
         </div>
         <div className="p-4 bg-gray-50 rounded-lg">
           <p className="text-xs text-gray-500">Date & Time</p>
-          <p className="text-sm font-medium text-gray-800 mt-1">{new Date(exam.date).toLocaleString()}</p>
+          <p className="text-sm font-medium text-gray-800 mt-1">
+            {new Date(exam.date).toLocaleString()}
+          </p>
         </div>
         <div className="p-4 bg-gray-50 rounded-lg">
           <p className="text-xs text-gray-500">Duration</p>
@@ -797,7 +858,9 @@ function ExamDetails({ exam, isAdmin }) {
         </div>
         <div className="p-4 bg-gray-50 rounded-lg">
           <p className="text-xs text-gray-500">Uploaded By</p>
-          <p className="text-sm font-medium text-gray-800 mt-1">{exam.uploadedBy || 'School Management'}</p>
+          <p className="text-sm font-medium text-gray-800 mt-1">
+            {exam.uploadedBy || 'School Management'}
+          </p>
         </div>
       </div>
 

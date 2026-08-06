@@ -431,7 +431,7 @@ export default function ReportsPage() {
 
   return (
     <div className="space-y-6">
-      <section className="institution-card overflow-hidden rounded-[28px] px-6 py-6 sm:px-8">
+      <section className="glass-card overflow-hidden rounded-[28px] px-6 py-6 sm:px-8">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)] lg:items-end">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[var(--moeys-gold)]">

@@ -2,6 +2,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "./styles/design-tokens.css";
 
 :root {
   --brand-primary: #2e3a59; /* deep slate */
@@ -9,6 +10,23 @@
   --brand-accent: #e76f51; /* burnt orange */
   --bg-light: #f8fafc;
   --bg-dark: #080c14;
+  /* Design Tokens */
+  --spacing-xs: 0.25rem; /* 4px */
+  --spacing-sm: 0.5rem;  /* 8px */
+  --spacing-md: 1rem;    /* 16px */
+  --spacing-lg: 1.5rem;  /* 24px */
+  --spacing-xl: 2rem;    /* 32px */
+  --radius-sm: 0.25rem;  /* 4px */
+  --radius-md: 0.5rem;   /* 8px */
+  --radius-lg: 0.75rem;  /* 12px */
+  --shadow-card: 0 10px 24px rgba(16, 33, 60, 0.08);
+  --font-size-sm: 0.875rem; /* 14px */
+  --font-size-base: 1rem;   /* 16px */
+  --font-size-lg: 1.125rem; /* 18px */
+  --font-size-xl: 1.25rem;  /* 20px */
+  --font-size-2xl: 1.5rem;  /* 24px */
+  --font-size-3xl: 1.875rem;/* 30px */
+  --font-size-4xl: 2.25rem; /* 36px */
 }
 
 @layer base {
@@ -88,13 +106,11 @@
 }
 
 .institution-card {
-  background: #ffffff;
-  border: 1px solid rgba(226, 232, 240, 0.85);
-  box-shadow:
-    0 4px 20px -2px rgba(15, 23, 42, 0.04),
-    0 1px 2px 0 rgba(15, 23, 42, 0.02);
-  transition:
-    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
     box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
     border-color 0.25s ease;
 }
@@ -107,7 +123,7 @@
 }
 
 .header-surface {
-  background: rgba(255, 255, 255, 0.88);
+  background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.55));
   border-bottom: 1px solid rgba(226, 232, 240, 0.8);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -131,9 +147,10 @@
   box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.2);
 }
 
-.footer-shell {
-  background: #0b1120;
-  border-top: 1px solid #1e293b;
+.sidebar-glass {
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(12px);
+  border-right: 1px solid rgba(255,255,255,0.08);
 }
 
 .footer-panel-title {

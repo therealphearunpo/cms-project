@@ -231,6 +231,7 @@ export default function Header({ onMenuToggle, isMenuEnabled, onMenuVisibilityTo
 
   const executeSearchResult = (entry) => {
     setSearchOpen(false);
+    setQuery('');
     setFocusIndex(-1);
     if (!entry) return;
     navigate(entry.path);

@@ -13,7 +13,7 @@ import {
   HiOutlineSearch,
   HiOutlineX,
 } from 'react-icons/hi';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 
 import { ACCOUNT_ROLES, normalizeRole } from '../../constants/roles';
 import { useAuth } from '../../context/AuthContext';
@@ -74,6 +74,7 @@ const menuItems = [
 export default function Sidebar({ isOpen, onClose, onMenuVisibilityToggle }) {
   const { user } = useAuth();
   const role = normalizeRole(user?.role);
+  const location = useLocation();
   const visibleMenuItems = menuItems.filter(
     (item) => item.roles.includes(role) && (!item.adminCenterOnly || user?.isAdminCenterMember)
   );
@@ -97,7 +98,7 @@ export default function Sidebar({ isOpen, onClose, onMenuVisibilityToggle }) {
         className={`
           fixed top-0 left-0 h-full w-64 bg-slate-900 border-r border-slate-800 z-50
           flex flex-col
-          transform transition-transform duration-300 ease-in-out
+          transform transition-transform duration-500 ease-in-out
           lg:translate-x-0 shadow-2xl shadow-slate-950/40
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
@@ -127,15 +128,7 @@ export default function Sidebar({ isOpen, onClose, onMenuVisibilityToggle }) {
             <HiOutlineX className="w-4 h-4" />
           </button>
 
-          {/* Desktop hide button */}
-          <button
-            type="button"
-            onClick={onMenuVisibilityToggle}
-            className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors hidden lg:flex flex-shrink-0"
-            aria-label="Hide sidebar"
-          >
-            <HiOutlineX className="w-4 h-4" />
-          </button>
+
         </div>
 
         {/* Navigation links */}
@@ -144,7 +137,12 @@ export default function Sidebar({ isOpen, onClose, onMenuVisibilityToggle }) {
             <NavLink
               key={item.path}
               to={item.path}
-              onClick={onClose}
+              onClick={() => {
+            if (location.pathname === item.path) {
+              onClose();
+              onMenuVisibilityToggle();
+            }
+          }}
               className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
             >
               <item.icon className="w-5 h-5 flex-shrink-0" />

@@ -6,17 +6,18 @@ import {
   HiOutlineChartBar,
   HiOutlineClipboardCheck,
   HiOutlineClock,
+  HiOutlineDatabase,
   HiOutlineDocumentText,
+  HiOutlineLightningBolt,
   HiOutlineSparkles,
   HiOutlineTrendingUp,
   HiOutlineUsers,
   HiOutlineCheckCircle,
-  HiOutlineLightningBolt,
   HiOutlineCalendar,
-  HiOutlineDatabase,
 } from 'react-icons/hi';
 import { useNavigate } from 'react-router-dom';
 
+import MetricCard from './MetricCard';
 import { ACCOUNT_ROLES, normalizeRole } from '../../constants/roles';
 import { useAuth } from '../../context/AuthContext';
 import { classOptions } from '../../data/students';
@@ -405,36 +406,15 @@ export default function DashboardPage() {
       {/* KPI Ribbons / Metric Cards */}
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {stats.map((stat) => (
-          <article
+          <MetricCard
             key={stat.label}
-            className="institution-card rounded-2xl p-5 hover:border-blue-500/50 transition-all duration-300 group"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <span className="inline-block px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
-                  {stat.badge}
-                </span>
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                  {stat.label}
-                </p>
-                <p className="mt-1.5 text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                  {stat.value}
-                </p>
-              </div>
-              <div
-                className={`rounded-xl p-3 ${stat.tone} flex-shrink-0 group-hover:scale-110 transition-transform`}
-              >
-                <stat.icon className="h-6 w-6" />
-              </div>
-            </div>
-            <div className="mt-4 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-3">
-              <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold">
-                <HiOutlineTrendingUp className="h-4 w-4" />
-                {stat.trend}
-              </span>
-              <span className="text-[10px] text-slate-400">Real-time</span>
-            </div>
-          </article>
+            label={stat.label}
+            value={stat.value}
+            badge={stat.badge}
+            trend={stat.trend}
+            tone={stat.tone}
+            icon={stat.icon}
+          />
         ))}
       </section>
 

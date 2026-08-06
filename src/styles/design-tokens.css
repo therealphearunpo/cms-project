@@ -1,0 +1,69 @@
+/* Design Tokens */
+:root {
+  /* Primary Colors */
+  --color-primary: #3B82F6;
+  --color-dark: #1A2847;
+  --color-navy: #0F172A;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+
+  /* Neutral Colors */
+  --color-gray-600: #64748B;
+  --color-gray-400: #94A3B8;
+  --color-gray-100: #F1F5F9;
+
+  /* Subject Colors */
+  --subject-languages: #FED7AA;
+  --subject-math: #FCA5A5;
+  --subject-science: #E9D5FF;
+  --subject-studies: #BFDBFE;
+  --subject-pe: #A7F3D0;
+  --subject-ict: #DDD6FE;
+  --subject-enrollment: #0F172A; /* fallback for enrollment */
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+
+  /* Border radius */
+  --radius-btn: 6px;
+  --radius-card: 12px;
+  --radius-modal: 16px;
+  --radius-large: 20px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.2);
+  --shadow-xl: 0 20px 25px rgba(0,0,0,0.3);
+
+  /* Typography */
+  --font-display: 'Inter', 'Poppins', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'Courier New', Monaco, monospace;
+
+  --size-h1: 36px;   --weight-h1: 700;
+  --size-h2: 28px;   --weight-h2: 700;
+  --size-h3: 20px;   --weight-h3: 700;
+  --size-h4: 16px;   --weight-h4: 700;
+  --size-body: 14px; --weight-body: 400; --lh-body: 1.6; --ls-body: 0.3px;
+  --size-data: 32px; --weight-data: 700;
+  --size-label: 12px; --weight-label: 500; --ls-label: 1.2px; --lh-label: 1.4;
+  --size-caption: 11px; --weight-caption: 400;
+}
+
+html, body {
+  font-family: var(--font-body);
+  font-size: var(--size-body);
+  line-height: var(--lh-body);
+  letter-spacing: var(--ls-body);
+  background-color: var(--color-dark);
+  color: var(--color-gray-600);
+  margin: 0;
+  padding: 0;
+}

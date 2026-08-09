@@ -61,7 +61,7 @@ export function getGradeFromClassCode(classCode) {
   return Number.isFinite(parsed) ? parsed : 7;
 }
 
-export function getCurriculumByClass(classCode, track = 'science') {
+export function getCurriculumByClass(classCode, _track = 'science') {
   const grade = getGradeFromClassCode(classCode);
   // Grades 7–11 share the same unified curriculum (no track distinction)
   if (grade <= 11) {

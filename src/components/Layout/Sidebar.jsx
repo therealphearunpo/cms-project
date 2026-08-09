@@ -127,8 +127,6 @@ export default function Sidebar({ isOpen, onClose, onMenuVisibilityToggle }) {
           >
             <HiOutlineX className="w-4 h-4" />
           </button>
-
-
         </div>
 
         {/* Navigation links */}
@@ -138,11 +136,11 @@ export default function Sidebar({ isOpen, onClose, onMenuVisibilityToggle }) {
               key={item.path}
               to={item.path}
               onClick={() => {
-            if (location.pathname === item.path) {
-              onClose();
-              onMenuVisibilityToggle();
-            }
-          }}
+                if (location.pathname === item.path) {
+                  onClose();
+                  onMenuVisibilityToggle();
+                }
+              }}
               className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
             >
               <item.icon className="w-5 h-5 flex-shrink-0" />

@@ -148,7 +148,35 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-6 pt-5 border-t border-slate-700/60 text-center">
+          <div className="mt-6 pt-5 border-t border-slate-700/60">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2.5 text-center">
+              Quick Demo Accounts
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              {[
+                { role: 'admin', email: 'admin@school.edu', password: 'Admin1234' },
+                { role: 'teacher', email: 'teacher@school.edu', password: 'Teacher1234' },
+                { role: 'student', email: 'student@school.edu', password: 'Student1234' },
+              ].map((demo) => (
+                <button
+                  key={demo.role}
+                  type="button"
+                  onClick={() => {
+                    setEmail(demo.email);
+                    setPassword(demo.password);
+                  }}
+                  className="px-2.5 py-2 bg-slate-900/60 hover:bg-slate-700/60 border border-slate-700 rounded-xl text-slate-300 text-xs transition text-center hover:border-blue-500/50"
+                >
+                  <span className="font-semibold text-slate-200 capitalize">{demo.role}</span>
+                  <span className="block text-[11px] text-slate-400 truncate">
+                    {demo.role} : {demo.email}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-5 pt-4 border-t border-slate-700/60 text-center">
             <p className="text-xs text-slate-400">
               Ministry of Education, Youth and Sport • Cambodia
             </p>

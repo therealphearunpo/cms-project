@@ -1,0 +1,42 @@
+[
+  {
+    "id": "asg-301",
+    "title": "Calculus and Trigonometric Functions",
+    "classCode": "12A",
+    "subject": "Mathematics",
+    "dueDate": "2026-08-20",
+    "submissions": 38,
+    "total": 42,
+    "status": "active"
+  },
+  {
+    "id": "asg-302",
+    "title": "Khmer Classical Literature Essay",
+    "classCode": "12B",
+    "subject": "Khmer Language & Literature",
+    "dueDate": "2026-08-22",
+    "submissions": 40,
+    "total": 40,
+    "status": "active"
+  },
+  {
+    "id": "asg-303",
+    "title": "Electromagnetism Physics Lab Report",
+    "classCode": "11A",
+    "subject": "Physics",
+    "dueDate": "2026-08-25",
+    "submissions": 32,
+    "total": 38,
+    "status": "active"
+  },
+  {
+    "id": "asg-304",
+    "title": "World History & Ancient Civilizations",
+    "classCode": "10A",
+    "subject": "History",
+    "dueDate": "2026-08-28",
+    "submissions": 35,
+    "total": 41,
+    "status": "active"
+  }
+]

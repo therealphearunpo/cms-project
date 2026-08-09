@@ -3,7 +3,6 @@ import React, { useMemo, useState } from 'react';
 import { ACCOUNT_ROLES, normalizeRole } from '../../constants/roles';
 import { useAuth } from '../../context/AuthContext';
 import {
-  TRACK_OPTIONS,
   generateOfficialTimetable,
   getCurriculumByClass,
   getGradeFromClassCode,
@@ -42,16 +41,23 @@ export default function SchedulePage() {
   const [selectedClass, setSelectedClass] = useState(
     () => studentClassCode || scheduleClassOptions[0]?.value || '7A'
   );
-  const [track, setTrack] = useState('science');
+
   const [isEditingCurriculum, setIsEditingCurriculum] = useState(false);
   const [curriculumDraft, setCurriculumDraft] = useState(null);
   const [isEditingTable, setIsEditingTable] = useState(false);
   const [tableDraftRows, setTableDraftRows] = useState(null);
 
   const grade = useMemo(() => getGradeFromClassCode(selectedClass), [selectedClass]);
-  const trackEnabled = grade >= 11;
-  const effectiveTrack = trackEnabled ? track : 'science';
-  const curriculumKey = `${selectedClass}-${trackEnabled ? track : 'general'}`;
+  // Determine track automatically for grade 12 based on class suffix
+  const effectiveTrack = useMemo(() => {
+    if (grade === 12) {
+      const suffix = String(selectedClass).trim().toUpperCase().slice(-1);
+      return suffix === 'C' ? 'social' : 'science';
+    }
+    // For grades 7‑11 the track is irrelevant; default to 'science' to satisfy API
+    return 'science';
+  }, [grade, selectedClass]);
+  const curriculumKey = `${selectedClass}-${grade === 12 ? effectiveTrack : 'general'}`;
 
   const readSavedCurriculumMap = () => {
     try {
@@ -135,7 +141,7 @@ export default function SchedulePage() {
 
     const payload = {
       grade,
-      track: trackEnabled ? (effectiveTrack === 'social' ? 'Social Science' : 'Science') : null,
+      track: grade === 12 ? (effectiveTrack === 'social' ? 'Social Science' : 'Science') : null,
       totalPeriodsRange: [
         cleanedSubjects.reduce((sum, item) => sum + item.periods, 0),
         cleanedSubjects.reduce((sum, item) => sum + item.periods, 0),
@@ -200,19 +206,13 @@ export default function SchedulePage() {
           className="w-full"
           disabled={isStudent}
         />
-        <Select
-          options={TRACK_OPTIONS}
-          value={track}
-          onChange={setTrack}
-          className="w-full"
-          disabled={!trackEnabled}
-        />
+        {/* Track selector removed – track is automatically derived for grade 12 */}
       </div>
 
-      {!trackEnabled && (
+      {grade !== 12 && (
         <div className="bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 text-sm text-blue-700">
           Grade {grade} uses the national general foundation curriculum. Track options are enabled
-          from Grade 11 onward.
+          from Grade 12 onward.
         </div>
       )}
 

@@ -26,7 +26,7 @@ import {
   YAxis,
 } from 'recharts';
 
-import { classOptions, subjectOptions } from '../../data/students';
+import { classOptions, getInitialStudents, subjectOptions } from '../../data/students';
 import { assignmentsAPI, studentsAPI } from '../../services/api';
 import Button from '../common/Button';
 import Select from '../common/Select';
@@ -58,7 +58,7 @@ function saveJson(key, value) {
 }
 
 function getMergedStudents() {
-  const localStudents = safeReadJson(LOCAL_STUDENTS_KEY, []);
+  const localStudents = safeReadJson(LOCAL_STUDENTS_KEY, null) || getInitialStudents();
   const seen = new Set();
   return localStudents.filter((student, index) => {
     const key =

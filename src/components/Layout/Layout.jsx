@@ -36,7 +36,19 @@ export default function Layout({ children }) {
       )}
 
       {/* Main content area — offset by sidebar width on desktop */}
-      <div className={`flex flex-col flex-1 min-w-0 ${isMenuEnabled ? 'lg:ml-64' : ''}`} role="button" tabIndex={0} onClick={() => { if (isSidebarOpen) setIsSidebarOpen(false); }} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { if (isSidebarOpen) setIsSidebarOpen(false); } }}>
+      <div
+        className={`flex flex-col flex-1 min-w-0 ${isMenuEnabled ? 'lg:ml-64' : ''}`}
+        role="button"
+        tabIndex={0}
+        onClick={() => {
+          if (isSidebarOpen) setIsSidebarOpen(false);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            if (isSidebarOpen) setIsSidebarOpen(false);
+          }
+        }}
+      >
         <Header
           onMenuToggle={() => setIsSidebarOpen((prev) => !prev)}
           isMenuEnabled={isMenuEnabled}

@@ -10,7 +10,6 @@ import {
   HiOutlineDocumentText,
   HiOutlineLightningBolt,
   HiOutlineSparkles,
-  HiOutlineTrendingUp,
   HiOutlineUsers,
   HiOutlineCheckCircle,
   HiOutlineCalendar,
@@ -20,20 +19,13 @@ import { useNavigate } from 'react-router-dom';
 import MetricCard from './MetricCard';
 import { ACCOUNT_ROLES, normalizeRole } from '../../constants/roles';
 import { useAuth } from '../../context/AuthContext';
-import { classOptions } from '../../data/students';
+import { classOptions, getInitialStudents } from '../../data/students';
 import { studentsAPI } from '../../services/api';
 
 const ATTENDANCE_STORAGE_KEY = 'attendance_records_v1';
-const LOCAL_STUDENTS_KEY = 'students_local_v2';
 
 function readLocalStudents() {
-  try {
-    const raw = localStorage.getItem(LOCAL_STUDENTS_KEY);
-    const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
+  return getInitialStudents();
 }
 
 function mergeUniqueStudents(items) {

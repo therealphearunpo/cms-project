@@ -7,6 +7,7 @@ import {
   classOptions,
   DEFAULT_CLASS_CODE,
   DEFAULT_SHIFT,
+  getInitialStudents,
   normalizeShift,
 } from '../../data/students';
 import { studentsAPI } from '../../services/api';
@@ -28,13 +29,7 @@ const EMPTY_FORM = {
 };
 
 function readLocalStudents() {
-  try {
-    const raw = localStorage.getItem(LOCAL_STUDENTS_KEY);
-    const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (_error) {
-    return [];
-  }
+  return getInitialStudents();
 }
 
 function saveLocalStudents(students) {

@@ -11,15 +11,14 @@ import {
   HiViewGrid,
 } from 'react-icons/hi';
 
-import { classOptions as studentClassOptions } from '../../data/students';
-import { normalizeTeacherStream } from '../../data/teachers';
+import { classOptions as studentClassOptions, getInitialStudents } from '../../data/students';
+import { loadTeachers, normalizeTeacherStream } from '../../data/teachers';
 import { teachersAPI, studentsAPI } from '../../services/api';
 import { generateAvatarByGender, normalizeGender } from '../../utils/avatar';
 import { buildStudentPassword, normalizeStudentAccount } from '../../utils/studentAuth';
 import Avatar from '../common/Avatar';
 import Button from '../common/Button';
 
-const LOCAL_STUDENTS_KEY = 'students_local_v2';
 const DIRECTORY_TYPES = {
   STUDENT: 'student',
   STAFF: 'staff',
@@ -30,13 +29,7 @@ const VIEW_MODES = {
 };
 
 function readLocalStudents() {
-  try {
-    const raw = localStorage.getItem(LOCAL_STUDENTS_KEY);
-    const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
+  return getInitialStudents();
 }
 
 function compareClassCodes(left, right) {
@@ -245,13 +238,18 @@ export default function StudentLookupPage() {
         setStudents(localStudents);
       }
 
-      if (teachersResult.status === 'fulfilled' && Array.isArray(teachersResult.value?.data)) {
+      const hasTeacherApi =
+        teachersResult.status === 'fulfilled' &&
+        Array.isArray(teachersResult.value?.data) &&
+        teachersResult.value.data.length > 0;
+
+      if (hasTeacherApi) {
         const normalizedTeachers = teachersResult.value.data.map((teacher, index) =>
           normalizeTeacherAccount(teacher, index + 1)
         );
         setTeachers(normalizedTeachers);
       } else {
-        setTeachers([]);
+        setTeachers(loadTeachers());
       }
 
       setLoading(false);

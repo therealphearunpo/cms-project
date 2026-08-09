@@ -1,3 +1,4 @@
+import sampleTeachers from './sampleTeachers.json';
 import { subjectOptions } from './students';
 import { generateAvatarByGender, normalizeGender } from '../utils/avatar';
 
@@ -40,7 +41,7 @@ export const DEPARTMENT_SUBJECTS = {
 const fallbackSubjects = subjectOptions.filter((item) => item.value).map((item) => item.label);
 
 const avatarFor = (seed, gender) => generateAvatarByGender(`teacher-${seed}`, gender);
-export const teachersData = [];
+export const teachersData = sampleTeachers;
 
 function toSlug(value) {
   return String(value || '')
@@ -91,9 +92,15 @@ export function normalizeTeacherItem(item, index = 0) {
 export function loadTeachers() {
   try {
     const raw = localStorage.getItem(LOCAL_TEACHERS_KEY);
-    if (!raw) return [];
+    if (!raw) {
+      localStorage.setItem(LOCAL_TEACHERS_KEY, JSON.stringify(teachersData));
+      return teachersData.map((item, index) => normalizeTeacherItem(item, index));
+    }
     const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed) || parsed.length === 0) return [];
+    if (!Array.isArray(parsed) || parsed.length === 0) {
+      localStorage.setItem(LOCAL_TEACHERS_KEY, JSON.stringify(teachersData));
+      return teachersData.map((item, index) => normalizeTeacherItem(item, index));
+    }
     const looksLikeLegacyDemoOnly =
       parsed.length > 0 &&
       parsed.every(
@@ -101,10 +108,13 @@ export function loadTeachers() {
           String(item?.id || '') === `teacher-${index + 1}` &&
           String(item?.employeeId || '') === `T${String(index + 1).padStart(4, '0')}`
       );
-    if (looksLikeLegacyDemoOnly) return [];
+    if (looksLikeLegacyDemoOnly) {
+      localStorage.setItem(LOCAL_TEACHERS_KEY, JSON.stringify(teachersData));
+      return teachersData.map((item, index) => normalizeTeacherItem(item, index));
+    }
     return parsed.map((item, index) => normalizeTeacherItem(item, index));
   } catch {
-    return [];
+    return teachersData.map((item, index) => normalizeTeacherItem(item, index));
   }
 }
 

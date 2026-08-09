@@ -17,11 +17,9 @@ import { useNavigate } from 'react-router-dom';
 import { ACCOUNT_ROLES, getRoleLabel, normalizeRole } from '../../constants/roles';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
-import { classOptions } from '../../data/students';
+import { classOptions, getInitialStudents } from '../../data/students';
 import { studentsAPI } from '../../services/api';
 import Avatar from '../common/Avatar';
-
-const LOCAL_STUDENTS_KEY = 'students_local_v2';
 
 const pageEntries = [
   {
@@ -97,13 +95,7 @@ const pageEntries = [
 ];
 
 function readLocalStudents() {
-  try {
-    const raw = localStorage.getItem(LOCAL_STUDENTS_KEY);
-    const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
+  return getInitialStudents();
 }
 
 function mergeUniqueStudents(items) {

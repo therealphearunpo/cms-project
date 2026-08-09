@@ -1,0 +1,32 @@
+[
+  {
+    "id": "exm-401",
+    "title": "National BacII Mock Examination - Mathematics",
+    "subject": "Mathematics",
+    "classCode": "12A",
+    "date": "2026-09-01",
+    "time": "08:00 - 10:30",
+    "room": "Hall A",
+    "status": "Scheduled"
+  },
+  {
+    "id": "exm-402",
+    "title": "National BacII Mock Examination - Physics",
+    "subject": "Physics",
+    "classCode": "12A",
+    "date": "2026-09-02",
+    "time": "08:00 - 10:00",
+    "room": "Hall A",
+    "status": "Scheduled"
+  },
+  {
+    "id": "exm-403",
+    "title": "Grade 11 Term 2 Khmer Literature Assessment",
+    "subject": "Khmer Language & Literature",
+    "classCode": "11A",
+    "date": "2026-09-05",
+    "time": "09:00 - 11:00",
+    "room": "Room 204",
+    "status": "Scheduled"
+  }
+]

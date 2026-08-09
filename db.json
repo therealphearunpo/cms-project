@@ -1,1 +1,74 @@
-{\n  "students": [\n    {\n      "id": 1,\n      "studentId": "S001",\n      "name": "Alice Johnson",\n      "class": "10A",\n      "shift": "Morning",\n      "gender": "female",\n      "email": "alice.johnson@school.edu",\n      "dateOfBirth": "2005-04-12"\n    },\n    {\n      "id": 2,\n      "studentId": "S002",\n      "name": "Bob Smith",\n      "class": "10B",\n      "shift": "Afternoon",\n      "gender": "male",\n      "email": "bob.smith@school.edu",\n      "dateOfBirth": "2005-08-23"\n    },\n    {\n      "id": 3,\n      "studentId": "S003",\n      "name": "Carol Lee",\n      "class": "11A",\n      "shift": "Morning",\n      "gender": "female",\n      "email": "carol.lee@school.edu",\n      "dateOfBirth": "2004-02-05"\n    }\n  ]\n}\n
+{
+  "students": [
+    {
+      "id": 1,
+      "studentId": "STU2026-001",
+      "name": "Sok Dara",
+      "class": "12A",
+      "shift": "Both",
+      "gender": "male",
+      "email": "sok.dara@school.edu",
+      "dateOfBirth": "2007-03-15"
+    },
+    {
+      "id": 2,
+      "studentId": "STU2026-002",
+      "name": "Chan Bopha",
+      "class": "12A",
+      "shift": "Both",
+      "gender": "female",
+      "email": "chan.bopha@school.edu",
+      "dateOfBirth": "2007-07-22"
+    },
+    {
+      "id": 3,
+      "studentId": "STU2026-003",
+      "name": "Morm Seyha",
+      "class": "12B",
+      "shift": "Both",
+      "gender": "male",
+      "email": "morm.seyha@school.edu",
+      "dateOfBirth": "2007-11-05"
+    },
+    {
+      "id": 4,
+      "studentId": "STU2026-004",
+      "name": "Keo Voleak",
+      "class": "11A",
+      "shift": "Both",
+      "gender": "female",
+      "email": "keo.voleak@school.edu",
+      "dateOfBirth": "2008-01-18"
+    },
+    {
+      "id": 5,
+      "studentId": "STU2026-005",
+      "name": "Alice Johnson",
+      "class": "10A",
+      "shift": "Both",
+      "gender": "female",
+      "email": "alice.johnson@school.edu",
+      "dateOfBirth": "2009-04-12"
+    },
+    {
+      "id": 6,
+      "studentId": "STU2026-006",
+      "name": "Bob Smith",
+      "class": "10B",
+      "shift": "Both",
+      "gender": "male",
+      "email": "bob.smith@school.edu",
+      "dateOfBirth": "2009-08-23"
+    },
+    {
+      "id": 7,
+      "studentId": "STU2026-007",
+      "name": "Carol Lee",
+      "class": "11B",
+      "shift": "Both",
+      "gender": "female",
+      "email": "carol.lee@school.edu",
+      "dateOfBirth": "2008-02-05"
+    }
+  ]
+}

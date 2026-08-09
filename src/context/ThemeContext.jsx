@@ -13,8 +13,11 @@ function resolveInitialTheme() {
     // Ignore storage errors and fall back to system preference.
   }
 
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    return 'dark';
+  if (typeof window !== 'undefined' && window.matchMedia) {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    if (mediaQuery && mediaQuery.matches) {
+      return 'dark';
+    }
   }
   return 'light';
 }

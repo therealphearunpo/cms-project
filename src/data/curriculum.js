@@ -16,23 +16,28 @@ const DAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 const DAY_LABELS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 const grade7To10Subjects = [
-  { subject: 'Khmer Language & Literature', periods: 6, focus: 'Core' },
-  { subject: 'Mathematics', periods: 6, focus: 'Core' },
-  { subject: 'Science (Physics/Chem/Bio/Earth)', periods: 6, focus: 'Core' },
-  { subject: 'Social Studies (History/Geography/Moral)', periods: 6, focus: 'Core' },
+  { subject: 'Khmer Language & Literature', periods: 5, focus: 'Core' },
+  { subject: 'Mathematics', periods: 5, focus: 'Core' },
+  { subject: 'Physics', periods: 2, focus: 'Core' },
+  { subject: 'Chemistry', periods: 2, focus: 'Core' },
+  { subject: 'Biology', periods: 2, focus: 'Core' },
+  { subject: 'Earth & Environmental Science', periods: 2, focus: 'Core' },
+  { subject: 'History', periods: 2, focus: 'Core' },
+  { subject: 'Geography', periods: 2, focus: 'Core' },
+  { subject: 'Moral & Civics', periods: 2, focus: 'Core' },
   { subject: 'Foreign Language (English/French)', periods: 4, focus: 'Core' },
   { subject: 'Physical Education & Sports', periods: 2, focus: 'Core' },
-  { subject: 'Life Skills / ICT', periods: 4, focus: 'Core' },
+  { subject: 'Life Skills / ICT', periods: 2, focus: 'Core' },
 ];
 
 const scienceTrackSubjects = [
-  { subject: 'Khmer Language & Literature', periods: 4, focus: 'Core' },
   { subject: 'Mathematics (Advanced)', periods: 7, focus: 'High' },
   { subject: 'Physics', periods: 4, focus: 'High' },
   { subject: 'Chemistry', periods: 4, focus: 'High' },
   { subject: 'Biology', periods: 4, focus: 'High' },
+  { subject: 'Khmer Language & Literature', periods: 4, focus: 'Core' },
+  { subject: 'Foreign Language (English/French)', periods: 3, focus: 'Core' },
   { subject: 'Earth & Environmental Science', periods: 2, focus: 'Core' },
-  { subject: 'Foreign Language', periods: 3, focus: 'Core' },
   { subject: 'History', periods: 2, focus: 'Basic' },
   { subject: 'Physical Education & Sports', periods: 1, focus: 'Basic' },
   { subject: 'Life Skills / ICT', periods: 1, focus: 'Basic' },
@@ -42,9 +47,9 @@ const socialTrackSubjects = [
   { subject: 'Khmer Language & Literature (Advanced)', periods: 6, focus: 'High' },
   { subject: 'History', periods: 5, focus: 'High' },
   { subject: 'Geography', periods: 5, focus: 'High' },
-  { subject: 'Civics and Morality', periods: 4, focus: 'High' },
+  { subject: 'Moral & Civics', periods: 4, focus: 'High' },
   { subject: 'Mathematics', periods: 4, focus: 'Core' },
-  { subject: 'Foreign Language', periods: 4, focus: 'Core' },
+  { subject: 'Foreign Language (English/French)', periods: 4, focus: 'Core' },
   { subject: 'Earth & Environmental Science', periods: 2, focus: 'Core' },
   { subject: 'Physical Education & Sports', periods: 1, focus: 'Basic' },
   { subject: 'Life Skills / ICT', periods: 1, focus: 'Basic' },
@@ -58,35 +63,41 @@ export function getGradeFromClassCode(classCode) {
 
 export function getCurriculumByClass(classCode, track = 'science') {
   const grade = getGradeFromClassCode(classCode);
-  if (grade <= 10) {
+  // Grades 7–11 share the same unified curriculum (no track distinction)
+  if (grade <= 11) {
     return {
       grade,
       track: null,
-      totalPeriodsRange: [30, 30],
+      totalPeriodsRange: [32, 32],
       subjects: grade7To10Subjects,
       notes:
-        'General foundation curriculum. MoEYS baseline uses 30 national-curriculum periods/week at secondary level (plus local life-skills blocks where applicable).',
+        'General foundation curriculum for grades 7‑11 (32 periods/week covering all core subjects).',
     };
   }
 
-  if (track === 'social') {
+  // Grade 12 – determine track based on class suffix (A/B = science, C = social)
+  const suffix = String(classCode || '').trim().toUpperCase().slice(-1);
+  const derivedTrack = suffix === 'C' ? 'social' : 'science';
+
+  if (derivedTrack === 'social') {
     return {
       grade,
       track: 'Social Science',
       totalPeriodsRange: [32, 32],
       subjects: socialTrackSubjects,
       notes:
-        'MoEYS social-science stream focus: Khmer, History, Geography, Civics and supporting Mathematics/Foreign Language.',
+        'MoEYS Social Science stream curriculum for grade 12 (32 periods/week focused on Khmer Literature, History, Geography, Civics, Mathematics, and Foreign Languages).',
     };
   }
 
+  // Default to science track for suffix A or B (or any other)
   return {
     grade,
     track: 'Science',
     totalPeriodsRange: [32, 32],
     subjects: scienceTrackSubjects,
     notes:
-      'MoEYS science stream focus: Mathematics, Physics, Chemistry, Biology and supporting Khmer/Foreign Language subjects.',
+      'MoEYS Science stream curriculum for grade 12 (32 periods/week focused on Advanced Mathematics, Physics, Chemistry, Biology, Khmer Literature, and Foreign Languages).',
   };
 }
 
@@ -141,14 +152,16 @@ export function generateOfficialTimetable({
   classCode,
   track = 'science',
   shift = 'Both',
-  periodMinutes = 45,
+  periodMinutes = 50,
   curriculumOverride = null,
 }) {
   const defaultCurriculum = getCurriculumByClass(classCode, track);
   const curriculum = curriculumOverride || defaultCurriculum;
   const [minPeriods] = defaultCurriculum.totalPeriodsRange;
   const slotsPerDay = 6;
-  const weeklySlots = DAY_KEYS.length * slotsPerDay;
+  const daysCount = DAY_KEYS.length;
+  const weeklySlots = daysCount * slotsPerDay;
+
   const overridePeriods = Array.isArray(curriculum?.subjects)
     ? curriculum.subjects.reduce((sum, item) => sum + (Number(item.periods) || 0), 0)
     : 0;
@@ -164,14 +177,23 @@ export function generateOfficialTimetable({
   }
 
   const times = buildTimeSlots(shift, periodMinutes, slotsPerDay);
-  const rows = times.map((time, idx) => {
-    const row = { time };
-    DAY_KEYS.forEach((key, dayIdx) => {
-      const index = dayIdx * slotsPerDay + idx;
-      row[key] = subjectQueue[index] || 'Self-Study / Club';
-    });
-    return row;
-  });
+
+  // Interleave subjects across days so each day has a balanced mix of different subjects
+  const grid = Array.from({ length: slotsPerDay }, () => ({}));
+  let queueIdx = 0;
+
+  for (let slotIdx = 0; slotIdx < slotsPerDay; slotIdx += 1) {
+    for (let dayIdx = 0; dayIdx < daysCount; dayIdx += 1) {
+      const dayKey = DAY_KEYS[dayIdx];
+      grid[slotIdx][dayKey] = subjectQueue[queueIdx] || 'Self-Study / Club';
+      queueIdx += 1;
+    }
+  }
+
+  const rows = times.map((time, idx) => ({
+    time,
+    ...grid[idx],
+  }));
 
   const officialHours = Number(((targetPeriods * periodMinutes) / 60).toFixed(1));
 

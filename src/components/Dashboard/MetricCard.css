@@ -1,6 +1,6 @@
 .metric-card {
   background: var(--color-navy);
-  border: 1px solid #1E293B;
+  border: 1px solid #1e293b;
   border-left-width: 4px;
   border-radius: var(--radius-card);
   padding: var(--spacing-md);
@@ -12,7 +12,7 @@
 }
 
 .metric-card:hover {
-  background: linear-gradient(135deg, rgba(59,130,246,0.05), rgba(30,23,42,0.05));
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(30, 23, 42, 0.05));
 }
 
 .metric-card__header {
@@ -38,7 +38,7 @@
   font-family: var(--font-mono);
   font-size: var(--size-data);
   font-weight: var(--weight-data);
-  color: #FFFFFF;
+  color: #ffffff;
   margin: var(--spacing-sm) 0;
   line-height: 1.2;
 }
@@ -58,20 +58,42 @@
   font-weight: 500;
 }
 
-.metric-card__trend--up { color: var(--color-success); }
-.metric-card__trend--down { color: var(--color-error); }
-.metric-card__trend--neutral { color: var(--color-gray-400); }
+.metric-card__trend--up {
+  color: var(--color-success);
+}
+.metric-card__trend--down {
+  color: var(--color-error);
+}
+.metric-card__trend--neutral {
+  color: var(--color-gray-400);
+}
 
-.metric-card__trend-icon { font-size: 14px; }
+.metric-card__trend-icon {
+  font-size: 14px;
+}
 
 /* Subject specific left border colors */
-.metric-card--enrollment { border-left-color: var(--subject-enrollment); }
-.metric-card--languages { border-left-color: var(--subject-languages); }
-.metric-card--math { border-left-color: var(--subject-math); }
-.metric-card--science { border-left-color: var(--subject-science); }
-.metric-card--studies { border-left-color: var(--subject-studies); }
-.metric-card--pe { border-left-color: var(--subject-pe); }
-.metric-card--ict { border-left-color: var(--subject-ict); }
+.metric-card--enrollment {
+  border-left-color: var(--subject-enrollment);
+}
+.metric-card--languages {
+  border-left-color: var(--subject-languages);
+}
+.metric-card--math {
+  border-left-color: var(--subject-math);
+}
+.metric-card--science {
+  border-left-color: var(--subject-science);
+}
+.metric-card--studies {
+  border-left-color: var(--subject-studies);
+}
+.metric-card--pe {
+  border-left-color: var(--subject-pe);
+}
+.metric-card--ict {
+  border-left-color: var(--subject-ict);
+}
 
 .metric-card:focus-visible {
   outline: 2px solid var(--color-primary);
@@ -79,11 +101,19 @@
 }
 
 @media (max-width: 768px) {
-  .metric-card { min-height: 120px; }
-  .metric-card__value { font-size: 28px; }
+  .metric-card {
+    min-height: 120px;
+  }
+  .metric-card__value {
+    font-size: 28px;
+  }
 }
 
 @media (max-width: 640px) {
-  .metric-card { padding: var(--spacing-sm); }
-  .metric-card__value { font-size: 24px; }
+  .metric-card {
+    padding: var(--spacing-sm);
+  }
+  .metric-card__value {
+    font-size: 24px;
+  }
 }

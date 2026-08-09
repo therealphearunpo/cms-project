@@ -1,0 +1,102 @@
+[
+  {
+    "id": "std-101",
+    "studentId": "STU2026-001",
+    "name": "Sok Dara",
+    "class": "12A",
+    "shift": "Both",
+    "gender": "male",
+    "email": "sok.dara@school.edu",
+    "dateOfBirth": "2007-03-15"
+  },
+  {
+    "id": "std-102",
+    "studentId": "STU2026-002",
+    "name": "Chan Bopha",
+    "class": "12A",
+    "shift": "Both",
+    "gender": "female",
+    "email": "chan.bopha@school.edu",
+    "dateOfBirth": "2007-07-22"
+  },
+  {
+    "id": "std-103",
+    "studentId": "STU2026-003",
+    "name": "Morm Seyha",
+    "class": "12B",
+    "shift": "Both",
+    "gender": "male",
+    "email": "morm.seyha@school.edu",
+    "dateOfBirth": "2007-11-05"
+  },
+  {
+    "id": "std-104",
+    "studentId": "STU2026-004",
+    "name": "Keo Voleak",
+    "class": "11A",
+    "shift": "Both",
+    "gender": "female",
+    "email": "keo.voleak@school.edu",
+    "dateOfBirth": "2008-01-18"
+  },
+  {
+    "id": "std-105",
+    "studentId": "STU2026-005",
+    "name": "Alice Johnson",
+    "class": "10A",
+    "shift": "Both",
+    "gender": "female",
+    "email": "alice.johnson@school.edu",
+    "dateOfBirth": "2009-04-12"
+  },
+  {
+    "id": "std-106",
+    "studentId": "STU2026-006",
+    "name": "Bob Smith",
+    "class": "10B",
+    "shift": "Both",
+    "gender": "male",
+    "email": "bob.smith@school.edu",
+    "dateOfBirth": "2009-08-23"
+  },
+  {
+    "id": "std-107",
+    "studentId": "STU2026-007",
+    "name": "Carol Lee",
+    "class": "11B",
+    "shift": "Both",
+    "gender": "female",
+    "email": "carol.lee@school.edu",
+    "dateOfBirth": "2008-02-05"
+  },
+  {
+    "id": "std-108",
+    "studentId": "STU2026-008",
+    "name": "Vannak Sovann",
+    "class": "9A",
+    "shift": "Both",
+    "gender": "male",
+    "email": "vannak.sovann@school.edu",
+    "dateOfBirth": "2010-09-14"
+  },
+  {
+    "id": "std-109",
+    "studentId": "STU2026-009",
+    "name": "Nary Sophea",
+    "class": "8A",
+    "shift": "Both",
+    "gender": "female",
+    "email": "nary.sophea@school.edu",
+    "dateOfBirth": "2011-05-30"
+  },
+  {
+    "id": "std-110",
+    "studentId": "STU2026-010",
+    "name": "Heng Rattana",
+    "class": "7A",
+    "shift": "Both",
+    "gender": "male",
+    "email": "heng.rattana@school.edu",
+    "dateOfBirth": "2012-12-10"
+  }
+]

@@ -1,5 +1,5 @@
 export const gradeLevels = [7, 8, 9, 10, 11, 12];
-const classSections = ['A', 'B', 'C', 'D', 'E', 'F'];
+const classSections = ['A', 'B', 'C'];
 const SHIFT_BOTH = 'Both';
 const studyShifts = [SHIFT_BOTH];
 
@@ -11,8 +11,28 @@ export const DEFAULT_CLASS_CODE = classCodes[0];
 export const DEFAULT_SECTION = 'A';
 export const DEFAULT_SHIFT = SHIFT_BOTH;
 
+import sampleStudents from './sampleStudents.json';
+
 export const normalizeShift = () => SHIFT_BOTH;
-export const studentsData = [];
+export const studentsData = sampleStudents;
+
+export function getInitialStudents() {
+  try {
+    const raw = localStorage.getItem('students_local_v2');
+    if (!raw) {
+      localStorage.setItem('students_local_v2', JSON.stringify(sampleStudents));
+      return sampleStudents;
+    }
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return parsed;
+    }
+    localStorage.setItem('students_local_v2', JSON.stringify(sampleStudents));
+    return sampleStudents;
+  } catch {
+    return sampleStudents;
+  }
+}
 
 export const classOptions = [
   { value: '', label: 'Select Class' },
@@ -53,7 +73,4 @@ export const sectionOptions = [
   { value: 'A', label: 'Section A' },
   { value: 'B', label: 'Section B' },
   { value: 'C', label: 'Section C' },
-  { value: 'D', label: 'Section D' },
-  { value: 'E', label: 'Section E' },
-  { value: 'F', label: 'Section F' },
 ];

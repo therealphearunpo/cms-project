@@ -12,7 +12,6 @@ import {
 
 import { ACCOUNT_ROLES, normalizeRole } from '../../constants/roles';
 import { useAuth } from '../../context/AuthContext';
-import sampleAssignments from '../../data/sampleAssignments.json';
 import {
   classOptions,
   DEFAULT_CLASS_CODE,
@@ -37,11 +36,9 @@ const readLocalData = (key) => {
   try {
     const raw = localStorage.getItem(key);
     const parsed = raw ? JSON.parse(raw) : [];
-    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-    if (key === LOCAL_ASSIGNMENTS_KEY) return sampleAssignments;
     return Array.isArray(parsed) ? parsed : [];
   } catch {
-    return key === LOCAL_ASSIGNMENTS_KEY ? sampleAssignments : [];
+    return [];
   }
 };
 

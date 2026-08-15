@@ -1,18 +1,10 @@
 import React, { createContext, useCallback, useContext, useEffect, useReducer } from 'react';
 
-import { isFrontendOnly } from '../config/appMode.js';
 import { ACCOUNT_ROLES, getRoleLabel, normalizeRole } from '../constants/roles';
-import demoUsers from '../data/demoUsers.json';
 import { authAPI } from '../services/api';
 import { generateAvatarByGender, normalizeGender } from '../utils/avatar';
-import {
-  buildStudentPassword,
-  makeStudentEmail,
-  normalizeStudentAccount,
-} from '../utils/studentAuth';
 
 const AuthContext = createContext(null);
-const LOCAL_STUDENTS_KEY = 'students_local_v2';
 const ADMIN_CENTER_EMAILS = [
   'nim.cheyseth.2824@rupp.edu.kh',
   'thet.englang.2824@rupp.edu.kh',
@@ -73,76 +65,6 @@ function normalizeUser(user) {
   };
 }
 
-function isDemoMode() {
-  return isFrontendOnly();
-}
-
-function readLocalStudents() {
-  try {
-    const raw = localStorage.getItem(LOCAL_STUDENTS_KEY);
-    const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (_error) {
-    return [];
-  }
-}
-
-function getDemoUser(email, password) {
-  if (!email || !password) return null;
-  const normalizedEmail = String(email).trim().toLowerCase();
-  const rawPassword = String(password);
-  const trimmedPassword = rawPassword.trim();
-  return demoUsers.find(
-    (item) =>
-      String(item.email || '')
-        .trim()
-        .toLowerCase() === normalizedEmail &&
-      (String(item.password || '') === rawPassword ||
-        String(item.password || '').trim() === trimmedPassword)
-  );
-}
-
-function getLocalStudentUser(email, password) {
-  if (!email || !password) return null;
-
-  const normalizedEmail = String(email).trim().toLowerCase();
-  const normalizedPassword = String(password);
-  const students = readLocalStudents();
-
-  for (let index = 0; index < students.length; index += 1) {
-    const student = normalizeStudentAccount(students[index], index + 1);
-    const studentEmail = String(student.email || makeStudentEmail(student.name, student.class))
-      .trim()
-      .toLowerCase();
-    const expectedPassword = buildStudentPassword(student);
-
-    if (studentEmail !== normalizedEmail || expectedPassword !== normalizedPassword) {
-      continue;
-    }
-
-    return {
-      id: student.id,
-      email: studentEmail,
-      name: student.name,
-      role: ACCOUNT_ROLES.STUDENT,
-      gender: student.gender,
-      avatar: student.avatar,
-      studentId: student.studentId,
-      class: student.class,
-      dateOfBirth: student.dateOfBirth,
-    };
-  }
-
-  return null;
-}
-
-function resolveLocalUser(email, password) {
-  return getDemoUser(email, password) || getLocalStudentUser(email, password);
-}
-
-function createDemoToken(email) {
-  return `demo:${String(email).trim().toLowerCase()}`;
-}
 
 function clearStoredAuth() {
   localStorage.removeItem('auth_user');
@@ -199,74 +121,32 @@ export function AuthProvider({ children }) {
 
       const normalizedEmail = String(email).trim().toLowerCase();
       const rawPassword = String(password);
+      const response = await authAPI.login({ email: normalizedEmail, password: rawPassword });
+      const token = response?.data?.token;
+      const user = normalizeUser(mergeStoredProfile(response?.data?.user));
 
-      if (isDemoMode()) {
-        const localUser = resolveLocalUser(normalizedEmail, rawPassword);
-        if (!localUser) {
-          throw new Error('Invalid email or password.');
-        }
-
-        const token = createDemoToken(normalizedEmail);
-        const user = normalizeUser(mergeStoredProfile(localUser));
-
-        localStorage.setItem('auth_token', token);
-        localStorage.setItem('auth_user', JSON.stringify(user));
-        dispatch({ type: 'LOGIN_SUCCESS', payload: user });
-        return { success: true, role: user.role };
+      if (!token || !user) {
+        throw new Error('Login response is missing required user data');
       }
 
-      try {
-        const response = await authAPI.login({ email: normalizedEmail, password: rawPassword });
-        const token = response?.data?.token;
-        const user = normalizeUser(mergeStoredProfile(response?.data?.user));
-
-        if (!token || !user) {
-          throw new Error('Login response is missing required user data');
-        }
-
-        localStorage.setItem('auth_token', token);
-        localStorage.setItem('auth_user', JSON.stringify(user));
-        dispatch({ type: 'LOGIN_SUCCESS', payload: user });
-        return { success: true, role: user.role };
-      } catch (apiError) {
-        const isNetworkErr =
-          !apiError?.response &&
-          (apiError?.message === 'Network Error' || apiError?.code === 'ERR_NETWORK');
-
-        if (isNetworkErr) {
-          const localUser = resolveLocalUser(normalizedEmail, rawPassword);
-          if (localUser) {
-            const token = createDemoToken(normalizedEmail);
-            const user = normalizeUser(mergeStoredProfile(localUser));
-
-            localStorage.setItem('auth_token', token);
-            localStorage.setItem('auth_user', JSON.stringify(user));
-            dispatch({ type: 'LOGIN_SUCCESS', payload: user });
-            return { success: true, role: user.role };
-          }
-        }
-        throw apiError;
-      }
+      localStorage.setItem('auth_token', token);
+      localStorage.setItem('auth_user', JSON.stringify(user));
+      dispatch({ type: 'LOGIN_SUCCESS', payload: user });
+      return { success: true, role: user.role };
     } catch (error) {
       clearStoredAuth();
-      const isNetworkError =
-        !error?.response && (error?.message === 'Network Error' || error?.code === 'ERR_NETWORK');
       const message =
-        isNetworkError && !isDemoMode()
-          ? 'Unable to reach the authentication server. Please check your network connection, backend availability, and API URL.'
-          : error?.response?.data?.message || error?.message || 'Login failed';
+        error?.response?.data?.message || error?.message || 'Login failed';
       dispatch({ type: 'LOGIN_FAILURE', payload: message });
       return { success: false, error: message };
     }
   }, []);
 
   const logout = useCallback(async () => {
-    if (!isDemoMode()) {
-      try {
-        await authAPI.logout();
-      } catch (_error) {
-        // Local logout should still complete if the API is unavailable.
-      }
+    try {
+      await authAPI.logout();
+    } catch (_error) {
+      // Local logout should still complete if the API is unavailable.
     }
 
     clearStoredAuth();
@@ -282,16 +162,6 @@ export function AuthProvider({ children }) {
         return;
       }
 
-      if (isDemoMode()) {
-        const storedUser = readStoredUser();
-        if (storedUser) {
-          dispatch({ type: 'LOGIN_SUCCESS', payload: normalizeUser(storedUser) });
-        } else {
-          clearStoredAuth();
-          dispatch({ type: 'LOGOUT' });
-        }
-        return;
-      }
 
       try {
         const response = await authAPI.me();

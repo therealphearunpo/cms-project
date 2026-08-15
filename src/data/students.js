@@ -11,26 +11,19 @@ export const DEFAULT_CLASS_CODE = classCodes[0];
 export const DEFAULT_SECTION = 'A';
 export const DEFAULT_SHIFT = SHIFT_BOTH;
 
-import sampleStudents from './sampleStudents.json';
+
 
 export const normalizeShift = () => SHIFT_BOTH;
-export const studentsData = sampleStudents;
+export const studentsData = [];
 
 export function getInitialStudents() {
   try {
     const raw = localStorage.getItem('students_local_v2');
-    if (!raw) {
-      localStorage.setItem('students_local_v2', JSON.stringify(sampleStudents));
-      return sampleStudents;
-    }
+    if (!raw) return [];
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
-    }
-    localStorage.setItem('students_local_v2', JSON.stringify(sampleStudents));
-    return sampleStudents;
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
-    return sampleStudents;
+    return [];
   }
 }
 

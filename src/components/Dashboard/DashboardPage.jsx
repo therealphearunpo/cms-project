@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import MetricCard from './MetricCard';
 import { ACCOUNT_ROLES, normalizeRole } from '../../constants/roles';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { classOptions, getInitialStudents } from '../../data/students';
 import { studentsAPI } from '../../services/api';
 import { mergeUniqueStudents } from '../../utils/students';
@@ -58,32 +59,38 @@ function formatDisplayDate(dateValue) {
   return new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium' }).format(date);
 }
 
-function getRoleDashboardCopy(role, userName, totalStudents) {
+function getRoleDashboardCopy(role, userName, totalStudents, t) {
   if (role === ACCOUNT_ROLES.ADMIN) {
     return {
-      eyebrow: 'Admin Portal',
-      title: `System Overview`,
-      summary:
-        'Manage school operations, student rosters, academic records, and system reports.',
-      insight: `${totalStudents} registered student accounts active in the system.`,
+      eyebrow: t('dashboard.admin_portal', 'Admin Portal'),
+      title: t('dashboard.admin_title', 'System Overview'),
+      summary: t(
+        'dashboard.admin_summary',
+        'Manage school operations, student rosters, academic records, and system reports.'
+      ),
+      insight: `${totalStudents} ${t('dashboard.active_enrolled', 'registered student accounts active in the system.')}`,
     };
   }
 
   if (role === ACCOUNT_ROLES.TEACHER) {
     return {
-      eyebrow: 'Teacher Portal',
-      title: `Classroom Overview`,
-      summary:
-        'Record daily attendance, evaluate assignments, and track class timetables.',
-      insight: `${totalStudents} students currently enrolled under your classes.`,
+      eyebrow: t('dashboard.teacher_portal', 'Teacher Portal'),
+      title: t('dashboard.teacher_title', 'Classroom Overview'),
+      summary: t(
+        'dashboard.teacher_summary',
+        'Record daily attendance, evaluate assignments, and track class timetables.'
+      ),
+      insight: `${totalStudents} ${t('dashboard.active_enrolled', 'students currently enrolled under your classes.')}`,
     };
   }
 
   return {
-    eyebrow: 'Student Portal',
-    title: `Welcome back, ${userName}`,
-    summary:
-      'Track your class schedule, exam timetables, grade marksheets, and pending assignments.',
+    eyebrow: t('dashboard.student_portal', 'Student Portal'),
+    title: `${t('dashboard.welcome_back', 'Welcome back,')} ${userName}`,
+    summary: t(
+      'dashboard.student_summary',
+      'Track your class schedule, exam timetables, grade marksheets, and pending assignments.'
+    ),
     insight: 'Your student account is synchronized and up to date.',
   };
 }
@@ -91,6 +98,7 @@ function getRoleDashboardCopy(role, userName, totalStudents) {
 export default function DashboardPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useLanguage();
   const role = normalizeRole(user?.role);
   const isAdmin = role === ACCOUNT_ROLES.ADMIN;
   const isTeacher = role === ACCOUNT_ROLES.TEACHER;
@@ -154,32 +162,32 @@ export default function DashboardPage() {
   }, [studentRecords]);
 
   const profileName = user?.name || user?.fullName || user?.email?.split('@')[0] || 'User';
-  const heroCopy = getRoleDashboardCopy(role, profileName, dashboard.totalStudents);
+  const heroCopy = getRoleDashboardCopy(role, profileName, dashboard.totalStudents, t);
 
   const stats = [
     {
-      label: 'Total Students',
+      label: t('dashboard.total_students', 'Total Students'),
       value: dashboard.totalStudents,
       icon: HiOutlineUsers,
       trend: '+12.4% vs last term',
       badge: 'Active Roster',
     },
     {
-      label: 'Active Classes',
+      label: t('dashboard.classes_active', 'Active Classes'),
       value: dashboard.classCount,
       icon: HiOutlineAcademicCap,
       trend: `${dashboard.classRangeLabel}`,
       badge: 'Grade 7-12',
     },
     {
-      label: 'Attendance Rate',
+      label: t('dashboard.attendance_rate', 'Attendance Rate'),
       value: `${dashboard.attendanceRate}%`,
       icon: HiOutlineClipboardCheck,
       trend: `${dashboard.markedCount || '420+'} daily records`,
       badge: 'Verified',
     },
     {
-      label: 'Shifts Configured',
+      label: 'Shifts Configured / វេនសិក្សា',
       value: `${dashboard.shiftCount} Shifts`,
       icon: HiOutlineClock,
       trend: 'Morning & Afternoon',

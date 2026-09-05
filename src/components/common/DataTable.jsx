@@ -9,6 +9,7 @@ import {
 } from 'react-icons/hi';
 
 import Button from './Button';
+import { useLanguage } from '../../context/LanguageContext';
 import { usePagination } from '../../hooks/usePagination';
 
 function buildPageItems(currentPage, totalPages) {
@@ -54,6 +55,7 @@ export default function DataTable({
   filterable = true,
   itemsPerPage = 10,
 }) {
+  const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
@@ -115,26 +117,26 @@ export default function DataTable({
 
   if (loading) {
     return (
-      <div className="bg-white rounded-xl shadow-card p-8">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-card p-8">
         <div className="flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-card overflow-hidden">
-      <div className="p-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
+    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-card overflow-hidden">
+      <div className="p-3 sm:p-4 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
         {searchable && (
           <div className="relative flex-1 max-w-md">
-            <HiOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <HiOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Search..."
+              placeholder={t('common.search_records', 'Search records...')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="w-full pl-9 pr-4 py-1.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 dark:text-white"
             />
           </div>
         )}
@@ -142,12 +144,12 @@ export default function DataTable({
         <div className="flex items-center gap-2 ml-auto">
           {filterable && (
             <Button variant="secondary" size="sm" icon={HiOutlineFilter}>
-              Filter
+              {t('common.filter', 'Filter')}
             </Button>
           )}
           {exportable && (
             <Button variant="secondary" size="sm" icon={HiOutlineDownload} onClick={exportData}>
-              Export
+              {t('common.export_excel', 'Export')}
             </Button>
           )}
         </div>
@@ -156,21 +158,21 @@ export default function DataTable({
       <div className="overflow-x-auto">
         <table className="w-full min-w-[700px]">
           <thead>
-            <tr className="bg-gray-50">
+            <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
               {columns.map((column) => (
                 <th
                   key={column.accessor}
                   onClick={() => column.sortable && requestSort(column.accessor)}
                   className={`
-                    px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider
-                    ${column.sortable ? 'cursor-pointer hover:text-gray-700' : ''}
+                    px-4 py-2.5 text-left text-xs font-semibold text-slate-500 dark:text-slate-400
+                    ${column.sortable ? 'cursor-pointer hover:text-slate-900 dark:hover:text-white' : ''}
                   `}
                 >
                   <div className="flex items-center gap-1">
                     {column.header}
                     {sortConfig.key === column.accessor && (
-                      <span className="text-gray-400">
-                        {sortConfig.direction === 'asc' ? '^' : 'v'}
+                      <span className="text-slate-400 font-mono">
+                        {sortConfig.direction === 'asc' ? '▲' : '▼'}
                       </span>
                     )}
                   </div>
@@ -178,11 +180,14 @@ export default function DataTable({
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
             {currentItems.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="px-4 py-8 text-center text-gray-500">
-                  No data available
+                <td
+                  colSpan={columns.length}
+                  className="px-4 py-8 text-center text-xs text-slate-500 dark:text-slate-400"
+                >
+                  {t('common.no_records', 'No records found')}
                 </td>
               </tr>
             ) : (
@@ -191,12 +196,15 @@ export default function DataTable({
                   key={index}
                   onClick={() => onRowClick?.(row)}
                   className={`
-                    hover:bg-gray-50 transition-colors
+                    hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors
                     ${onRowClick ? 'cursor-pointer' : ''}
                   `}
                 >
                   {columns.map((column) => (
-                    <td key={column.accessor} className="px-4 py-3 text-sm text-gray-700">
+                    <td
+                      key={column.accessor}
+                      className="px-4 py-3 text-xs sm:text-sm text-slate-800 dark:text-slate-200"
+                    >
                       {column.render
                         ? column.render(row[column.accessor], row)
                         : row[column.accessor]}
@@ -210,30 +218,39 @@ export default function DataTable({
       </div>
 
       {pagination && totalPages > 1 && (
-        <div className="flex flex-col gap-3 border-t border-gray-100 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="text-sm text-gray-500">
-            Page {currentPage} of {totalPages}
-            <span className="ml-2 text-xs text-gray-400">
-              Showing {currentItems.length} of {sortedData.length} records
-            </span>
+        <div className="flex flex-col gap-3 border-t border-slate-200 dark:border-slate-800 px-4 py-3 sm:flex-row sm:items-center sm:justify-between text-xs text-slate-500 dark:text-slate-400">
+          <div>
+            {t('common.showing', 'Showing')}{' '}
+            <span className="font-semibold text-slate-900 dark:text-white">
+              {(currentPage - 1) * itemsPerPage + 1}
+            </span>{' '}
+            -{' '}
+            <span className="font-semibold text-slate-900 dark:text-white">
+              {Math.min(currentPage * itemsPerPage, sortedData.length)}
+            </span>{' '}
+            {t('common.of', 'of')}{' '}
+            <span className="font-semibold text-slate-900 dark:text-white">
+              {sortedData.length}
+            </span>{' '}
+            {t('common.entries', 'entries')}
           </div>
           <div className="flex items-center gap-2 self-end sm:self-auto">
             <button
               onClick={prevPage}
               disabled={currentPage === 1}
-              className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              aria-label="Previous page"
+              className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              aria-label={t('common.prev', 'Previous')}
             >
-              <HiOutlineChevronLeft className="w-4 h-4 text-gray-600" />
+              <HiOutlineChevronLeft className="w-4 h-4" />
             </button>
 
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 font-mono text-xs">
               {pageItems.map((item) => {
                 if (typeof item === 'string') {
                   return (
                     <span
                       key={item}
-                      className="flex h-8 min-w-[1.75rem] items-center justify-center px-1 text-sm text-gray-400"
+                      className="flex h-7 min-w-[1.5rem] items-center justify-center px-1 text-slate-400"
                     >
                       ...
                     </span>
@@ -245,11 +262,11 @@ export default function DataTable({
                     key={item}
                     onClick={() => paginate(item)}
                     className={`
-                      h-8 min-w-[2rem] rounded-lg px-2 text-sm font-medium transition-colors
+                      h-7 min-w-[1.75rem] rounded-md px-1.5 font-medium transition-colors
                       ${
                         currentPage === item
-                          ? 'bg-primary-600 text-white'
-                          : 'hover:bg-gray-100 text-gray-600'
+                          ? 'bg-blue-600 text-white'
+                          : 'border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
                       }
                     `}
                     aria-current={currentPage === item ? 'page' : undefined}
@@ -263,10 +280,10 @@ export default function DataTable({
             <button
               onClick={nextPage}
               disabled={currentPage === totalPages}
-              className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              aria-label="Next page"
+              className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              aria-label={t('common.next', 'Next')}
             >
-              <HiOutlineChevronRight className="w-4 h-4 text-gray-600" />
+              <HiOutlineChevronRight className="w-4 h-4" />
             </button>
           </div>
         </div>

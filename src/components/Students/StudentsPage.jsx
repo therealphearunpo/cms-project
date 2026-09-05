@@ -13,6 +13,7 @@ import {
 import { studentsAPI } from '../../services/api';
 import { generateAvatarByGender, normalizeGender } from '../../utils/avatar';
 import { makeStudentEmail } from '../../utils/studentAuth';
+import { mergeUniqueStudents } from '../../utils/students';
 import Badge from '../common/Badge';
 import Button from '../common/Button';
 import DataTable from '../common/DataTable';
@@ -68,19 +69,6 @@ function normalizeStudentRecord(student, fallbackId = null) {
   };
 }
 
-function mergeUniqueStudents(items) {
-  const map = new Map();
-  items.forEach((item, index) => {
-    const normalized = normalizeStudentRecord(item, index + 1);
-    const key =
-      (normalized.id != null && `id:${String(normalized.id)}`) ||
-      (normalized.studentId && `studentId:${normalized.studentId}`) ||
-      (normalized.email && `email:${normalized.email.toLowerCase()}`) ||
-      `fallback:${normalized.name.toLowerCase()}-${normalized.class}-${index}`;
-    map.set(key, normalized);
-  });
-  return Array.from(map.values());
-}
 
 function formatDateOfBirth(value) {
   if (!value) return '-';
@@ -167,86 +155,91 @@ export default function StudentsPage() {
     return students.filter((student) => student.class === selectedClass);
   }, [selectedClass, students]);
 
-  const columns = [
-    {
-      header: 'Student',
-      accessor: 'name',
-      sortable: true,
-      render: (value, row) => (
-        <div className="flex items-center gap-3">
-          <img
-            src={row.avatar}
-            alt={value}
-            className="h-9 w-9 rounded-full border border-gray-200 object-cover"
-          />
-          <div>
-            <p className="font-medium text-gray-800">{value}</p>
-            <p className="text-xs text-gray-400">{row.studentId || 'Auto-generated ID'}</p>
+  const columns = useMemo(
+    () => [
+      {
+        header: 'Student',
+        accessor: 'name',
+        sortable: true,
+        render: (value, row) => (
+          <div className="flex items-center gap-3">
+            <img
+              src={row.avatar}
+              alt={value}
+              className="h-9 w-9 rounded-full border border-gray-200 object-cover"
+            />
+            <div>
+              <p className="font-medium text-gray-800">{value}</p>
+              <p className="text-xs text-gray-400">{row.studentId || 'Auto-generated ID'}</p>
+            </div>
           </div>
-        </div>
-      ),
-    },
-    {
-      header: 'Class',
-      accessor: 'class',
-      sortable: true,
-    },
-    {
-      header: 'Gender',
-      accessor: 'gender',
-      sortable: true,
-      render: (value) => <Badge variant={value === 'female' ? 'info' : 'success'}>{value}</Badge>,
-    },
-    {
-      header: 'Date of Birth',
-      accessor: 'dateOfBirth',
-      sortable: true,
-      render: (value) => formatDateOfBirth(value),
-    },
-    {
-      header: 'Source',
-      accessor: 'isLocalOnly',
-      sortable: true,
-      render: (value) => (
-        <Badge variant={value ? 'warning' : 'success'}>{value ? 'Local only' : 'Backend'}</Badge>
-      ),
-    },
-    {
-      header: 'Actions',
-      accessor: 'actions',
-      render: (_value, row) => (
-        <div className="flex items-center gap-2">
-          <Button
-            variant="secondary"
-            size="sm"
-            icon={HiOutlinePencil}
-            onClick={() => {
-              setEditingStudent(row);
-              setFormData({
-                studentId: row.studentId || '',
-                name: row.name || '',
-                class: row.class || DEFAULT_CLASS_CODE,
-                shift: row.shift || DEFAULT_SHIFT,
-                gender: row.gender || 'male',
-                dateOfBirth: row.dateOfBirth || '',
-              });
-              setIsCreateOpen(true);
-            }}
-          >
-            Edit
-          </Button>
-          <Button
-            variant="danger"
-            size="sm"
-            icon={HiOutlineTrash}
-            onClick={() => setDeletingStudent(row)}
-          >
-            Remove
-          </Button>
-        </div>
-      ),
-    },
-  ];
+        ),
+      },
+      {
+        header: 'Class',
+        accessor: 'class',
+        sortable: true,
+      },
+      {
+        header: 'Gender',
+        accessor: 'gender',
+        sortable: true,
+        render: (value) => <Badge variant={value === 'female' ? 'info' : 'success'}>{value}</Badge>,
+      },
+      {
+        header: 'Date of Birth',
+        accessor: 'dateOfBirth',
+        sortable: true,
+        render: (value) => formatDateOfBirth(value),
+      },
+      {
+        header: 'Source',
+        accessor: 'isLocalOnly',
+        sortable: true,
+        render: (value) => (
+          <Badge variant={value ? 'warning' : 'success'}>{value ? 'Local only' : 'Backend'}</Badge>
+        ),
+      },
+      {
+        header: 'Actions',
+        accessor: 'actions',
+        render: (_value, row) => (
+          <div className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={HiOutlinePencil}
+              onClick={() => {
+                setEditingStudent(row);
+                setFormData({
+                  studentId: row.studentId || '',
+                  name: row.name || '',
+                  class: row.class || DEFAULT_CLASS_CODE,
+                  shift: row.shift || DEFAULT_SHIFT,
+                  gender: row.gender || 'male',
+                  dateOfBirth: row.dateOfBirth || '',
+                });
+                setIsCreateOpen(true);
+              }}
+            >
+              Edit
+            </Button>
+            <Button
+              variant="danger"
+              size="sm"
+              icon={HiOutlineTrash}
+              onClick={() => setDeletingStudent(row)}
+            >
+              Remove
+            </Button>
+          </div>
+        ),
+      },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
 
   const resetForm = () => {
     setFormData(EMPTY_FORM);

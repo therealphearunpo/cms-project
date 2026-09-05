@@ -6,8 +6,9 @@ import { isFrontendOnly } from '../config/appMode.js';
 import { ACCOUNT_ROLES, normalizeRole } from '../constants/roles';
 import { useAttendanceContext } from '../context/AttendanceContext';
 import { useAuth } from '../context/AuthContext';
-import { loadTeachers, normalizeTeacherItem } from '../data/teachers';
+import { loadTeachers } from '../data/teachers';
 import { studentsAPI, teachersAPI } from '../services/api';
+import { mergeUniqueStudents, mergeUniqueTeachers } from '../utils/students';
 
 const LOCAL_STUDENTS_KEY = 'students_local_v2';
 
@@ -21,32 +22,6 @@ function readLocalStudents() {
   }
 }
 
-function mergeUniqueStudents(items) {
-  const map = new Map();
-  items.forEach((item, index) => {
-    if (!item || typeof item !== 'object') return;
-    const idKey = item.id != null ? `id:${String(item.id)}` : '';
-    const studentIdKey = item.studentId ? `studentId:${String(item.studentId)}` : '';
-    const emailKey = item.email ? `email:${String(item.email).toLowerCase()}` : '';
-    const fallbackKey = `fallback:${String(item.name || '').toLowerCase()}-${String(item.class || '')}-${index}`;
-    map.set(idKey || studentIdKey || emailKey || fallbackKey, item);
-  });
-  return Array.from(map.values());
-}
-
-function mergeUniqueTeachers(items) {
-  const map = new Map();
-  items.forEach((item, index) => {
-    if (!item || typeof item !== 'object') return;
-    const normalized = normalizeTeacherItem(item, index);
-    const employeeKey = normalized.employeeId ? `employee:${normalized.employeeId}` : '';
-    const emailKey = normalized.email ? `email:${String(normalized.email).toLowerCase()}` : '';
-    const idKey = normalized.id ? `id:${String(normalized.id)}` : '';
-    const fallbackKey = `fallback:${String(normalized.name || '').toLowerCase()}-${index}`;
-    map.set(employeeKey || emailKey || idKey || fallbackKey, normalized);
-  });
-  return Array.from(map.values());
-}
 
 export function useFilteredStudents() {
   const { user } = useAuth();

@@ -19,6 +19,7 @@ import { ACCOUNT_ROLES, normalizeRole } from '../../constants/roles';
 import { useAuth } from '../../context/AuthContext';
 import { classOptions, getInitialStudents } from '../../data/students';
 import { studentsAPI } from '../../services/api';
+import { mergeUniqueStudents } from '../../utils/students';
 
 const ATTENDANCE_STORAGE_KEY = 'attendance_records_v1';
 
@@ -26,19 +27,6 @@ function readLocalStudents() {
   return getInitialStudents();
 }
 
-function mergeUniqueStudents(items) {
-  const map = new Map();
-  items.forEach((item, index) => {
-    if (!item || typeof item !== 'object') return;
-    const key =
-      (item.id != null && `id:${String(item.id)}`) ||
-      (item.studentId && `studentId:${String(item.studentId)}`) ||
-      (item.email && `email:${String(item.email).toLowerCase()}`) ||
-      `fallback:${String(item.name || '').toLowerCase()}-${String(item.class || '')}-${index}`;
-    map.set(key, item);
-  });
-  return Array.from(map.values());
-}
 
 function getAttendanceSummary() {
   try {

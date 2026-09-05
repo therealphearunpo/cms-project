@@ -14,11 +14,13 @@ import {
 import useMarksheetsData from './useMarksheetsData';
 import { ACCOUNT_ROLES, normalizeRole } from '../../constants/roles';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { marksheetsAPI } from '../../services/api';
 import DataTable from '../common/DataTable';
 
 export default function MarksheetsPage() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const role = normalizeRole(user?.role);
   const isStudent = role === ACCOUNT_ROLES.STUDENT;
   const canEditMarks = role === ACCOUNT_ROLES.ADMIN;
@@ -62,7 +64,10 @@ export default function MarksheetsPage() {
         id: student.id,
         studentId,
         name: student.name,
+        nameKhmer: student.nameKhmer || student.name,
+        nameLatin: student.nameLatin || student.name,
         class: student.class,
+        shift: student.shift,
         rollNo: student.rollNo,
         ...normalizedScores,
         hasScores,
@@ -180,9 +185,14 @@ export default function MarksheetsPage() {
 
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Marksheets</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Only real saved marks are shown. Students without marks stay blank until entered.
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+            {t('marksheets.title', 'MoEYS Academic Gradebook')}
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+            {t(
+              'marksheets.subtitle',
+              'Student score recording, class ranking, and semester evaluations'
+            )}
           </p>
         </div>
       </div>

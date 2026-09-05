@@ -18,6 +18,7 @@ import StudentsPage from './components/Students/StudentsPage';
 import { ACCOUNT_ROLES, getRoleHomePath, normalizeRole } from './constants/roles';
 import { AttendanceProvider } from './context/AttendanceContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { LanguageProvider } from './context/LanguageContext';
 import { ThemeProvider } from './context/ThemeContext';
 
 
@@ -186,11 +187,13 @@ export default function App() {
   return (
     <BrowserRouter basename={routerBase}>
       <ThemeProvider>
-        <AuthProvider>
-          <AttendanceProvider>
-            <AuthRoutes />
-          </AttendanceProvider>
-        </AuthProvider>
+        <LanguageProvider>
+          <AuthProvider>
+            <AttendanceProvider>
+              <AuthRoutes />
+            </AttendanceProvider>
+          </AuthProvider>
+        </LanguageProvider>
       </ThemeProvider>
     </BrowserRouter>
   );

@@ -17,62 +17,84 @@ import { NavLink, useLocation } from 'react-router-dom';
 
 import { ACCOUNT_ROLES, normalizeRole } from '../../constants/roles';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 const menuItems = [
   {
     path: '/dashboard',
     icon: HiOutlineHome,
     label: 'Dashboard',
+    transKey: 'nav.dashboard',
     roles: [ACCOUNT_ROLES.STUDENT, ACCOUNT_ROLES.TEACHER, ACCOUNT_ROLES.ADMIN],
   },
   {
     path: '/attendance',
     icon: HiOutlineClipboardCheck,
     label: 'Attendance',
+    transKey: 'nav.attendance',
     roles: [ACCOUNT_ROLES.TEACHER, ACCOUNT_ROLES.ADMIN],
   },
-  { path: '/students', icon: HiOutlineUserGroup, label: 'Students', roles: [ACCOUNT_ROLES.ADMIN] },
+  {
+    path: '/students',
+    icon: HiOutlineUserGroup,
+    label: 'Students',
+    transKey: 'nav.students',
+    roles: [ACCOUNT_ROLES.ADMIN],
+  },
   {
     path: '/student-lookup',
     icon: HiOutlineSearch,
     label: 'User Lookup',
+    transKey: 'nav.lookup',
     roles: [ACCOUNT_ROLES.ADMIN],
   },
   {
     path: '/schedule',
     icon: HiOutlineCalendar,
     label: 'Class Schedule',
+    transKey: 'nav.schedule',
     roles: [ACCOUNT_ROLES.STUDENT, ACCOUNT_ROLES.TEACHER, ACCOUNT_ROLES.ADMIN],
   },
   {
     path: '/marksheets',
     icon: HiOutlineDocumentText,
     label: 'Marksheets',
+    transKey: 'nav.marksheets',
     roles: [ACCOUNT_ROLES.STUDENT, ACCOUNT_ROLES.ADMIN],
   },
   {
     path: '/assignments',
     icon: HiOutlineBookOpen,
     label: 'Assignments',
+    transKey: 'nav.assignments',
     roles: [ACCOUNT_ROLES.STUDENT, ACCOUNT_ROLES.TEACHER],
   },
   {
     path: '/exams',
     icon: HiOutlineAcademicCap,
     label: 'Exam Schedule',
+    transKey: 'nav.exams',
     roles: [ACCOUNT_ROLES.STUDENT, ACCOUNT_ROLES.TEACHER, ACCOUNT_ROLES.ADMIN],
   },
-  { path: '/reports', icon: HiOutlineChartBar, label: 'Reports', roles: [ACCOUNT_ROLES.ADMIN] },
+  {
+    path: '/reports',
+    icon: HiOutlineChartBar,
+    label: 'Reports',
+    transKey: 'nav.reports',
+    roles: [ACCOUNT_ROLES.ADMIN],
+  },
   {
     path: '/profile',
     icon: HiOutlineUser,
     label: 'My Profile',
+    transKey: 'nav.profile',
     roles: [ACCOUNT_ROLES.STUDENT, ACCOUNT_ROLES.TEACHER, ACCOUNT_ROLES.ADMIN],
   },
 ];
 
 export default function Sidebar({ isOpen, onClose, onMenuVisibilityToggle }) {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const role = normalizeRole(user?.role);
   const location = useLocation();
   const visibleMenuItems = menuItems.filter(
@@ -144,7 +166,7 @@ export default function Sidebar({ isOpen, onClose, onMenuVisibilityToggle }) {
               className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
             >
               <item.icon className="w-4 h-4 flex-shrink-0" />
-              <span className="truncate">{item.label}</span>
+              <span className="truncate">{t(item.transKey, item.label)}</span>
             </NavLink>
           ))}
         </nav>

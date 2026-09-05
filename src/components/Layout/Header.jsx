@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { ACCOUNT_ROLES, getRoleLabel, normalizeRole } from '../../constants/roles';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
 import { classOptions, getInitialStudents } from '../../data/students';
 import { studentsAPI } from '../../services/api';
@@ -128,6 +129,7 @@ function MenuToggleIcon() {
 export default function Header({ onMenuToggle, isMenuEnabled, onMenuVisibilityToggle }) {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { language, toggleLanguage, t } = useLanguage();
   const { isDark, toggleTheme } = useTheme();
   const role = normalizeRole(user?.role);
 
@@ -398,6 +400,18 @@ export default function Header({ onMenuToggle, isMenuEnabled, onMenuVisibilityTo
           <BadgeIcon className="w-3.5 h-3.5" />
           <span>{profileRole}</span>
         </div>
+
+        {/* Language Switcher Pill */}
+        <button
+          type="button"
+          onClick={toggleLanguage}
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition-colors"
+          title={language === 'km' ? 'Switch to English' : 'ប្តូរជាភាសាខ្មែរ'}
+          aria-label={t('header.language', 'Language')}
+        >
+          <span className="text-sm">{language === 'km' ? '🇰🇭' : '🇺🇸'}</span>
+          <span className="font-bold text-[11px]">{language === 'km' ? 'ខ្មែរ' : 'EN'}</span>
+        </button>
 
         {/* Theme Switcher Button */}
         <button

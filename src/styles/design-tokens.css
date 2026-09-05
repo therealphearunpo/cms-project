@@ -43,8 +43,8 @@
   --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.3);
 
   /* Typography */
-  --font-display: 'Inter', 'Poppins', system-ui, sans-serif;
-  --font-body: 'Inter', system-ui, sans-serif;
+  --font-display: 'Outfit', 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', 'Noto Sans Khmer', 'Segoe UI', sans-serif;
   --font-mono: 'Courier New', Monaco, monospace;
 
   --size-h1: 36px;
@@ -58,7 +58,7 @@
   --size-body: 14px;
   --weight-body: 400;
   --lh-body: 1.6;
-  --ls-body: 0.3px;
+  --ls-body: 0;
   --size-data: 32px;
   --weight-data: 700;
   --size-label: 12px;

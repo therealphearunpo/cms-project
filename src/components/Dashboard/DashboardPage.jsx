@@ -8,8 +8,6 @@ import {
   HiOutlineClock,
   HiOutlineDatabase,
   HiOutlineDocumentText,
-  HiOutlineLightningBolt,
-  HiOutlineSparkles,
   HiOutlineUsers,
   HiOutlineCheckCircle,
   HiOutlineCalendar,
@@ -75,30 +73,30 @@ function formatDisplayDate(dateValue) {
 function getRoleDashboardCopy(role, userName, totalStudents) {
   if (role === ACCOUNT_ROLES.ADMIN) {
     return {
-      eyebrow: 'Institutional Command Dashboard',
-      title: `Executive Control Panel for ${userName}`,
+      eyebrow: 'School overview',
+      title: `Good to see you, ${userName}`,
       summary:
-        'Real-time overview of school operations, student enrolment, academic monitoring, and institution reporting.',
-      insight: `${totalStudents} registered student accounts active across the Cambodia National Curriculum system.`,
+        'Keep track of enrolment, attendance, classes, and school reports from one place.',
+      insight: `${totalStudents} students are currently in the school register.`,
     };
   }
 
   if (role === ACCOUNT_ROLES.TEACHER) {
     return {
-      eyebrow: 'Academic & Teaching Operations',
-      title: `Classroom Operations Overview for ${userName}`,
+      eyebrow: 'Teaching overview',
+      title: `Good to see you, ${userName}`,
       summary:
-        'Monitor active class rosters, record daily attendance, evaluate assignments, and track timetable schedules.',
-      insight: `${totalStudents} students currently enrolled under your active academic scope.`,
+        'See today’s attendance, upcoming work, and your class schedule at a glance.',
+      insight: `${totalStudents} students are currently in your teaching register.`,
     };
   }
 
   return {
-    eyebrow: 'Student Learning Workspace',
+    eyebrow: 'Your school day',
     title: `Welcome back, ${userName}`,
     summary:
-      'Access your academic schedule, track exam timetables, review marksheets, and submit pending class assignments.',
-    insight: 'Your national curriculum student portal is synchronized and up to date.',
+      'Check your schedule, review marks, and stay on top of assignments and exams.',
+    insight: 'Your timetable and academic records are ready to view.',
   };
 }
 
@@ -172,36 +170,36 @@ export default function DashboardPage() {
 
   const stats = [
     {
-      label: 'Total Student Enrolment',
+      label: 'Students',
       value: dashboard.totalStudents,
       icon: HiOutlineUsers,
-      trend: '+12.4% vs last term',
+      trend: 'Currently enrolled',
       tone: 'bg-blue-500/10 text-blue-600 dark:bg-blue-400/10 dark:text-blue-400 border border-blue-500/20',
-      badge: 'Active Scope',
+      badge: 'Enrolment',
     },
     {
-      label: 'Class Coverage & Roster',
+      label: 'Classes',
       value: dashboard.classCount,
       icon: HiOutlineAcademicCap,
-      trend: `${dashboard.classRangeLabel} Classes`,
+      trend: `${dashboard.classRangeLabel}`,
       tone: 'bg-indigo-500/10 text-indigo-600 dark:bg-indigo-400/10 dark:text-indigo-400 border border-indigo-500/20',
-      badge: 'Grade 7-12',
+      badge: 'Active classes',
     },
     {
-      label: 'Attendance Rate',
+      label: 'Attendance',
       value: `${dashboard.attendanceRate}%`,
       icon: HiOutlineClipboardCheck,
-      trend: `${dashboard.markedCount || '420+'} daily records`,
+      trend: `${dashboard.markedCount || 'No'} records today`,
       tone: 'bg-emerald-500/10 text-emerald-600 dark:bg-emerald-400/10 dark:text-emerald-400 border border-emerald-500/20',
-      badge: 'High Accuracy',
+      badge: 'Today',
     },
     {
-      label: 'Shift Structure & Shifts',
+      label: 'School shifts',
       value: `${dashboard.shiftCount} Shifts`,
       icon: HiOutlineClock,
-      trend: 'Morning & Afternoon',
+      trend: 'Morning and afternoon',
       tone: 'bg-amber-500/10 text-amber-600 dark:bg-amber-400/10 dark:text-amber-400 border border-amber-500/20',
-      badge: 'Full Schedule',
+      badge: 'Timetable',
     },
   ];
 
@@ -288,56 +286,50 @@ export default function DashboardPage() {
 
   const activityFeed = [
     {
-      title: 'National Curriculum Sync Completed',
+      title: 'Student register updated',
       time: 'Just now',
-      tag: 'System',
-      desc: `${dashboard.totalStudents} student records synced with MOEYS database.`,
+      tag: 'Register',
+      desc: `${dashboard.totalStudents} student records are available.`,
     },
     {
-      title: 'Daily Attendance Aggregation',
+      title: 'Attendance is ready',
       time: '10 mins ago',
       tag: 'Attendance',
-      desc: `Attendance tracking active with ${dashboard.attendanceRate}% compliance.`,
+      desc: `${dashboard.attendanceRate}% of today’s marked students are present.`,
     },
     {
-      title: 'Class Allocation Updated',
+      title: 'Class lists are up to date',
       time: '1 hour ago',
       tag: 'Classes',
-      desc: `Roster for ${dashboard.classCount} active classes configured.`,
+      desc: `${dashboard.classCount} classes currently have students assigned.`,
     },
     {
-      title: 'Term Examination Schedule Published',
+      title: 'Exam schedule published',
       time: '3 hours ago',
       tag: 'Exams',
-      desc: 'Schedules available across all grade levels.',
+      desc: 'The latest exam timetable is available to view.',
     },
   ];
 
   return (
     <div className="space-y-6 select-none">
-      {/* Tier-1 Enterprise Hero Banner */}
-      <section className="relative overflow-hidden rounded-3xl bg-slate-900 border border-slate-800 p-6 sm:p-8 text-white shadow-2xl shadow-slate-950/40">
-        {/* Glow Effects */}
-        <div className="absolute top-0 right-0 w-[450px] h-[450px] bg-blue-600/20 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute bottom-0 left-1/4 w-[350px] h-[350px] bg-indigo-600/20 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.05)_1px,transparent_1px)] [background-size:20px_20px] opacity-30 pointer-events-none" />
-
-        <div className="relative z-10 grid gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(300px,0.7fr)] lg:items-center">
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 dark:border-slate-800 dark:bg-slate-900">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(300px,0.7fr)] lg:items-center">
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold uppercase tracking-wider">
-                <HiOutlineLightningBolt className="w-3.5 h-3.5 text-blue-400 animate-pulse" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-950/50 dark:text-blue-300">
+                <HiOutlineCalendar className="w-3.5 h-3.5" />
                 {heroCopy.eyebrow}
               </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-300 text-xs font-semibold">
-                <HiOutlineCheckCircle className="w-3.5 h-3.5 text-emerald-400" /> System Healthy
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300">
+                <HiOutlineCheckCircle className="w-3.5 h-3.5" /> All systems normal
               </span>
             </div>
 
-            <h1 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
+            <h1 className="mt-4 text-3xl font-bold leading-tight tracking-tight text-slate-900 sm:text-4xl dark:text-white">
               {heroCopy.title}
             </h1>
-            <p className="mt-3.5 max-w-3xl text-sm sm:text-base leading-relaxed text-slate-300 font-normal">
+            <p className="mt-3.5 max-w-3xl text-sm leading-relaxed text-slate-600 sm:text-base dark:text-slate-300">
               {heroCopy.summary}
             </p>
 
@@ -348,7 +340,7 @@ export default function DashboardPage() {
                 onClick={() =>
                   navigate(isAdmin ? '/students' : isTeacher ? '/attendance' : '/assignments')
                 }
-                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-600/30 hover:shadow-blue-500/40 transition-all flex items-center gap-2"
+                className="flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 sm:text-sm"
               >
                 <span>
                   {isAdmin
@@ -363,7 +355,7 @@ export default function DashboardPage() {
               <button
                 type="button"
                 onClick={() => navigate('/profile')}
-                className="px-4 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-200 text-xs sm:text-sm font-semibold transition-colors"
+                className="rounded-lg border border-slate-200 px-4 py-2.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50 sm:text-sm dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
               >
                 Profile & Settings
               </button>
@@ -371,23 +363,20 @@ export default function DashboardPage() {
           </div>
 
           {/* Right Highlight Box */}
-          <div className="rounded-2xl border border-slate-700/80 bg-slate-800/50 backdrop-blur-xl p-5 sm:p-6 shadow-xl">
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-5 sm:p-6 dark:border-slate-700 dark:bg-slate-800/60">
             <div className="flex items-start gap-3.5">
-              <div className="rounded-xl bg-blue-600/20 border border-blue-500/30 p-3 text-blue-400 flex-shrink-0">
-                <HiOutlineSparkles className="h-6 w-6" />
+              <div className="flex-shrink-0 rounded-lg bg-blue-100 p-3 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300">
+                <HiOutlineClipboardCheck className="h-6 w-6" />
               </div>
               <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
-                  Institutional Insight
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  At a glance
                 </span>
-                <p className="mt-1.5 text-xs sm:text-sm leading-relaxed text-slate-200 font-medium">
+                <p className="mt-1.5 text-xs font-medium leading-relaxed text-slate-700 sm:text-sm dark:text-slate-200">
                   {heroCopy.insight}
                 </p>
-                <div className="mt-3 pt-3 border-t border-slate-700/60 flex items-center justify-between text-xs text-slate-400">
-                  <span>Data Integrity: 100%</span>
-                  <span className="text-emerald-400 font-semibold flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Active
-                  </span>
+                <div className="mt-3 flex items-center gap-1.5 border-t border-slate-200 pt-3 text-xs text-slate-500 dark:border-slate-700 dark:text-slate-400">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Updated today
                 </div>
               </div>
             </div>
@@ -418,10 +407,10 @@ export default function DashboardPage() {
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 px-6 py-4">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
-                Activity Stream
+                Recent updates
               </span>
               <h2 className="mt-0.5 text-lg font-bold text-slate-900 dark:text-white">
-                Institutional Operations Feed
+                What’s happening
               </h2>
             </div>
 
@@ -447,7 +436,7 @@ export default function DashboardPage() {
                     : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
                 }`}
               >
-                System Logs
+                All updates
               </button>
             </div>
           </div>
@@ -460,7 +449,7 @@ export default function DashboardPage() {
                 className="flex items-start gap-4 px-6 py-4.5 hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors"
               >
                 <div className="mt-1 p-2 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-300 flex-shrink-0">
-                  <HiOutlineSparkles className="w-4 h-4" />
+                  <HiOutlineCheckCircle className="w-4 h-4" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">

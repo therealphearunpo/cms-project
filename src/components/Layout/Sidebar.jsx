@@ -96,7 +96,7 @@ export default function Sidebar({ isOpen, onClose, onMenuVisibilityToggle }) {
 
       <aside
         className={`
-          fixed top-0 left-0 h-full w-64 bg-slate-900 border-r border-slate-800 z-50
+          fixed top-0 left-0 h-full w-64 bg-slate-950 border-r border-slate-800 z-50
           flex flex-col
           transform transition-transform duration-500 ease-in-out
           lg:translate-x-0 shadow-2xl shadow-slate-950/40
@@ -105,16 +105,16 @@ export default function Sidebar({ isOpen, onClose, onMenuVisibilityToggle }) {
       >
         {/* Logo / Brand */}
         <div className="flex items-center gap-3 px-5 h-16 border-b border-slate-800 flex-shrink-0">
-          <div className="w-9 h-9 rounded-xl bg-blue-600 border border-blue-400/30 flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-600/30">
-            <span className="text-white font-extrabold text-xs tracking-wider">EDU</span>
+          <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-blue-700">
+            <span className="text-xs font-bold tracking-wider text-white">EDU</span>
           </div>
 
           <div className="min-w-0 flex-1">
             <p className="text-slate-100 font-bold text-sm leading-tight tracking-wide truncate">
-              MOEYS Portal
+              School Portal
             </p>
             <p className="text-blue-400 text-[10px] font-semibold uppercase tracking-widest mt-0.5">
-              School Management
+              Class management
             </p>
           </div>
 

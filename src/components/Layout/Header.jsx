@@ -10,7 +10,6 @@ import {
   HiOutlineShieldCheck,
   HiOutlineAcademicCap,
   HiOutlineUserGroup,
-  HiOutlineSparkles,
 } from 'react-icons/hi';
 import { useNavigate } from 'react-router-dom';
 
@@ -312,7 +311,7 @@ export default function Header({ onMenuToggle, isMenuEnabled, onMenuVisibilityTo
         )}
 
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center font-extrabold text-xs tracking-wider shadow-md shadow-blue-600/20 flex-shrink-0">
+          <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-blue-700 text-xs font-bold tracking-wider text-white">
             EDU
           </div>
           <div className="min-w-0 hidden sm:block">
@@ -335,7 +334,7 @@ export default function Header({ onMenuToggle, isMenuEnabled, onMenuVisibilityTo
           <input
             ref={searchInputRef}
             type="text"
-            placeholder="Quick search (Press ⌘K to focus)..."
+            placeholder="Search pages and students..."
             className="w-full border-none bg-transparent text-slate-800 dark:text-slate-100 outline-none placeholder:text-slate-400 text-xs sm:text-sm font-medium"
             value={query}
             onChange={(event) => {
@@ -360,7 +359,7 @@ export default function Header({ onMenuToggle, isMenuEnabled, onMenuVisibilityTo
             </button>
           ) : (
             <span className="hidden md:inline-flex items-center gap-0.5 text-[10px] font-mono text-slate-400 bg-slate-200/70 dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-300/60 dark:border-slate-700 font-semibold">
-              <HiOutlineSparkles className="w-3 h-3 text-blue-500" /> ⌘K
+              ⌘K
             </span>
           )}
         </div>

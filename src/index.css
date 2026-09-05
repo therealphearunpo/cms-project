@@ -106,28 +106,22 @@
 }
 
 .institution-card {
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
   transition:
-    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.2s ease,
     border-color 0.25s ease;
 }
 
 .institution-card:hover {
   border-color: rgba(59, 130, 246, 0.35);
-  box-shadow:
-    0 12px 30px -4px rgba(15, 23, 42, 0.08),
-    0 4px 6px -2px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
 }
 
 .header-surface {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.55));
-  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.96);
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .search-shell {
@@ -149,9 +143,8 @@
 }
 
 .sidebar-glass {
-  background: rgba(30, 41, 59, 0.6);
-  backdrop-filter: blur(12px);
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0f172a;
+  border-right: 1px solid #1e293b;
 }
 
 .footer-panel-title {
@@ -163,8 +156,13 @@
 }
 
 .footer-telegram {
-  background: linear-gradient(135deg, #0088cc 0%, #006699 100%);
-  box-shadow: 0 10px 20px rgba(0, 136, 204, 0.3);
+  background: #0088cc;
+  box-shadow: 0 4px 10px rgba(0, 136, 204, 0.2);
+}
+
+.footer-shell {
+  background: #0f172a;
+  color: #cbd5e1;
 }
 
 /* Micro Animations & Glow Elements */
@@ -258,6 +256,15 @@ html.dark .institution-card {
   background: #0f172a;
   border-color: #1e293b;
   box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.4);
+}
+
+html.dark .metric-card {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+html.dark .metric-card__value {
+  color: #f8fafc;
 }
 
 html.dark .institution-card:hover {

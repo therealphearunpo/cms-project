@@ -310,14 +310,13 @@ export default function Header({ onMenuToggle, isMenuEnabled, onMenuVisibilityTo
           </button>
         )}
 
-          <div className="w-7 h-7 rounded-md bg-blue-600 text-white flex items-center justify-center font-bold text-xs flex-shrink-0">
-            CMS
-          </div>
-          <div className="min-w-0 hidden sm:block">
-            <h1 className="text-sm font-bold text-slate-900 dark:text-white truncate leading-tight">
-              Class Management System
-            </h1>
-          </div>
+        <div className="w-7 h-7 rounded-md bg-blue-600 text-white flex items-center justify-center font-bold text-xs flex-shrink-0">
+          CMS
+        </div>
+        <div className="min-w-0 hidden sm:block">
+          <h1 className="text-sm font-bold text-slate-900 dark:text-white truncate leading-tight">
+            Class Management System
+          </h1>
         </div>
       </div>
 
@@ -356,7 +355,7 @@ export default function Header({ onMenuToggle, isMenuEnabled, onMenuVisibilityTo
               Ctrl K
             </span>
           )}
-        </div>v>
+        </div>
 
         {searchOpen && query.trim() && (
           <div className="search-dropdown absolute left-0 right-0 z-50 mt-2 overflow-hidden rounded-2xl">

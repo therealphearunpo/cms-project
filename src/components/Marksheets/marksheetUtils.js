@@ -11,13 +11,13 @@ export const SUBJECTS = [
 ];
 
 export const SUBJECT_LABELS = {
-  khmer: 'Khmer (ភាសាខ្មែរ)',
-  mathematics: 'Math (គណិត)',
-  physics: 'Physics (រូបវិទ្យា)',
-  chemistry: 'Chemistry (គីមី)',
-  biology: 'Biology (ជីវវិទ្យា)',
-  history: 'History (ប្រវត្តិ)',
-  english: 'English (អង់គ្លេស)',
+  khmer: 'ភាសាខ្មែរ (Khmer)',
+  mathematics: 'គណិតវិទ្យា (Math)',
+  physics: 'រូបវិទ្យា (Physics)',
+  chemistry: 'គីមីវិទ្យា (Chemistry)',
+  biology: 'ជីវវិទ្យា (Biology)',
+  history: 'ប្រវត្តិវិទ្យា (History)',
+  english: 'ភាសាអង់គ្លេស (English)',
 };
 
 export function safeReadJson(key, fallback) {

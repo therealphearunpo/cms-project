@@ -26,10 +26,18 @@ import {
   YAxis,
 } from 'recharts';
 
+import { CURRENT_ACADEMIC_YEAR, getCurrentSemester, SEMESTER_LABELS } from '../../data/academicCalendar';
 import { classOptions, getInitialStudents, subjectOptions } from '../../data/students';
 import { assignmentsAPI, studentsAPI } from '../../services/api';
 import Button from '../common/Button';
 import Select from '../common/Select';
+import {
+  computeSubjectScore,
+  getGradeFromAverage,
+  LOCAL_MARKSHEETS_KEY,
+  SUBJECTS,
+  SUBJECT_LABELS,
+} from '../Marksheets/marksheetUtils';
 
 const ATTENDANCE_STORAGE_KEY = 'attendance_records_v1';
 const LOCAL_STUDENTS_KEY = 'students_local_v2';
@@ -102,6 +110,16 @@ function getReportMeta(reportType) {
       title: 'Subject submission performance overview',
       description:
         'Compare submission strength across subjects and identify variation in performance indicators.',
+      icon: HiOutlinePresentationChartLine,
+    };
+  }
+
+  if (reportType === 'moeys_grades') {
+    return {
+      eyebrow: 'MoEYS Academic Grade Book',
+      title: 'MoEYS standardized grade book export and evaluations',
+      description:
+        'Official MoEYS curriculum score distribution, rank computations, and conduct marks.',
       icon: HiOutlinePresentationChartLine,
     };
   }
@@ -384,6 +402,58 @@ export default function ReportsPage() {
         ...performanceData.map((row) => [row.subject, row.average, row.highest, row.lowest]),
       ];
       filename = `performance-report-${stamp}.csv`;
+    } else if (reportType === 'moeys_grades') {
+      const marksheets = safeReadJson(LOCAL_MARKSHEETS_KEY, {});
+      const currentSem = getCurrentSemester();
+      const semesterName = SEMESTER_LABELS[currentSem] || currentSem;
+      rows = [
+        ['ព្រះរាជាណាចក្រកម្ពុជា • ជាតិ សាសនា ព្រះមហាក្សត្រ', 'Kingdom of Cambodia'],
+        ['ក្រសួងអប់រំ យុវជន និងកីឡា (MoEYS)', 'Ministry of Education, Youth and Sport'],
+        ['របាយការណ៍បញ្ជីពិន្ទុផ្លូវការ', 'Official MoEYS Grade Book'],
+        ['ឆ្នាំសិក្សា / Academic Year', CURRENT_ACADEMIC_YEAR],
+        ['វគ្គ / Semester', semesterName],
+        ['ថ្នាក់ / Class', classLabel],
+        [],
+        [
+          'លេខរៀង / Roll',
+          'ឈ្មោះខ្មែរ / Khmer Name',
+          'ឈ្មោះឡាតាំង / Latin Name',
+          'ថ្នាក់ / Class',
+          'សីលធម៌ / Conduct',
+          ...SUBJECTS.map((s) => SUBJECT_LABELS[s] || s),
+          'មធ្យម / Avg',
+          'និទ្ទេស / Grade',
+          'លទ្ធផល / Result',
+        ],
+        ...filteredStudents.map((student) => {
+          const studentScores = marksheets[String(student.id)] || {};
+          const subjectAverages = SUBJECTS.map((s) => {
+            const raw = studentScores[s];
+            if (raw == null) return '-';
+            return computeSubjectScore(raw);
+          });
+          const validNums = subjectAverages.filter((v) => typeof v === 'number');
+          const avg =
+            validNums.length > 0
+              ? Number((validNums.reduce((a, b) => a + b, 0) / SUBJECTS.length).toFixed(1))
+              : '-';
+          const grade = typeof avg === 'number' ? getGradeFromAverage(avg) : '-';
+          const result =
+            typeof avg === 'number' ? (avg >= 50 ? 'ជាប់ (Pass)' : 'ធ្លាក់ (Fail)') : '-';
+          return [
+            student.rollNo || '-',
+            student.nameKhmer || student.name,
+            student.nameLatin || student.name,
+            student.class || '-',
+            student.conduct || 'B',
+            ...subjectAverages,
+            avg,
+            grade,
+            result,
+          ];
+        }),
+      ];
+      filename = `moeys-gradebook-${classLabel}-${stamp}.csv`;
     } else {
       rows = [
         ['Report', 'Student Demographics by Shift'],
@@ -504,6 +574,7 @@ export default function ReportsPage() {
               { value: 'attendance', label: 'Attendance Report' },
               { value: 'performance', label: 'Performance Report' },
               { value: 'demographics', label: 'Demographics Report' },
+              { value: 'moeys_grades', label: 'MoEYS Grade Book (បញ្ជីពិន្ទុ)' },
             ]}
             value={reportType}
             onChange={setReportType}

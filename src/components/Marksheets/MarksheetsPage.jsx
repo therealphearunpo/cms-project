@@ -6,15 +6,24 @@ import MarksheetFilters from './MarksheetFilters';
 import MarksheetStats from './MarksheetStats';
 import {
   clampScore,
+  computeSubjectScore,
+  emptyScoreEntry,
   getGradeFromAverage,
-  LOCAL_MARKSHEETS_KEY,
   saveJson,
   SUBJECTS,
 } from './marksheetUtils';
+import PrintGradeBook from './PrintGradeBook';
 import useMarksheetsData from './useMarksheetsData';
 import { ACCOUNT_ROLES, normalizeRole } from '../../constants/roles';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
+import {
+  academicYearOptions,
+  CURRENT_ACADEMIC_YEAR,
+  getCurrentSemester,
+  SEMESTER_1,
+  semesterOptions,
+} from '../../data/academicCalendar';
 import { marksheetsAPI } from '../../services/api';
 import DataTable from '../common/DataTable';
 
@@ -26,22 +35,29 @@ export default function MarksheetsPage() {
   const canEditMarks = role === ACCOUNT_ROLES.ADMIN;
   const studentClassCode = String(user?.class || '').trim();
 
-  const { students, marksByStudent, setMarksByStudent, loading } = useMarksheetsData();
+  // --- Semester & Academic Year selectors ---
+  const [semester, setSemester] = useState(() => getCurrentSemester());
+  const [academicYear, setAcademicYear] = useState(CURRENT_ACADEMIC_YEAR);
+
+  const { students, marksByStudent, setMarksByStudent, loading, storageKey } = useMarksheetsData(
+    semester,
+    academicYear
+  );
 
   const [notification, setNotification] = useState(null);
   const [selectedClass, setSelectedClass] = useState(studentClassCode || 'ALL');
   const [editing, setEditing] = useState(null);
   const [formScores, setFormScores] = useState({});
   const [isSaving, setIsSaving] = useState(false);
+  const [showPrint, setShowPrint] = useState(false);
 
   const filteredStudents = useMemo(() => {
     const lockedClass = isStudent && studentClassCode ? studentClassCode : null;
-
-    return students.filter((student) => {
-      return lockedClass
+    return students.filter((student) =>
+      lockedClass
         ? student.class === lockedClass
-        : selectedClass === 'ALL' || student.class === selectedClass;
-    });
+        : selectedClass === 'ALL' || student.class === selectedClass
+    );
   }, [isStudent, selectedClass, studentClassCode, students]);
 
   const rows = useMemo(() => {
@@ -49,16 +65,18 @@ export default function MarksheetsPage() {
       const studentId = String(student.id);
       const scores = marksByStudent[studentId] || null;
       const hasScores = Boolean(scores);
+
+      // Build per-subject computed averages
+      const subjectAverages = SUBJECTS.reduce((acc, subject) => {
+        acc[subject] = hasScores ? computeSubjectScore(scores[subject]) : '';
+        return acc;
+      }, {});
+
       const total = hasScores
-        ? SUBJECTS.reduce((sum, subject) => sum + clampScore(scores[subject]), 0)
+        ? SUBJECTS.reduce((sum, subject) => sum + Number(subjectAverages[subject] || 0), 0)
         : null;
       const avg = hasScores ? Number((total / SUBJECTS.length).toFixed(1)) : null;
       const grade = hasScores ? getGradeFromAverage(avg) : '';
-
-      const normalizedScores = SUBJECTS.reduce((acc, subject) => {
-        acc[subject] = hasScores ? clampScore(scores[subject]) : '';
-        return acc;
-      }, {});
 
       return {
         id: student.id,
@@ -69,7 +87,10 @@ export default function MarksheetsPage() {
         class: student.class,
         shift: student.shift,
         rollNo: student.rollNo,
-        ...normalizedScores,
+        conduct: student.conduct,
+        ...subjectAverages,
+        // Also keep raw dual-score entries for modal editing
+        _rawScores: scores,
         hasScores,
         total,
         avg,
@@ -77,6 +98,7 @@ export default function MarksheetsPage() {
       };
     });
 
+    // Compute dense rank by avg
     const ranked = [...baseRows]
       .filter((row) => row.hasScores)
       .sort((a, b) => {
@@ -117,12 +139,21 @@ export default function MarksheetsPage() {
 
   const openEditModal = (row) => {
     setEditing(row);
-    setFormScores(
-      SUBJECTS.reduce((acc, subject) => {
-        acc[subject] = clampScore(row[subject]);
-        return acc;
-      }, {})
-    );
+    // Populate form with existing dual-score entries (or empty)
+    const initial = SUBJECTS.reduce((acc, subject) => {
+      const raw = row._rawScores?.[subject];
+      if (raw && typeof raw === 'object') {
+        acc[subject] = { monthly: clampScore(raw.monthly), exam: clampScore(raw.exam) };
+      } else if (raw != null) {
+        // Legacy single number — treat as both monthly and exam
+        const n = clampScore(raw);
+        acc[subject] = { monthly: n, exam: n };
+      } else {
+        acc[subject] = emptyScoreEntry();
+      }
+      return acc;
+    }, {});
+    setFormScores(initial);
   };
 
   const closeEditModal = () => {
@@ -135,8 +166,13 @@ export default function MarksheetsPage() {
     event.preventDefault();
     if (!editing) return;
 
+    // Store dual-score objects
     const nextScores = SUBJECTS.reduce((acc, subject) => {
-      acc[subject] = clampScore(formScores[subject]);
+      const entry = formScores[subject] || emptyScoreEntry();
+      acc[subject] = {
+        monthly: clampScore(entry.monthly),
+        exam: clampScore(entry.exam),
+      };
       return acc;
     }, {});
 
@@ -150,14 +186,19 @@ export default function MarksheetsPage() {
       await marksheetsAPI.update(editing.studentId, {
         studentId: editing.studentId,
         studentName: editing.name,
-        ...nextScores,
+        semester,
+        academicYear,
+        scores: nextScores,
       });
       setNotification({ type: 'success', message: 'Marksheet updated successfully.' });
     } catch {
-      setNotification({ type: 'success', message: 'Marksheet updated locally (API unavailable).' });
+      setNotification({
+        type: 'success',
+        message: 'Marksheet saved locally (API unavailable).',
+      });
     } finally {
       setMarksByStudent(nextMap);
-      saveJson(LOCAL_MARKSHEETS_KEY, nextMap);
+      saveJson(storageKey, nextMap);
       setIsSaving(false);
       closeEditModal();
       setTimeout(() => setNotification(null), 3000);
@@ -166,6 +207,7 @@ export default function MarksheetsPage() {
 
   const columns = useMemo(
     () => createMarksheetColumns({ canEditMarks, subjects: SUBJECTS, openEditModal }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [canEditMarks]
   );
 
@@ -183,7 +225,8 @@ export default function MarksheetsPage() {
         </div>
       )}
 
-      <div className="flex items-center justify-between">
+      {/* Page Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
             {t('marksheets.title', 'MoEYS Academic Gradebook')}
@@ -194,6 +237,69 @@ export default function MarksheetsPage() {
               'Student score recording, class ranking, and semester evaluations'
             )}
           </p>
+        </div>
+
+        {/* Print button */}
+        {canEditMarks && (
+          <button
+            type="button"
+            onClick={() => setShowPrint(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors flex-shrink-0 self-start"
+          >
+            🖨️ {t('common.print', 'Print Grade Book')} (បញ្ជីពិន្ទុ)
+          </button>
+        )}
+      </div>
+
+      {/* Semester & Academic Year selectors */}
+      <div className="flex flex-wrap items-center gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+        <div className="flex items-center gap-2">
+          <label
+            htmlFor="semester-select"
+            className="text-xs font-semibold text-slate-600 dark:text-slate-300 whitespace-nowrap"
+          >
+            វគ្គ (Semester):
+          </label>
+          <select
+            id="semester-select"
+            value={semester}
+            onChange={(e) => setSemester(e.target.value)}
+            className="text-xs px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            {semesterOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label
+            htmlFor="year-select"
+            className="text-xs font-semibold text-slate-600 dark:text-slate-300 whitespace-nowrap"
+          >
+            ឆ្នាំសិក្សា (Year):
+          </label>
+          <select
+            id="year-select"
+            value={academicYear}
+            onChange={(e) => setAcademicYear(e.target.value)}
+            className="text-xs px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            {academicYearOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Semester badge */}
+        <div className="ml-auto flex items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700">
+            📚 {semester === SEMESTER_1 ? 'វគ្គ ១' : 'វគ្គ ២'} · {academicYear}
+          </span>
         </div>
       </div>
 
@@ -209,8 +315,8 @@ export default function MarksheetsPage() {
         columns={columns}
         data={rows}
         loading={loading}
-        searchable={true}
-        exportable={true}
+        searchable
+        exportable
         itemsPerPage={30}
       />
 
@@ -222,6 +328,16 @@ export default function MarksheetsPage() {
         formScores={formScores}
         setFormScores={setFormScores}
         isSaving={isSaving}
+      />
+
+      {/* Print Grade Book Modal */}
+      <PrintGradeBook
+        rows={rows}
+        selectedClass={selectedClass === 'ALL' ? null : selectedClass}
+        semester={semester}
+        academicYear={academicYear}
+        isOpen={showPrint}
+        onClose={() => setShowPrint(false)}
       />
     </div>
   );

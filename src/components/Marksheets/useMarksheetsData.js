@@ -1,19 +1,25 @@
 import { useEffect, useState } from 'react';
 
 import {
-  LOCAL_MARKSHEETS_KEY,
+  getMarksheetStorageKey,
   LOCAL_STUDENTS_KEY,
   normalizeScoreMap,
   normalizeStudent,
   safeReadJson,
   uniqueStudents,
 } from './marksheetUtils';
+import { CURRENT_ACADEMIC_YEAR, SEMESTER_1 } from '../../data/academicCalendar';
 import { marksheetsAPI, studentsAPI } from '../../services/api';
 
-export default function useMarksheetsData() {
+export default function useMarksheetsData(
+  semester = SEMESTER_1,
+  academicYear = CURRENT_ACADEMIC_YEAR
+) {
   const [students, setStudents] = useState([]);
   const [marksByStudent, setMarksByStudent] = useState({});
   const [loading, setLoading] = useState(true);
+
+  const storageKey = getMarksheetStorageKey(semester, academicYear);
 
   useEffect(() => {
     const loadData = async () => {
@@ -42,19 +48,21 @@ export default function useMarksheetsData() {
         apiScores = {};
       }
 
-      const localScores = normalizeScoreMap(safeReadJson(LOCAL_MARKSHEETS_KEY, {}));
+      // Load semester-scoped local scores
+      const localScores = normalizeScoreMap(safeReadJson(storageKey, {}));
       setStudents(mergedStudents);
       setMarksByStudent({ ...apiScores, ...localScores });
       setLoading(false);
     };
 
     loadData();
-  }, []);
+  }, [semester, academicYear, storageKey]);
 
   return {
     students,
     marksByStudent,
     setMarksByStudent,
     loading,
+    storageKey,
   };
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { format } from 'date-fns';
-import { HiOutlineCheckCircle } from 'react-icons/hi';
+import { HiOutlineCheckCircle, HiOutlineExclamation } from 'react-icons/hi';
 
 import FilterBar from './FilterBar';
 import StudentCard from './StudentCard';
@@ -9,6 +9,11 @@ import StudentListItem from './StudentListItem';
 import { ACCOUNT_ROLES, normalizeRole } from '../../constants/roles';
 import { useAttendanceContext } from '../../context/AttendanceContext';
 import { useAuth } from '../../context/AuthContext';
+import {
+  ABSENCE_WARNING_THRESHOLD,
+  CURRENT_ACADEMIC_YEAR,
+  MAX_ALLOWED_ABSENCE_DAYS,
+} from '../../data/academicCalendar';
 import {
   getDepartmentSubjectOptions,
   loadTeachers,
@@ -18,6 +23,25 @@ import {
 import { useFilteredStudents, useAttendanceStats } from '../../hooks/useAttendance';
 import Button from '../common/Button';
 import Modal from '../common/Modal';
+
+const SCHOOL_NAME = 'វិទ្យាល័យ...'; // Change to actual school name
+
+/**
+ * Count total absent days for each student across all records.
+ * @param {Object} records - { 'yyyy-MM-dd': { studentId: status } }
+ * @returns {Object} { studentId: absentCount }
+ */
+function computeAbsenceCounts(records) {
+  const counts = {};
+  Object.values(records || {}).forEach((dayRecords) => {
+    Object.entries(dayRecords || {}).forEach(([studentId, status]) => {
+      if (status === 'absent') {
+        counts[studentId] = (counts[studentId] || 0) + 1;
+      }
+    });
+  });
+  return counts;
+}
 
 const EMPTY_STAFF_FORM = {
   id: '',
@@ -34,6 +58,7 @@ export default function AttendancePage() {
   const {
     attendanceScope,
     currentDate,
+    records,
     selectedClass,
     selectedSubject,
     selectedShift,
@@ -151,30 +176,43 @@ export default function AttendancePage() {
     }
   };
 
+  // Absence counts across all records (Phase 3 MoEYS feature)
+  const absenceCounts = useMemo(() => computeAbsenceCounts(records), [records]);
+  const atRiskStudents = useMemo(
+    () => filteredStudents.filter((s) => (absenceCounts[s.id] || 0) >= ABSENCE_WARNING_THRESHOLD),
+    [filteredStudents, absenceCounts]
+  );
+
   const exportAttendanceCsv = () => {
     if (filteredStudents.length === 0) return;
 
     const escapeCell = (value) => `"${String(value ?? '').replace(/"/g, '""')}"`;
     const rows = filteredStudents.map((student) => [
       student.employeeId || student.rollNo || '-',
+      student.nameKhmer || student.name,
       student.name,
       student.class,
       student.shift || (isAdmin ? 'Staff' : 'Morning'),
       getStudentStatus(student.id) || 'unmarked',
+      absenceCounts[student.id] || 0,
     ]);
 
     const csvContent = [
-      ['Date', format(currentDate, 'yyyy-MM-dd')],
-      ['Class', selectedClass || 'All'],
-      ['Shift', selectedShift || 'All'],
-      ['Subject', selectedSubject || 'All'],
+      ['School / សាលា', SCHOOL_NAME],
+      ['Academic Year / ឆ្នាំសិក្សា', CURRENT_ACADEMIC_YEAR],
+      ['Date / ថ្ងៃខែឆ្នាំ', format(currentDate, 'yyyy-MM-dd')],
+      ['Class / ថ្នាក់', selectedClass || 'All'],
+      ['Shift / វេន', selectedShift || 'All'],
+      ['Subject / មុខវិជ្ជា', selectedSubject || 'All'],
       [],
       [
-        isAdmin ? 'Teacher ID' : 'Roll No',
+        isAdmin ? 'Teacher ID' : 'Roll No / លេខរៀង',
+        'Khmer Name / ឈ្មោះខ្មែរ',
         `${recordLabel} Name`,
-        isAdmin ? 'Stream' : 'Class',
-        'Shift',
-        'Status',
+        isAdmin ? 'Stream' : 'Class / ថ្នាក់',
+        'Shift / វេន',
+        'Status / ស្ថានភាព',
+        'Total Absences / ចំនួនថ្ងៃអវត្តមានសរុប',
       ],
       ...rows,
     ]
@@ -331,6 +369,43 @@ export default function AttendancePage() {
           {filteredStudents.length} {recordLabel.toLowerCase()}s found.
         </span>
       </div>
+
+      {/* At-Risk Absence Warning (MoEYS Phase 3) */}
+      {!isAdmin && atRiskStudents.length > 0 && (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-700 p-4">
+          <div className="flex items-start gap-3">
+            <HiOutlineExclamation className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">
+                ⚠️ សិស្សដែលប្រឈមមុខគ្រោះថ្នាក់ (At-Risk Students — Absence Warning)
+              </p>
+              <p className="text-xs text-amber-700 dark:text-amber-400 mt-0.5">
+                {atRiskStudents.length} student{atRiskStudents.length > 1 ? 's have' : ' has'}{' '}
+                exceeded {ABSENCE_WARNING_THRESHOLD} absent days (MoEYS limit: {MAX_ALLOWED_ABSENCE_DAYS} days).
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {atRiskStudents.map((s) => {
+                  const count = absenceCounts[s.id] || 0;
+                  const isDanger = count >= MAX_ALLOWED_ABSENCE_DAYS;
+                  return (
+                    <span
+                      key={s.id}
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold border ${
+                        isDanger
+                          ? 'bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-300 dark:border-rose-700'
+                          : 'bg-amber-100 text-amber-700 border-amber-300 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-700'
+                      }`}
+                    >
+                      {s.nameKhmer || s.name} — {count} ថ្ងៃ
+                      {isDanger && ' 🔴'}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {Object.keys(groupedStudents).length === 0 ? (
         <div className="bg-white rounded-xl p-12 shadow-card text-center">

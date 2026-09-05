@@ -5,9 +5,9 @@ import {
   HiOutlineArrowRight,
   HiOutlineChartBar,
   HiOutlineClipboardCheck,
-  HiOutlineClock,
   HiOutlineDatabase,
   HiOutlineDocumentText,
+  HiOutlineExclamation,
   HiOutlineUsers,
   HiOutlineCheckCircle,
   HiOutlineCalendar,
@@ -18,6 +18,12 @@ import MetricCard from './MetricCard';
 import { ACCOUNT_ROLES, normalizeRole } from '../../constants/roles';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
+import {
+  CURRENT_ACADEMIC_YEAR,
+  getCurrentSemester,
+  SEMESTER_LABELS,
+  ABSENCE_WARNING_THRESHOLD,
+} from '../../data/academicCalendar';
 import { classOptions, getInitialStudents } from '../../data/students';
 import { studentsAPI } from '../../services/api';
 import { mergeUniqueStudents } from '../../utils/students';
@@ -28,27 +34,39 @@ function readLocalStudents() {
   return getInitialStudents();
 }
 
-
 function getAttendanceSummary() {
   try {
     const raw = localStorage.getItem(ATTENDANCE_STORAGE_KEY);
     const records = raw ? JSON.parse(raw) : {};
     const dates = Object.keys(records || {}).sort();
-    if (dates.length === 0) return { rate: 96.4, marked: 0, latestDate: null };
+    if (dates.length === 0) return { rate: 96.4, marked: 0, latestDate: null, atRiskCount: 0 };
 
     const latestDate = dates[dates.length - 1];
     const latest = records[latestDate] || {};
     const statuses = Object.values(latest).filter(Boolean);
     const marked = statuses.length;
-    if (marked === 0) return { rate: 96.4, marked: 0, latestDate };
+
+    // Compute at-risk students (total absent days >= threshold)
+    const absentCounts = {};
+    Object.values(records).forEach((dayRec) => {
+      Object.entries(dayRec || {}).forEach(([sid, status]) => {
+        if (status === 'absent') absentCounts[sid] = (absentCounts[sid] || 0) + 1;
+      });
+    });
+    const atRiskCount = Object.values(absentCounts).filter(
+      (c) => c >= ABSENCE_WARNING_THRESHOLD
+    ).length;
+
+    if (marked === 0) return { rate: 96.4, marked: 0, latestDate, atRiskCount };
     const present = statuses.filter((status) => status === 'present').length;
     return {
       rate: Math.round((present / marked) * 1000) / 10,
       marked,
       latestDate,
+      atRiskCount,
     };
   } catch {
-    return { rate: 96.4, marked: 0, latestDate: null };
+    return { rate: 96.4, marked: 0, latestDate: null, atRiskCount: 0 };
   }
 }
 
@@ -158,8 +176,12 @@ export default function DashboardPage() {
       leadClassLabel: leadClass
         ? `${leadClass[0]} (${leadClass[1]} students)`
         : 'Class 12A (42 students)',
+      atRiskCount: attendance.atRiskCount || 0,
     };
   }, [studentRecords]);
+
+  const currentSemester = getCurrentSemester();
+  const semesterLabel = SEMESTER_LABELS[currentSemester] || currentSemester;
 
   const profileName = user?.name || user?.fullName || user?.email?.split('@')[0] || 'User';
   const heroCopy = getRoleDashboardCopy(role, profileName, dashboard.totalStudents, t);
@@ -169,7 +191,7 @@ export default function DashboardPage() {
       label: t('dashboard.total_students', 'Total Students'),
       value: dashboard.totalStudents,
       icon: HiOutlineUsers,
-      trend: '+12.4% vs last term',
+      trend: `ឆ្នាំសិក្សា ${CURRENT_ACADEMIC_YEAR}`,
       badge: 'Active Roster',
     },
     {
@@ -187,11 +209,11 @@ export default function DashboardPage() {
       badge: 'Verified',
     },
     {
-      label: 'Shifts Configured / វេនសិក្សា',
-      value: `${dashboard.shiftCount} Shifts`,
-      icon: HiOutlineClock,
-      trend: 'Morning & Afternoon',
-      badge: 'Standard',
+      label: 'At-Risk Students / សិស្សប្រឈមមុខ',
+      value: dashboard.atRiskCount,
+      icon: HiOutlineExclamation,
+      trend: `≥ ${ABSENCE_WARNING_THRESHOLD} absent days`,
+      badge: dashboard.atRiskCount > 0 ? 'Warning' : 'OK',
     },
   ];
 
@@ -309,13 +331,17 @@ export default function DashboardPage() {
       <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
                 {heroCopy.eyebrow}
               </span>
               <span className="text-slate-300 dark:text-slate-700">•</span>
               <span className="inline-flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-medium">
                 <HiOutlineCheckCircle className="w-4 h-4" /> Operational
+              </span>
+              {/* Cambodia Academic Context Badge */}
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700">
+                📚 {semesterLabel} · {CURRENT_ACADEMIC_YEAR}
               </span>
             </div>
 

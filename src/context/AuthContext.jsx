@@ -138,10 +138,13 @@ function shouldUseDemoAuthFirst() {
 }
 
 function isNetworkError(error) {
-  return (
-    !error?.response ||
-    /network error|failed to fetch|econnrefused/i.test(String(error?.message || ''))
-  );
+  if (!error?.response) return true;
+  if (/network error|failed to fetch|econnrefused/i.test(String(error?.message || ''))) return true;
+  // Treat any non-auth HTTP error (not 401/403) as "backend not properly set up"
+  // so the demo fallback is used when running locally without a backend.
+  const status = error.response?.status;
+  if (status && status !== 401 && status !== 403) return true;
+  return false;
 }
 
 async function loginWithDemoAccount(email, password) {

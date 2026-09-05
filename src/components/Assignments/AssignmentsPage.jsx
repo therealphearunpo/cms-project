@@ -206,7 +206,9 @@ export default function AssignmentsPage() {
         const apiAssignments = (Array.isArray(response?.data) ? response.data : []).map(
           normalizeAssignment
         );
-        const merged = mergeUniqueById([...apiAssignments, ...localAssignments]);
+        // Prefer the backend record when an id exists in both sources so stale
+        // cached data cannot hide an update after a reload.
+        const merged = mergeUniqueById([...localAssignments, ...apiAssignments]);
         setAssignments(merged);
       } catch {
         setAssignments(localAssignments);

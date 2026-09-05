@@ -310,32 +310,26 @@ export default function Header({ onMenuToggle, isMenuEnabled, onMenuVisibilityTo
           </button>
         )}
 
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-blue-700 text-xs font-bold tracking-wider text-white">
-            EDU
+          <div className="w-7 h-7 rounded-md bg-blue-600 text-white flex items-center justify-center font-bold text-xs flex-shrink-0">
+            CMS
           </div>
           <div className="min-w-0 hidden sm:block">
-            <div className="flex items-center gap-2">
-              <h1 className="text-sm font-extrabold text-slate-900 dark:text-white truncate leading-tight tracking-tight">
-                High School Management Portal
-              </h1>
-            </div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
-              Kingdom of Cambodia • Ministry of Education (MOEYS)
-            </p>
+            <h1 className="text-sm font-bold text-slate-900 dark:text-white truncate leading-tight">
+              Class Management System
+            </h1>
           </div>
         </div>
       </div>
 
       {/* Middle Area: Command Palette Search Bar */}
       <div ref={searchRef} className="relative flex-1 max-w-md mx-2">
-        <div className="search-shell flex items-center gap-2.5 rounded-xl px-3.5 py-2 text-sm">
+        <div className="search-shell flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm">
           <HiOutlineSearch className="h-4 w-4 text-slate-400 flex-shrink-0" />
           <input
             ref={searchInputRef}
             type="text"
-            placeholder="Search pages and students..."
-            className="w-full border-none bg-transparent text-slate-800 dark:text-slate-100 outline-none placeholder:text-slate-400 text-xs sm:text-sm font-medium"
+            placeholder="Search pages or students..."
+            className="w-full border-none bg-transparent text-slate-800 dark:text-slate-100 outline-none placeholder:text-slate-400 text-xs sm:text-sm font-normal"
             value={query}
             onChange={(event) => {
               setQuery(event.target.value);
@@ -358,11 +352,11 @@ export default function Header({ onMenuToggle, isMenuEnabled, onMenuVisibilityTo
               <HiOutlineX className="h-3.5 w-3.5 text-slate-500" />
             </button>
           ) : (
-            <span className="hidden md:inline-flex items-center gap-0.5 text-[10px] font-mono text-slate-400 bg-slate-200/70 dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-300/60 dark:border-slate-700 font-semibold">
-              ⌘K
+            <span className="hidden md:inline-flex items-center text-[10px] font-mono text-slate-400 bg-slate-200/80 dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-300/50 dark:border-slate-700 font-medium">
+              Ctrl K
             </span>
           )}
-        </div>
+        </div>v>
 
         {searchOpen && query.trim() && (
           <div className="search-dropdown absolute left-0 right-0 z-50 mt-2 overflow-hidden rounded-2xl">

@@ -86,7 +86,7 @@ export default function Sidebar({ isOpen, onClose, onMenuVisibilityToggle }) {
         <button
           type="button"
           aria-label="Close sidebar"
-          className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 bg-slate-950/70 z-40 lg:hidden"
           onClick={onClose}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') onClose();
@@ -98,23 +98,23 @@ export default function Sidebar({ isOpen, onClose, onMenuVisibilityToggle }) {
         className={`
           fixed top-0 left-0 h-full w-64 bg-slate-950 border-r border-slate-800 z-50
           flex flex-col
-          transform transition-transform duration-500 ease-in-out
-          lg:translate-x-0 shadow-2xl shadow-slate-950/40
+          transform transition-transform duration-200 ease-in-out
+          lg:translate-x-0
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >
         {/* Logo / Brand */}
-        <div className="flex items-center gap-3 px-5 h-16 border-b border-slate-800 flex-shrink-0">
-          <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-blue-700">
-            <span className="text-xs font-bold tracking-wider text-white">EDU</span>
+        <div className="flex items-center gap-3 px-4 h-14 border-b border-slate-800 flex-shrink-0">
+          <div className="w-7 h-7 rounded-md bg-blue-600 flex items-center justify-center flex-shrink-0 text-white font-bold text-xs">
+            CMS
           </div>
 
           <div className="min-w-0 flex-1">
-            <p className="text-slate-100 font-bold text-sm leading-tight tracking-wide truncate">
-              School Portal
+            <p className="text-slate-100 font-semibold text-sm leading-tight truncate">
+              School Management
             </p>
-            <p className="text-blue-400 text-[10px] font-semibold uppercase tracking-widest mt-0.5">
-              Class management
+            <p className="text-slate-400 text-[11px] font-normal truncate">
+              Class Portal
             </p>
           </div>
 
@@ -122,7 +122,7 @@ export default function Sidebar({ isOpen, onClose, onMenuVisibilityToggle }) {
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors lg:hidden flex-shrink-0"
+            className="p-1.5 rounded-md text-slate-400 hover:bg-slate-800 hover:text-white transition-colors lg:hidden flex-shrink-0"
             aria-label="Close sidebar"
           >
             <HiOutlineX className="w-4 h-4" />
@@ -130,7 +130,7 @@ export default function Sidebar({ isOpen, onClose, onMenuVisibilityToggle }) {
         </div>
 
         {/* Navigation links */}
-        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+        <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-0.5">
           {visibleMenuItems.map((item) => (
             <NavLink
               key={item.path}
@@ -143,22 +143,19 @@ export default function Sidebar({ isOpen, onClose, onMenuVisibilityToggle }) {
               }}
               className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
             >
-              <item.icon className="w-5 h-5 flex-shrink-0" />
+              <item.icon className="w-4 h-4 flex-shrink-0" />
               <span className="truncate">{item.label}</span>
             </NavLink>
           ))}
         </nav>
 
-        {/* Bottom Info Widget */}
-        <div className="px-3 pb-4 flex-shrink-0">
-          <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-3.5">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-blue-400">
-              National Education System
-            </p>
-            <p className="mt-1.5 text-xs leading-relaxed text-slate-400">
-              High School Class Management Portal for staff, teachers, and students.
-            </p>
-          </div>
+        {/* Bottom System Info */}
+        <div className="p-3 border-t border-slate-800 flex-shrink-0 text-xs text-slate-400 flex items-center justify-between">
+          <span className="font-mono text-[11px]">v2.0.0</span>
+          <span className="inline-flex items-center gap-1.5 text-[11px]">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            Operational
+          </span>
         </div>
       </aside>
     </>

@@ -86,11 +86,11 @@ function InfoCard({ icon: Icon, label, value }) {
 function SectionTitle({ eyebrow, title, summary }) {
   return (
     <div>
-      <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--moeys-gold)]">
+      <p className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
         {eyebrow}
       </p>
-      <h2 className="mt-2 text-xl font-semibold text-slate-900">{title}</h2>
-      {summary ? <p className="mt-2 text-sm leading-6 text-slate-500">{summary}</p> : null}
+      <h2 className="mt-1 text-xl font-bold text-slate-900 dark:text-white">{title}</h2>
+      {summary ? <p className="mt-1.5 text-xs leading-relaxed text-slate-500 dark:text-slate-400">{summary}</p> : null}
     </div>
   );
 }
@@ -254,14 +254,14 @@ export default function ProfilePage() {
         </div>
       )}
 
-      <section className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
-        <div className="grid gap-8 px-6 py-7 lg:grid-cols-[minmax(0,1.2fr)_320px] lg:px-8 xl:grid-cols-[minmax(0,1.3fr)_360px]">
+      <section className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm p-6">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_320px] lg:items-center xl:grid-cols-[minmax(0,1.3fr)_360px]">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[var(--moeys-gold)]">
+            <p className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
               Account Center
             </p>
-            <h1 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-              Profile and account settings
+            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl">
+              Profile & Account Settings
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">
               Keep your information accurate, maintain a professional profile photo, and review the
@@ -504,7 +504,7 @@ export default function ProfilePage() {
                     {valueFor('name', 'User')}
                   </h3>
                   <p className="mt-1 text-sm text-slate-500">{textValue('email') || 'No email'}</p>
-                  <p className="mt-2 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--moeys-gold)]">
+                  <p className="mt-1.5 text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
                     {ROLE_LABELS[currentRole]}
                   </p>
                 </div>

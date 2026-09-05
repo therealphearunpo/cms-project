@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useReducer } from 'react';
 
+import { isFrontendOnly } from '../config/appMode';
 import { ACCOUNT_ROLES, getRoleLabel, normalizeRole } from '../constants/roles';
 import { authAPI } from '../services/api';
 import { generateAvatarByGender, normalizeGender } from '../utils/avatar';
@@ -9,6 +10,20 @@ const ADMIN_CENTER_EMAILS = [
   'nim.cheyseth.2824@rupp.edu.kh',
   'thet.englang.2824@rupp.edu.kh',
   'po.phearun.2824@rupp.edu.kh',
+];
+export const DEMO_LOGIN_ACCOUNTS = [
+  {
+    label: 'Admin',
+    email: 'admin@school.edu',
+    password: 'Admin1234',
+    user: {
+      id: 'demo-admin',
+      name: 'Admin Center',
+      email: 'admin@school.edu',
+      gender: 'male',
+      role: ACCOUNT_ROLES.ADMIN,
+    },
+  },
 ];
 
 const initialState = {
@@ -109,6 +124,43 @@ function mergeStoredProfile(user) {
   };
 }
 
+function isLocalHost() {
+  if (typeof window === 'undefined') return false;
+  return ['localhost', '127.0.0.1'].includes(window.location.hostname);
+}
+
+function canUseLocalDemoAuth() {
+  return isFrontendOnly() || process.env.NODE_ENV === 'test' || isLocalHost();
+}
+
+function shouldUseDemoAuthFirst() {
+  return isFrontendOnly() || process.env.NODE_ENV === 'test';
+}
+
+function isNetworkError(error) {
+  return (
+    !error?.response ||
+    /network error|failed to fetch|econnrefused/i.test(String(error?.message || ''))
+  );
+}
+
+async function loginWithDemoAccount(email, password) {
+  const account = DEMO_LOGIN_ACCOUNTS.find(
+    (item) => item.email === email && item.password === password
+  );
+
+  if (!account) {
+    throw new Error('Invalid email or password');
+  }
+
+  return {
+    data: {
+      token: `demo-token-${account.user.id}`,
+      user: account.user,
+    },
+  };
+}
+
 export function AuthProvider({ children }) {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
@@ -121,7 +173,21 @@ export function AuthProvider({ children }) {
 
       const normalizedEmail = String(email).trim().toLowerCase();
       const rawPassword = String(password);
-      const response = await authAPI.login({ email: normalizedEmail, password: rawPassword });
+      let response;
+
+      if (shouldUseDemoAuthFirst()) {
+        response = await loginWithDemoAccount(normalizedEmail, rawPassword);
+      } else {
+        try {
+          response = await authAPI.login({ email: normalizedEmail, password: rawPassword });
+        } catch (apiError) {
+          if (!canUseLocalDemoAuth() || !isNetworkError(apiError)) {
+            throw apiError;
+          }
+          response = await loginWithDemoAccount(normalizedEmail, rawPassword);
+        }
+      }
+
       const token = response?.data?.token;
       const user = normalizeUser(mergeStoredProfile(response?.data?.user));
 

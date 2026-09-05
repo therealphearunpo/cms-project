@@ -74,9 +74,6 @@ body {
   font-family: var(--font-body);
   font-size: var(--size-body);
   line-height: var(--lh-body);
-  letter-spacing: var(--ls-body);
-  background-color: var(--color-dark);
-  color: var(--color-gray-600);
   margin: 0;
   padding: 0;
 }

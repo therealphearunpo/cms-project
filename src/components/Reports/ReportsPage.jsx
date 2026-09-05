@@ -431,30 +431,30 @@ export default function ReportsPage() {
 
   return (
     <div className="space-y-6">
-      <section className="glass-card overflow-hidden rounded-[28px] px-6 py-6 sm:px-8">
+      <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-6 sm:px-8 shadow-sm">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)] lg:items-end">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[var(--moeys-gold)]">
+            <p className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
               {reportMeta.eyebrow}
             </p>
-            <h1 className="mt-3 text-3xl font-bold text-gray-800 dark:text-gray-100 sm:text-4xl">
+            <h1 className="mt-2 text-2xl font-bold text-slate-900 dark:text-slate-100 sm:text-3xl">
               {reportMeta.title}
             </h1>
-            <p className="mt-3 max-w-3xl text-sm leading-7 text-gray-600 dark:text-gray-300">
+            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-500 dark:text-slate-400">
               {reportMeta.description}
             </p>
           </div>
 
-          <div className="rounded-[24px] border border-[rgba(15,47,99,0.08)] bg-white px-5 py-5 dark:border-slate-700 dark:bg-slate-900">
+          <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 dark:border-slate-800 dark:bg-slate-950">
             <div className="flex items-start gap-3">
-              <div className="rounded-2xl bg-[var(--moeys-navy)]/10 p-3 text-[var(--moeys-navy)] dark:bg-white/10 dark:text-white">
-                <ReportIcon className="h-6 w-6" />
+              <div className="rounded-lg bg-blue-600/10 p-2.5 text-blue-600 dark:bg-blue-400/10 dark:text-blue-400">
+                <ReportIcon className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">
+                <p className="text-xs font-bold text-slate-900 dark:text-slate-100">
                   Export-ready analytics
                 </p>
-                <p className="mt-2 text-sm leading-6 text-gray-600 dark:text-gray-300">
+                <p className="mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
                   The reporting center stays tied to current class scope, stored attendance, and
                   assignment activity.
                 </p>
@@ -466,30 +466,30 @@ export default function ReportsPage() {
 
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {statCards.map((stat) => (
-          <article key={stat.label} className="institution-card rounded-[24px] px-5 py-5">
+          <article key={stat.label} className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-5 py-4.5 shadow-sm">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{stat.label}</p>
-                <p className="mt-2 text-3xl font-bold text-gray-800 dark:text-gray-100">
+                <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{stat.label}</p>
+                <p className="mt-1.5 text-2xl font-bold text-slate-900 dark:text-slate-100 font-mono">
                   {stat.value}
                 </p>
               </div>
-              <div className={`rounded-2xl p-3 ${stat.tone}`}>
-                <stat.icon className="h-6 w-6" />
+              <div className={`rounded-lg p-2.5 ${stat.tone}`}>
+                <stat.icon className="h-5 w-5" />
               </div>
             </div>
-            <p className="mt-4 text-xs text-gray-500 dark:text-gray-400">{stat.hint}</p>
+            <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">{stat.hint}</p>
           </article>
         ))}
       </section>
 
-      <section className="institution-card rounded-[28px] px-5 py-5 sm:px-6">
+      <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-5 py-5 sm:px-6 shadow-sm">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--moeys-gold)]">
+            <p className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
               Report Controls
             </p>
-            <h2 className="mt-2 text-xl font-semibold text-gray-800 dark:text-gray-100">
+            <h2 className="mt-1 text-lg font-bold text-slate-900 dark:text-slate-100">
               Filter and export institutional reports
             </h2>
           </div>
@@ -535,13 +535,13 @@ export default function ReportsPage() {
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[minmax(0,1.08fr)_360px]">
-        <div className="institution-card rounded-[28px] px-5 py-5 sm:px-6">
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-5 py-5 sm:px-6 shadow-sm">
           <div className="mb-5 flex items-center justify-between gap-4">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--moeys-gold)]">
+              <p className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
                 Visual Analysis
               </p>
-              <h2 className="mt-2 text-xl font-semibold text-gray-800 dark:text-gray-100">
+              <h2 className="mt-1 text-lg font-bold text-slate-900 dark:text-slate-100">
                 {reportType === 'attendance'
                   ? 'Attendance trend by period'
                   : reportType === 'performance'
@@ -549,7 +549,7 @@ export default function ReportsPage() {
                     : 'Student shift distribution'}
               </h2>
             </div>
-            <div className="rounded-2xl bg-slate-100 p-3 text-slate-600 dark:bg-slate-800 dark:text-slate-200">
+            <div className="rounded-lg bg-slate-100 p-2 text-slate-600 dark:bg-slate-800 dark:text-slate-200">
               <HiOutlineDocumentReport className="h-5 w-5" />
             </div>
           </div>
@@ -602,54 +602,54 @@ export default function ReportsPage() {
         </div>
 
         <div className="space-y-6">
-          <div className="institution-card rounded-[28px] px-6 py-6">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--moeys-gold)]">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-5 py-5 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
               Key Statistics
             </p>
-            <h2 className="mt-2 text-xl font-semibold text-gray-800 dark:text-gray-100">
+            <h2 className="mt-1 text-lg font-bold text-slate-900 dark:text-slate-100">
               Summary indicators
             </h2>
-            <div className="mt-5 space-y-4">
-              <div className="rounded-2xl bg-gray-50 px-4 py-4 dark:bg-slate-950/50">
+            <div className="mt-4 space-y-2.5">
+              <div className="rounded-lg bg-slate-50 px-3.5 py-3 dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800">
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-sm text-gray-600 dark:text-gray-300">
+                  <span className="text-xs text-slate-600 dark:text-slate-400">
                     Students in Scope
                   </span>
-                  <span className="text-lg font-bold text-gray-800 dark:text-gray-100">
+                  <span className="text-sm font-bold text-slate-900 dark:text-slate-100 font-mono">
                     {summaryStats.students}
                   </span>
                 </div>
               </div>
-              <div className="rounded-2xl bg-gray-50 px-4 py-4 dark:bg-slate-950/50">
+              <div className="rounded-lg bg-slate-50 px-3.5 py-3 dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800">
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-sm text-gray-600 dark:text-gray-300">Average Present</span>
-                  <span className="text-lg font-bold text-green-600">
+                  <span className="text-xs text-slate-600 dark:text-slate-400">Average Present</span>
+                  <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400 font-mono">
                     {summaryStats.avgPresent}%
                   </span>
                 </div>
               </div>
-              <div className="rounded-2xl bg-gray-50 px-4 py-4 dark:bg-slate-950/50">
+              <div className="rounded-lg bg-slate-50 px-3.5 py-3 dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800">
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-sm text-gray-600 dark:text-gray-300">Average Absent</span>
-                  <span className="text-lg font-bold text-red-600">{summaryStats.avgAbsent}%</span>
+                  <span className="text-xs text-slate-600 dark:text-slate-400">Average Absent</span>
+                  <span className="text-sm font-bold text-rose-600 dark:text-rose-400 font-mono">{summaryStats.avgAbsent}%</span>
                 </div>
               </div>
-              <div className="rounded-2xl bg-gray-50 px-4 py-4 dark:bg-slate-950/50">
+              <div className="rounded-lg bg-slate-50 px-3.5 py-3 dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800">
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-sm text-gray-600 dark:text-gray-300">
+                  <span className="text-xs text-slate-600 dark:text-slate-400">
                     Performance Average
                   </span>
-                  <span className="text-lg font-bold text-blue-600">
+                  <span className="text-sm font-bold text-blue-600 dark:text-blue-400 font-mono">
                     {summaryStats.avgPerformance}%
                   </span>
                 </div>
               </div>
-              <div className="rounded-2xl bg-gray-50 px-4 py-4 dark:bg-slate-950/50">
+              <div className="rounded-lg bg-slate-50 px-3.5 py-3 dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800">
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-sm text-gray-600 dark:text-gray-300">
+                  <span className="text-xs text-slate-600 dark:text-slate-400">
                     Subjects Reported
                   </span>
-                  <span className="text-lg font-bold text-gray-800 dark:text-gray-100">
+                  <span className="text-sm font-bold text-slate-900 dark:text-slate-100 font-mono">
                     {summaryStats.subjects}
                   </span>
                 </div>
@@ -657,28 +657,28 @@ export default function ReportsPage() {
             </div>
           </div>
 
-          <div className="institution-card rounded-[28px] px-6 py-6">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--moeys-gold)]">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-5 py-5 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
               Recent Exports
             </p>
-            <h2 className="mt-2 text-xl font-semibold text-gray-800 dark:text-gray-100">
+            <h2 className="mt-1 text-lg font-bold text-slate-900 dark:text-slate-100">
               Report history
             </h2>
-            <div className="mt-5 space-y-3">
+            <div className="mt-4 space-y-2">
               {recentReports.length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-gray-200 px-4 py-6 text-sm text-gray-500 dark:border-slate-700 dark:text-gray-400">
+                <div className="rounded-lg border border-dashed border-slate-200 px-4 py-4 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400">
                   No report exports yet. Generate an export to create history.
                 </div>
               ) : (
                 recentReports.map((item) => (
                   <div
                     key={item.id}
-                    className="rounded-2xl bg-gray-50 px-4 py-4 dark:bg-slate-950/50"
+                    className="rounded-lg bg-slate-50 px-3.5 py-3 dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800"
                   >
-                    <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">
+                    <p className="text-xs font-semibold text-slate-900 dark:text-slate-100">
                       {item.type.charAt(0).toUpperCase() + item.type.slice(1)} | {item.classLabel}
                     </p>
-                    <p className="mt-1 text-xs uppercase tracking-[0.16em] text-gray-500 dark:text-gray-400">
+                    <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
                       {item.period} | {format(new Date(item.createdAt), 'dd MMM yyyy HH:mm')}
                     </p>
                   </div>

@@ -1,120 +1,110 @@
 .metric-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-top-width: 3px;
-  border-radius: 10px;
-  padding: var(--spacing-md);
-  min-height: 140px;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  min-height: 120px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+html.dark .metric-card {
+  background: #0f172a;
+  border-color: #1e293b;
 }
 
 .metric-card:hover {
-  border-color: #bfdbfe;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+html.dark .metric-card:hover {
+  border-color: #334155;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
 }
 
 .metric-card__header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: var(--spacing-sm);
+  align-items: center;
+  margin-bottom: 0.5rem;
 }
 
 .metric-card__label {
-  font-size: var(--size-label);
-  font-weight: var(--weight-label);
-  text-transform: none;
-  letter-spacing: 0;
-  color: var(--color-gray-400);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+}
+
+html.dark .metric-card__label {
+  color: #94a3b8;
 }
 
 .metric-card__timestamp {
-  font-size: var(--size-caption);
-  color: var(--color-gray-400);
+  font-size: 0.7rem;
+  color: #94a3b8;
+}
+
+html.dark .metric-card__timestamp {
+  color: #64748b;
 }
 
 .metric-card__value {
-  font-family: var(--font-display);
-  font-size: var(--size-data);
-  font-weight: var(--weight-data);
+  font-family: 'JetBrains Mono', monospace, sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
   color: #0f172a;
-  margin: var(--spacing-sm) 0;
+  margin: 0.25rem 0 0.75rem 0;
   line-height: 1.2;
+}
+
+html.dark .metric-card__value {
+  color: #f8fafc;
 }
 
 .metric-card__footer {
   margin-top: auto;
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
 }
 
 .metric-card__trend {
   display: flex;
   align-items: center;
-  gap: var(--spacing-xs);
-  font-size: 13px;
+  gap: 0.25rem;
+  font-size: 0.8rem;
   font-weight: 500;
 }
 
 .metric-card__trend--up {
-  color: var(--color-success);
+  color: #059669;
 }
+html.dark .metric-card__trend--up {
+  color: #10b981;
+}
+
 .metric-card__trend--down {
-  color: var(--color-error);
+  color: #dc2626;
 }
+html.dark .metric-card__trend--down {
+  color: #f87171;
+}
+
 .metric-card__trend--neutral {
-  color: var(--color-gray-400);
+  color: #64748b;
 }
 
-.metric-card__trend-icon {
-  font-size: 14px;
-}
-
-/* Subject specific left border colors */
-.metric-card--enrollment {
-  border-top-color: #2563eb;
-}
-.metric-card--languages {
-  border-top-color: var(--subject-languages);
-}
-.metric-card--math {
-  border-top-color: var(--subject-math);
-}
-.metric-card--science {
-  border-top-color: var(--subject-science);
-}
-.metric-card--studies {
-  border-top-color: var(--subject-studies);
-}
-.metric-card--pe {
-  border-top-color: var(--subject-pe);
-}
-.metric-card--ict {
-  border-top-color: var(--subject-ict);
+.metric-card__icon {
+  font-size: 1.25rem;
+  color: #94a3b8;
 }
 
 .metric-card:focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid #2563eb;
   outline-offset: 2px;
-}
-
-@media (max-width: 768px) {
-  .metric-card {
-    min-height: 120px;
-  }
-  .metric-card__value {
-    font-size: 28px;
-  }
-}
-
-@media (max-width: 640px) {
-  .metric-card {
-    padding: var(--spacing-sm);
-  }
-  .metric-card__value {
-    font-size: 24px;
-  }
 }

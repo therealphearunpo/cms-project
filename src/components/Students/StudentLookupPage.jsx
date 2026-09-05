@@ -141,11 +141,11 @@ function exportRowsAsCsv(filename, headers, rows) {
 function SectionTitle({ eyebrow, title, summary }) {
   return (
     <div>
-      <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--moeys-gold)]">
+      <p className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
         {eyebrow}
       </p>
-      <h2 className="mt-2 text-xl font-semibold text-slate-900">{title}</h2>
-      {summary ? <p className="mt-2 text-sm leading-6 text-slate-500">{summary}</p> : null}
+      <h2 className="mt-1 text-xl font-bold text-slate-900 dark:text-white">{title}</h2>
+      {summary ? <p className="mt-1.5 text-xs leading-relaxed text-slate-500 dark:text-slate-400">{summary}</p> : null}
     </div>
   );
 }
@@ -414,13 +414,13 @@ export default function StudentLookupPage() {
 
   return (
     <div className="space-y-6">
-      <section className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
-        <div className="grid gap-8 px-6 py-7 lg:grid-cols-[minmax(0,1.15fr)_320px] lg:px-8">
+      <section className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm p-6">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_320px] lg:items-center">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[var(--moeys-gold)]">
+            <p className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
               User Directory
             </p>
-            <h1 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl">
               User Lookup
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">
